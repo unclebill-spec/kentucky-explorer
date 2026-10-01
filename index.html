@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kentucky Explorer</title>
+<meta name="description" content="Interactive Kentucky map: notable land listings, hospitals and trauma centers, school quality, colleges, outdoor activities, history, and sweet-spot counties.">
+<meta name="theme-color" content="#123642">
+<!--OG-->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kentucky Explorer">
+<meta property="og:title" content="Kentucky Explorer — land, hospitals, schools &amp; history">
+<meta property="og:description" content="Interactive Kentucky map: notable land listings, hospitals &amp; trauma centers, school quality, colleges, outdoor activities, history and sweet-spot counties.">
+<meta property="og:image" content="https://unclebill-spec.github.io/kentucky-explorer/img/og.png">
+<meta property="og:url" content="https://unclebill-spec.github.io/kentucky-explorer/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://unclebill-spec.github.io/kentucky-explorer/img/og.png">
+<!--/OG-->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%97%BA%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="vendor/leaflet.css">
+<link rel="stylesheet" href="vendor/MarkerCluster.css">
+<link rel="stylesheet" href="vendor/MarkerCluster.Default.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="map" aria-label="Map of Kentucky"></div>
+
+<header id="topbar">
+  <div class="brand">Kentucky Explorer</div>
+  <div class="searchwrap">
+    <input id="search" type="search" placeholder="Search places, counties, properties…" autocomplete="off" aria-label="Search">
+    <div id="results" hidden></div>
+  </div>
+  <button id="layersBtn" class="btn" aria-expanded="false" aria-controls="layersPanel">Layers</button>
+</header>
+
+<aside id="layersPanel" hidden>
+  <div class="ph"><b>Layers</b><button class="x" data-close="layersPanel" aria-label="Close">×</button></div>
+  <div id="layerList"></div>
+  <div class="sect">
+    <label for="metricSel"><b>Color counties by</b></label>
+    <select id="metricSel"></select>
+    <div id="legend"></div>
+  </div>
+  <div class="sect">
+    <b>Base map</b>
+    <div id="baseList" class="seg"></div>
+  </div>
+  <div class="sect small" id="srcNote"></div>
+</aside>
+
+<section id="card" hidden aria-live="polite">
+  <div class="grab" aria-hidden="true"></div>
+  <button class="x cardx" id="cardClose" aria-label="Close card">×</button>
+  <div id="cardBody"></div>
+</section>
+
+<div id="lightbox" hidden role="dialog" aria-label="Photo viewer">
+  <button class="lbx" id="lbClose" aria-label="Close">×</button>
+  <button class="lbnav prev" id="lbPrev" aria-label="Previous photo">‹</button>
+  <div class="lbstage"><img id="lbImg" alt=""></div>
+  <button class="lbnav next" id="lbNext" aria-label="Next photo">›</button>
+  <div class="lbcount" id="lbCount"></div>
+</div>
+<div id="toast" hidden></div>
+
+<script src="vendor/leaflet.js"></script>
+<script src="vendor/leaflet.markercluster.js"></script>
+<script src="data/data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
