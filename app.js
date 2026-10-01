@@ -942,7 +942,7 @@
       on: t !== "camp", n: AT.filter(x => x.type === t).length, sub: true, disabled: !AT.some(x => x.type === t) }))]);
     // featured standouts: curated outdoor + history sites (featured flag from data/featured.json) move into their own always-on layer
     const L_feat = L.layerGroup(); let nFeat = 0;
-    [["activity", K.activities, () => L_act], ["history", K.history, h => L_hist[h.type] || L_hist.historic]].forEach(([type, xs, grp]) => (xs || []).forEach(x => {
+    [["activity", K.activities, () => L_act], ["history", K.history, h => L_hist[h.type] || L_hist.historic], ["attraction", AT, x => L_at[x.type]]].forEach(([type, xs, grp]) => (xs || []).forEach(x => {
       if (!x.featured) return; const m = MARK[type + ":" + x.id]; if (!m) return;
       grp(x).removeLayer(m); const o = m.options.icon.options;
       m.setIcon(L.divIcon(Object.assign({}, o, { html: o.html.replace('class="mk ', 'class="mk stout ') }))); m.setZIndexOffset(2500); L_feat.addLayer(m); nFeat++; }));
@@ -957,8 +957,8 @@
     PIN_KEY.bldg = () => `<div class="ksec"><b>🔔 Interesting buildings for sale</b> <span class="small">(under $600k: old churches, banks, schools, stores…)</span>${krow(mk("bldg", "🔔", 20), "Building for sale", "· tag = asking price")}</div>`;
     PIN_KEY.apt = () => `<div class="ksec"><b>✈ Airports</b>${krow(mk("apt", "✈", 20), "Kentucky airport with airline service", "· code beside the pin")}${krow(mk("apt oos", "✈", 20), "Nearby out-of-state airport (BNA, TYS, HTS, EVV, TRI)")}${krow(mk("apt ga", "✈", 20), "No scheduled flights right now")}</div>`;
     Object.values(MORE_ATT || {}).forEach(([e, label, key]) => { const t = Object.keys(MORE_ATT).find(k => MORE_ATT[k][2] === key); PIN_KEY[key] = () => krow(mk("att at-" + t, e, 20), esc(label)); });
-    PIN_KEY.feat = () => `<div class="ksec"><b>★ Kentucky standouts</b> <span class="small">(a short hand-picked list: big parks, gorges, caves, battlefields, landmark homes)</span>${krow(mk("act stout", "⛰", 20), "Standout site", "· gold ring, shown at every zoom")}</div>`;
-    PIN_KEY._lod = () => `<div class="ksec small"><b>Zoomed out?</b> Until you zoom in to about one county, everyday pins (homes, land, jobs, for-sale, schools, colleges, activities, campgrounds, amusement &amp; water parks, minor history) show as faint dots so the county colors stay readable. Hospitals, airports, museums, the aquarium and the ★ standouts always stay as icons.</div>`;
+    PIN_KEY.feat = () => `<div class="ksec"><b>★ Kentucky standouts</b> <span class="small">(a short hand-picked list: big parks, gorges, caves, battlefields, landmark homes, plus the famous museums, Newport Aquarium and Ark Encounter)</span>${krow(mk("act stout", "⛰", 20), "Standout site", "· gold ring, shown at every zoom")}</div>`;
+    PIN_KEY._lod = () => `<div class="ksec small"><b>Zoomed out?</b> Until you zoom in to about one county, everyday pins (homes, land, jobs, for-sale, schools, colleges, activities, campgrounds, amusement &amp; water parks, minor history) show as faint dots so the county colors stay readable. Airports, the ★ standouts, Level I/II trauma centers and big regional hospitals (200+ licensed beds) always stay as icons; other hospitals are small red dots until zoom 9, and other museums are faint dots until county zoom.</div>`;
   }
   function kyxMoreLate() {
     const A = K.airports || [], BZ = K.businesses || [], BD = K.buildings || [], AT = K.attractions || [];
@@ -1025,7 +1025,11 @@
   // (zoom 11 for schools and minor history). Hospitals, airports, museums, the aquarium and the featured standouts are never dotted.
   // Full icons are only added for the visible area (viewport culling). Each layer's group keeps working for filters (addLayer/removeLayer patched).
   function kyxLOD() {
-    const FULL = { props: 10, homes: 10, nh: 10, travel: 10, biz: 10, bldg: 10, col: 10, act: 10, a_park: 10, a_water: 10, a_camp: 10, sch: 11, h_hist: 11, h_coal: 11, h_ghost: 11, h_mine: 11 };
+    const FULL = { trauma: 9, hosp: 9, a_museum: 10, a_aqua: 10, props: 10, homes: 10, nh: 10, travel: 10, biz: 10, bldg: 10, col: 10, act: 10, a_park: 10, a_water: 10, a_camp: 10, sch: 11, h_hist: 11, h_coal: 11, h_ghost: 11, h_mine: 11 };
+    const bigHosp = h => /^Level (I|II)(\s|$)/.test(h.trauma || "") || (h.kind === "general" && (h.lic_beds || 0) >= 200);
+    const KEEP = { trauma: bigHosp, hosp: bigHosp };  // always icons even when zoomed out
+    const DOTSTY = { trauma: [0.75, 0.6, "#c62828"], hosp: [0.75, 0.6, "#c62828"] };  // [fillOpacity, extra radius, color]: hospitals a bit stronger than ordinary dots
+    const itemOf = l => { const k = REV.get(l); if (!k) return null; const i = k.indexOf(":"); return (IDX[k.slice(0, i)] || {})[k.slice(i + 1)] || null; };
     const FB = { props: "#e8a317", homes: "#00897b", nh: "#1565c0", travel: "#1a7d3a", biz: "#e65100", bldg: "#8e244d", a_park: "#c2185b", a_water: "#0288d1", a_camp: "#5b7f1f" };
     map.createPane("lodPane").style.zIndex = 450;
     const dotR = L.canvas({ pane: "lodPane", padding: 0.3, tolerance: 5 });
@@ -1067,10 +1071,11 @@
       },
       _clearDots() { if (this.dl && this._map) this._map.removeLayer(this.dl); this.dl = null; this.rz = null; },
       _clear() { this._clearDots(); this.shown.forEach(l => this._map && this._map.removeLayer(l)); this.shown.clear(); },
-      _size(z) { const r = z < 7 ? 1.8 : z < 8 ? 2.2 : z < 9 ? 2.6 : 3; if (r === this.rz || !this.dl) return; this.rz = r; this.dl.eachLayer(c => c.setRadius(r)); },
+      _size(z) { const r = (z < 7 ? 1.8 : z < 8 ? 2.2 : z < 9 ? 2.6 : 3) + (DOTSTY[this.d.key] ? DOTSTY[this.d.key][1] : 0); if (r === this.rz || !this.dl) return; this.rz = r; this.dl.eachLayer(c => c.setRadius(r)); },
       _dots() {
-        const fb = FB[this.d.key] || "#607d8b", lg = L.layerGroup();
-        this.g.eachLayer(l => { const cm = L.circleMarker(l.getLatLng(), { renderer: dotR, radius: 2.2, stroke: false, fillColor: colorOf(l, fb), fillOpacity: 0.42 });
+        const key = this.d.key, fb = FB[key] || "#607d8b", lg = L.layerGroup(), keep = KEEP[key], sty = DOTSTY[key];
+        this.g.eachLayer(l => { if (keep) { const it = itemOf(l); if (it && keep(it)) { this._map.addLayer(l); this.shown.add(l); return; } }
+          const cm = L.circleMarker(l.getLatLng(), { renderer: dotR, radius: 2.2, stroke: false, fillColor: sty ? sty[2] : colorOf(l, fb), fillOpacity: sty ? sty[0] : 0.42 });
           const tt = l.getTooltip && l.getTooltip(); if (tt) cm.bindTooltip(tt.getContent());
           cm.on("click", e => { if (e.originalEvent) e.originalEvent._kyxHandled = true; open(l); }); lg.addLayer(cm); });
         this.dl = lg.addTo(this._map);
@@ -1098,7 +1103,8 @@
   const zc = () => { const z = map.getZoom(), el = map.getContainer(); el.classList.toggle("z-low", z < 8); el.classList.toggle("z-vlow", z < 7); };
   map.on("zoomend", zc);
   if (location.hash) route(true);
-  else map.fitBounds([[36.5, -89.55], [39.15, -81.95]], isPhone() ? { padding: [4, 4] } : { paddingTopLeft: [325, 50], paddingBottomRight: [8, 8] });  // keep the map key from covering the Purchase
+  else if (isPhone()) { const zs = map.options.zoomSnap; map.options.zoomSnap = 0.05; map.fitBounds([[36.49, -89.57], [39.15, -81.96]], { padding: [2, 2], animate: false }); map.options.zoomSnap = zs; }  // phone: Kentucky fills the width
+  else map.fitBounds([[36.5, -89.55], [39.15, -81.95]], { paddingTopLeft: [325, 50], paddingBottomRight: [8, 8] });  // keep the map key from covering the Purchase
   zc();
   window.KYXApp = { openItem, closeCard, map, IDX };
 })();

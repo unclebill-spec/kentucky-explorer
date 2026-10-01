@@ -249,12 +249,14 @@ a.stat.tap:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
 .plab.bldg{color:#8e244d;border-left:3px solid #8e244d}
 .z-vlow .plab{display:none}
 /* zoomed out: always-on icons (hospitals, airports, museums, aquarium, standouts) stay readable but compact */
-.z-low .mk.trauma{transform:scale(.85)}
+.z-low .mk.trauma{transform:scale(.7)}
+.z-low .mk.hosp{transform:scale(.72)}
 .z-low .mk.att{transform:scale(.75)}
-.z-vlow .mk.trauma{transform:scale(.52)}
-.z-vlow .mk.hosp{transform:scale(.42)}
-.z-vlow .mk.att{transform:scale(.48)}
-.z-vlow .mk.apt{transform:scale(.7)}
+.z-low .mk.apt{transform:scale(.8)}
+.z-vlow .mk.trauma{transform:scale(.5)}
+.z-vlow .mk.hosp{transform:scale(.5)}
+.z-vlow .mk.att{transform:scale(.5)}
+.z-vlow .mk.apt{transform:scale(.58)}
 .mk.stout{box-shadow:0 0 0 2.5px #ffc400,0 1px 4px #0009}
-.z-low .mk.stout{transform:scale(.85)}
-.z-vlow .mk.stout{transform:scale(.62)}
+.z-low .mk.stout{transform:scale(.72)}
+.z-vlow .mk.stout{transform:scale(.52)}
