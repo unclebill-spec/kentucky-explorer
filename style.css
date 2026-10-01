@@ -182,3 +182,48 @@ a.inl{cursor:pointer;text-decoration:underline}
 .tjrow .tjtop{font-size:14px}
 .tjpay{color:var(--ink);margin-right:4px}
 .tjnote{background:#f6f8f0;border-left:3px solid var(--gold);padding:5px 8px;margin:6px 0;border-radius:4px}
+/* ---- county card: tappable count tiles -> grouping pages (#county=<slug>&cat=<cat>) ---- */
+.stats.gtiles{grid-template-columns:repeat(auto-fill,minmax(84px,1fr));margin-bottom:4px}
+.stat.gt{position:relative;display:block;min-height:54px;padding-right:18px}
+a.stat.tap{color:var(--ink);text-decoration:none;background:#e9f3f3;border:1px solid #bcd9d9;-webkit-tap-highlight-color:transparent;transition:transform .08s,background .08s}
+a.stat.tap b{color:var(--accent)}
+a.stat.tap span{text-decoration:underline;text-decoration-color:#9cc3c3;text-underline-offset:2px}
+a.stat.tap .gchev{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-style:normal;font-size:20px;color:var(--accent);line-height:1}
+a.stat.tap:active,a.stat.tap.pressed{background:#cfe6e6;transform:scale(.96)}
+a.stat.tap:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
+@media (hover:hover){a.stat.tap:hover{background:#dceeee}}
+.stat.zero{opacity:.5}
+.gtip{margin:0 0 6px}
+/* grouping page */
+@media (max-width:799px){#card.tall{max-height:86vh}}
+.gbar{position:sticky;top:0;z-index:4;display:flex;align-items:center;gap:8px;background:#fff;margin:0 -16px;padding:6px 50px 6px 12px;border-bottom:1px solid var(--line)}
+.gback,.gshare,.gfrom{border:0;border-radius:20px;font-weight:700;min-height:40px;padding:8px 14px;-webkit-tap-highlight-color:transparent}
+.gback{background:#e3f0f0;color:var(--accent);flex:0 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gshare{background:var(--accent);color:#fff;margin-left:auto;flex:0 0 auto}
+.gback:active,.gshare:active,.gfrom:active{transform:scale(.96);filter:brightness(.92)}
+.gfrom{display:inline-block;background:#e3f0f0;color:var(--accent);margin:4px 40px 2px 0;max-width:calc(100% - 40px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gjump{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
+.gjump button{border:1px solid #bcd9d9;background:#f3f8f8;color:var(--accent);border-radius:16px;padding:6px 10px;font-size:13px;font-weight:600;min-height:34px}
+.gjump button b{color:var(--ink);font-weight:700;margin-left:2px}
+.gsec{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);font-weight:700;margin:12px 0 0;padding:6px 0 4px;border-bottom:2px solid #d9e8e8}
+.gsec span{color:var(--muted);font-weight:600}
+.glist{margin:4px 0 6px}
+.grow{display:flex;align-items:center;gap:10px;padding:8px 2px;min-height:68px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none;-webkit-tap-highlight-color:transparent;content-visibility:auto;contain-intrinsic-size:auto 76px}
+.grow:active{background:#e6f2f2}
+@media (hover:hover){.grow:hover{background:#f3f8f8}}
+.gth{flex:0 0 60px;width:60px;height:60px;border-radius:9px;object-fit:cover;background:#e3e9eb;display:flex;align-items:center;justify-content:center;font-size:24px}
+.gtx{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px;line-height:1.3}
+.g1{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g2,.g3{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g2.wrap{white-space:normal}
+.grow>.gchev{flex:0 0 auto;font-style:normal;font-size:24px;color:#8fb5b5;line-height:1}
+.gtag{background:#eef4f4;border-radius:10px;padding:0 6px;color:var(--ink)}
+.gtag.tr{background:#fff1cf;color:#7a5200;font-weight:600}
+.gpay{color:#1a6a2f;font-weight:700}
+.gstar{color:#9a6400;font-weight:600}
+.glv{white-space:nowrap;margin-right:4px;color:var(--ink)}
+.glv .r{font-size:11px;padding:0 6px}
+.r.nr{background:#9e9e9e}
+.glv .up{color:#1a6a2f;font-weight:600}.glv .dn{color:#b3361f;font-weight:600}
+.gempty{color:var(--muted);font-size:13px;padding:10px 2px;border-bottom:1px solid var(--line)}
+#cardBody{overflow-wrap:anywhere}

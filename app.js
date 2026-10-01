@@ -473,6 +473,8 @@
     <table class="kv">${row("Trauma designation", h.trauma ? `${esc(h.trauma)}${h.trauma_name ? " — listed as “" + esc(h.trauma_name) + "”" : ""}<br><span class="small">${esc(h.trauma_src)}</span>` : "Not on the Kentucky Trauma System list")}
     ${row("Emergency dept.", h.emergency === "yes" ? "Yes (per OpenStreetMap)" : h.emergency === "no" ? "No (per OpenStreetMap)" : null)}
     ${row("Type", h.kind === "general" ? "General / acute care" : "Specialty (psychiatric, rehab, long-term, etc.)")}
+    ${row("Licensed beds", h.lic_beds ? `${esc(h.lic_beds)}${h.lic_type ? " · " + esc(h.lic_type) : ""}<br><span class="small">KY hospital directory, Sep 2026${h.lic_name ? ` · licensed as “${esc(h.lic_name)}”` : ""}</span>` : h.beds ? `${esc(h.beds)} <span class="small">(OpenStreetMap)</span>` : null)}
+    ${row("CMS star rating", h.cms_rating ? `${"★".repeat(Math.round(h.cms_rating))}${"☆".repeat(5 - Math.round(h.cms_rating))} ${esc(h.cms_rating)}/5 <span class="small">(CMS overall rating)</span>` : null)}
     ${row("County", h.county ? link("county", h.county, h.county + " County") : esc(h.state || "out of state"))}
     ${row("Phone", h.phone ? `<a href="tel:${esc(h.phone)}">${esc(h.phone)}</a>` : null)}${row("Website", h.web ? ext(h.web, "Website ↗") : null)}
     ${row("Map data", h.osm ? ext(h.osm, "OpenStreetMap ↗") : esc(h.note || ""))}</table>${nearbyProps(h)}`;
@@ -527,7 +529,7 @@
     const txt = c.text ? Object.entries(c.text).map(([k, v]) => row(k, esc(v))).join("") : "";
     return `${thumb("county", c)}<div class="kicker">County</div><h2>${esc(c.name)} County, Kentucky</h2>
       ${appealBlock(c)}
-      <div class="stats">${stat(c.n.props, "listings")}${stat(c.n.hosp, "hospitals")}${stat(c.n.schools, "schools")}${stat(c.n.colleges, "colleges")}${stat(c.n.acts, "activities")}${stat(c.n.hist, "history")}</div>
+      <div class="stats gtiles">${GCATS.map(g => groupTile(c, g)).join("")}</div><div class="small gtip">Tap a tile to list them · tap a row to fly to its pin</div>
       ${sweetKey && c.m[sweetKey] != null ? `<div class="badges"><span class="badge gold">Sweet-spot: ${esc(fmtMetric(metrics.find(m => m.key === sweetKey), c.m[sweetKey]))}</span></div>` : ""}
       ${mrows ? `<div class="kicker">County metrics</div><table class="tbl"><tr><th>Metric</th><th class="n">Value</th><th class="n">Rank</th></tr>${mrows}</table>` : ""}
       ${txt ? `<table class="kv">${txt}</table>` : ""}
@@ -542,6 +544,150 @@
     return near.length ? `<div class="kicker">Properties within 25 mi</div><table class="kv">${near.map(([p, d]) => row(d.toFixed(1) + " mi", link("property", p.id, p.title))).join("")}</table>` : "";
   }
   function hav(a, b, c, d) { const R = 3958.8, r = Math.PI / 180, x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(x)); }
+
+
+  // ------------------------------------------------------------------ county grouping pages (#county=<slug>&cat=<cat>)
+  // Each county-card count tile opens a compact, sorted list of that county's items; each row opens the item's own card and flies to its pin.
+  const GCATS = [
+    { k: "listings", n: "props", label: "listings", one: "listing", title: "Listings", icon: "🏡", layers: ["props", "homes"] },
+    { k: "hospitals", n: "hosp", label: "hospitals", title: "Hospitals", icon: "🏥", layers: ["trauma", "hosp"] },
+    { k: "travel", n: "travel", label: "travel jobs", one: "travel job", title: "Travel nurse jobs", icon: "💼", layers: ["travel"] },
+    { k: "schools", n: "schools", label: "schools", title: "Schools", icon: "🏫", layers: ["sch"] },
+    { k: "colleges", n: "colleges", label: "colleges", title: "Colleges", icon: "🎓", layers: ["col"] },
+    { k: "activities", n: "acts", label: "activities", one: "activity", title: "Activities & outdoors", icon: "🌲", layers: ["act"] },
+    { k: "history", n: "hist", label: "history", h2: "history sites", title: "History", icon: "🏛", layers: ["h_hist", "h_coal", "h_ghost", "h_mine"] },
+  ];
+  const GC = {}; GCATS.forEach(g => GC[g.k] = g);
+  const groupHash = (name, cat) => `#county=${slug(name)}&cat=${cat}`;
+  const gItems = {
+    listings: n => (K.properties || []).filter(p => p.county === n),
+    hospitals: n => (K.hospitals || []).filter(h => h.county === n),
+    travel: n => TJ_ALL.filter(j => j.h.county === n),
+    schools: n => (K.schools || []).filter(s => s.county === n),
+    colleges: n => (K.colleges || []).filter(x => x.county === n),
+    activities: n => (K.activities || []).filter(x => x.county === n),
+    history: n => (K.history || []).filter(x => x.county === n),
+  };
+  function gCount(c, g) {
+    if (g.k === "travel") return c.n.travel != null ? c.n.travel : gItems.travel(c.name).length;
+    return c.n[g.n] || 0;
+  }
+  function groupTile(c, g) {
+    const n = gCount(c, g);
+    if (!n) return `<div class="stat gt zero" aria-label="No ${esc(g.label)}"><b>0</b><span>${esc(g.label)}</span></div>`;
+    return `<a class="stat gt tap" href="${groupHash(c.name, g.k)}" data-grp="${g.k}" aria-label="${n} ${esc(g.label)}: open the list"><b>${n}</b><span>${esc(g.label)}</span><i class="gchev" aria-hidden="true">›</i></a>`;
+  }
+  const gImg = (src, ph) => src ? `<img class="gth" src="${esc(src)}" alt="" loading="lazy" decoding="async" width="60" height="60">` : `<span class="gth ph" aria-hidden="true">${ph}</span>`;
+  const gRow = (type, id, from, img, l1, l2, l3, wrap2) => `<a class="grow" href="#${type}=${esc(encodeURIComponent(id))}" data-go="${type}" data-id="${esc(id)}" data-from="${esc(from)}">${img}
+    <span class="gtx"><span class="g1">${l1}</span>${l2 ? `<span class="g2${wrap2 ? " wrap" : ""}">${l2}</span>` : ""}${l3 ? `<span class="g3">${l3}</span>` : ""}</span><i class="gchev" aria-hidden="true">›</i></a>`;
+  const dot = parts => parts.filter(x => x != null && x !== "" && x !== false).join(" · ");
+  const shortHosp = s => String(s || "").replace(/\s*\(.*?\)\s*/g, " ").replace(/\s+-\s+.*$/, "").trim();
+  function nearestDrive(p) {
+    const ds = (p.drives || []).map(d => ({ d, m: d.min_7am != null ? d.min_7am : d.minutes_free_flow })).filter(x => x.m != null);
+    if (!ds.length) return null;
+    const pick = ds.find(x => /nearest acute/i.test(x.d.role || "")) || ds.sort((a, b) => a.m - b.m)[0];
+    return `🏥 ${Math.round(pick.m)} min to ${esc(shortHosp(pick.d.hospital))}`;
+  }
+  const TRANK = t => !t ? 9 : /Level I\b(?! ?I)/.test(t) && !/II|IV/.test(t) ? 1 : /Level II\b/.test(t) && !/III/.test(t) ? 2 : /III/.test(t) ? 3 : /IV/.test(t) ? 4 : 5;
+  const hospBeds = h => h.lic_beds || (h.beds && +h.beds) || null;
+  const LVLNAME = { HS: "High", MS: "Middle", ES: "Elementary" };
+  const SKY = (K.meta && K.meta.school_ky) || {};
+  const topLevel = s => ["HS", "MS", "ES"].find(L => s.levels && s.levels[L]) || null;
+  const KIND_ORDER = ["University / college", "Community & technical college", "Other", "Seminary", "Beauty / trade school"];
+  const HIST_ORDER = ["historic", "ghost_town", "coal_camp", "mine"];
+  const HIST_SEC = { historic: "🏛 Historic sites & landmarks", ghost_town: "👻 Ghost towns", coal_camp: "🏚 Coal camps", mine: "⛏ Old mines (USGS MRDS)" };
+  const host = u => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return ""; } };
+  const firstSentence = (t, n = 140) => { t = String(t || "").replace(/\s+/g, " ").trim(); const m = t.match(/^(.{20,}?[.!?])\s/); t = m ? m[1] : t; return t.length > n ? t.slice(0, n - 1) + "…" : t; };
+  // section = [title, rows-html[]]
+  const GB = {};
+  GB.listings = (c, xs, from) => {
+    const byPrice = (a, b) => (a.price == null) - (b.price == null) || (a.price || 0) - (b.price || 0);
+    const r = p => gRow("property", p.id, from, gImg(p.rt || (p.th && p.th.u), isHome(p) ? "🏠" : "⌂"),
+      `<b>${p.price != null ? money(p.price) : "Price n/a"}</b>${p.beds != null ? ` · ${esc(p.beds)} bd${p.baths != null ? " / " + esc(p.baths) + " ba" : ""}` : ""}${p.acres != null ? ` · ${esc((+p.acres).toLocaleString(undefined, { maximumFractionDigits: 2 }))} ac` : ""}`,
+      `${p.standout && p.standout.length ? `<span class="gstar">★ ${esc(p.standout.join(", "))}</span> · ` : ""}${esc(p.title)}`,
+      dot([p.town && esc(p.town), nearestDrive(p)]));
+    const land = xs.filter(p => !isHome(p)).sort(byPrice), homes = xs.filter(isHome).sort(byPrice);
+    return { sub: "Sorted by price, lowest first", secs: [["⌂ 5+ acre land", land.map(r), "No 5+ acre land listings here right now."], ["🏠 1-acre homes", homes.map(r), "No 1-acre home listings here right now."]] };
+  };
+  GB.hospitals = (c, xs, from) => {
+    const tj = h => TJ.hospitals.find(t => t.hospital_id === h.id);
+    const sort = (a, b) => TRANK(a.trauma) - TRANK(b.trauma) || (hospBeds(b) || 0) - (hospBeds(a) || 0) || a.name.localeCompare(b.name);
+    const r = h => { const t = tj(h), beds = hospBeds(h);
+      return gRow("hospital", h.id, from, gImg(h.th && h.th.u, "🏥"), `<b>${esc(h.name)}</b>`,
+        dot([h.trauma && `<span class="gtag tr">🚑 Trauma ${esc(h.trauma.replace(/^Level /, "Lvl "))}</span>`, beds && `${esc(beds)} beds${h.lic_name && /\//.test(h.lic_name) ? " (shared license)" : ""}`,
+          h.lic_type && h.lic_type !== "Acute care" && esc(h.lic_type), h.cms_rating && `CMS ${esc(h.cms_rating)}★/5`, h.emergency === "yes" && "ER"]),
+        dot([h.city && esc(h.city), t && `<span class="gpay">💼 top ${money(t.top)}/wk</span> (${t.n} job${t.n > 1 ? "s" : ""})`]), true); };
+    const gen = xs.filter(h => h.kind === "general").sort(sort), spec = xs.filter(h => h.kind !== "general").sort(sort);
+    return { sub: "Trauma centers first, then by size · beds = state licensed beds", secs: [["Hospitals", gen.map(r), "No general hospitals in this county."], ...(spec.length ? [["Specialty (psychiatric, rehab, long-term)", spec.map(r)]] : [])] };
+  };
+  GB.travel = (c, xs, from) => ({ sub: "Highest weekly pay first · gross pay as posted", note: TJ_NOTE(), secs: [["Travel RN assignments", xs.map(j => gRow("travel", j.h.id, from, gImg(j.h.th && j.h.th.u, "💼"),
+    `<b class="gpay">${tjPay(j)}/wk</b> · ${esc(j.u || j.sp || "RN")}`, dot([j.sh && esc(j.sh), j.len && esc(j.len), j.st && "start " + esc(j.st)]), dot([esc(j.h.name), j.ag && esc(j.ag)])))]] });
+  GB.schools = (c, xs, from) => {
+    const lv = s => Object.entries(s.levels || {}).sort((a, b) => ["HS", "MS", "ES"].indexOf(a[0]) - ["HS", "MS", "ES"].indexOf(b[0])).map(([L, v]) => {
+      const d = v.score != null && SKY[L] != null ? v.score - SKY[L] : null;
+      return `<span class="glv">${v.rating ? `<span class="r ${esc(v.rating)}">${L}</span>` : `<span class="r nr">${L}</span>`}${v.score != null ? ` ${fmt1(v.score)}` : ""}${d != null ? ` <span class="${d >= 0 ? "up" : "dn"}">${d >= 0 ? "+" : "−"}${fmt1(Math.abs(d))} vs KY</span>` : ""}</span>`; }).join(" ");
+    const score = s => { const L = topLevel(s); return L && s.levels[L].score != null ? s.levels[L].score : -1; };
+    const r = s => gRow("school", s.id, from, gImg(s.th && s.th.u, "🏫"), `<b>${esc(s.name)}</b>`, lv(s) || "Not rated in 2025", dot([s.grades && "Grades " + esc(s.grades), esc(s.district), s.city && esc(s.city)]), true);
+    const secs = ["HS", "MS", "ES"].map(L => [`${LVLNAME[L]} schools`, xs.filter(s => topLevel(s) === L).sort((a, b) => score(b) - score(a) || a.name.localeCompare(b.name)).map(r)]);
+    const other = xs.filter(s => !topLevel(s)).sort((a, b) => a.name.localeCompare(b.name)).map(r);
+    if (other.length) secs.push(["Other / not rated", other]);
+    return { sub: `KDE 2025 overall score by level vs the KY average (ES ${fmt1(SKY.ES)}, MS ${fmt1(SKY.MS)}, HS ${fmt1(SKY.HS)}) · best first`, secs: secs.filter(x => x[1].length), jump: true };
+  };
+  GB.colleges = (c, xs, from) => ({ sub: "Universities first, then community & technical, other", secs: [["Colleges & schools", xs.slice().sort((a, b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind) || a.name.localeCompare(b.name)).map(x =>
+    gRow("college", x.id, from, gImg(x.th && x.th.u, "🎓"), `<b>${esc(x.name)}</b>`, dot([esc(x.kind), /nurs/i.test(x.name) && '<span class="gtag">🩺 Nursing</span>']), dot([x.city && esc(x.city)])))]] });
+  GB.activities = (c, xs, from) => ({ sub: "Grouped by type", secs: [["Activities & outdoors", xs.slice().sort((a, b) => a.kind.localeCompare(b.kind) || a.name.localeCompare(b.name)).map(a =>
+    gRow("activity", a.id, from, gImg(a.th && a.th.u, ACTI[a.kind] || "★"), `<b>${esc(a.name)}</b>`, `${ACTI[a.kind] || "★"} ${esc(a.kind)}`,
+      a.desc ? esc(firstSentence(a.desc)) : a.wiki ? "Wikipedia: " + esc(a.wiki.split(":").pop()) : a.web ? esc(host(a.web)) : ""))]] });
+  GB.history = (c, xs, from) => {
+    const one = h => { if (h.type === "mine") { const m = (h.desc || "").match(/recorded as a (.+?) of (.+?)\. /); return m ? `${m[1][0].toUpperCase() + m[1].slice(1)} of ${m[2]}` : ""; } return firstSentence(h.desc); };
+    const r = h => gRow("history", h.id, from, gImg((h.th && h.th.u) || (h.img && h.img.thumb), (HIST[h.type] || ["•"])[0]), `<b>${esc(h.name)}</b>`,
+      `${esc((HIST[h.type] || ["", h.type])[1])}${h.nhl ? " · National Historic Landmark" : ""}`, esc(one(h)));
+    return { sub: "Grouped by type", secs: HIST_ORDER.map(t => [HIST_SEC[t], xs.filter(h => h.type === t).sort((a, b) => a.name.localeCompare(b.name)).map(r)]).filter(x => x[1].length), jump: true };
+  };
+  function groupHtml(c, g) {
+    const xs = gItems[g.k](c.name), from = c.name + "|" + g.k, n = gCount(c, g);
+    const out = GB[g.k](c, xs, from);
+    const secs = out.secs, multi = secs.length > 1;
+    const jump = out.jump && secs.length > 2 ? `<nav class="gjump" aria-label="Jump to section">${secs.map((s, i) => `<button type="button" data-jump="gs${i}">${esc(s[0].replace(/^\S+\s(?=[A-Z])/u, ""))} <b>${s[1].length}</b></button>`).join("")}</nav>` : "";
+    const body = secs.map((s, i) => `${multi ? `<div class="gsec" id="gs${i}">${esc(s[0])} <span>${s[1].length}</span></div>` : ""}${s[1].length ? s[1].join("") : `<div class="gempty">${esc(s[2] || "None here.")}</div>`}`).join("");
+    return `<div class="gbar"><button type="button" class="gback" id="gBack" aria-label="Back to ${esc(c.name)} County card">‹ ${esc(c.name)} County</button>
+        <button type="button" class="gshare" id="gShare" aria-label="Share this list">${navigator.share ? "Share" : "Copy link"}</button></div>
+      <div class="kicker">${g.icon} ${esc(g.title)}</div><h2>${n} ${esc(n === 1 ? (g.one || (g.h2 || g.label).replace(/s$/, "")) : (g.h2 || g.label))} in ${esc(c.name)} County</h2>
+      <div class="sub">${esc(out.sub)}${xs.length ? " · tap a row to open it on the map" : ""}</div>${out.note || ""}${jump}
+      <div class="glist">${xs.length || secs.some(s => s[2]) ? body : `<div class="gempty">No ${esc(g.label)} recorded in ${esc(c.name)} County.</div>`}</div>
+      <div class="actions"><button class="btn" id="shareBtn">${navigator.share ? "Share…" : "Share"}</button><button class="btn ghost" id="copyBtn">Copy link</button><button class="btn ghost" id="zoomBtn">Zoom to county</button></div>
+      <div class="small" style="word-break:break-all">Link: <a href="${groupHash(c.name, g.k)}">${groupHash(c.name, g.k)}</a></div>`;
+  }
+  const groupShareUrl = (name, cat) => location.protocol === "file:" ? new URL("index.html" + groupHash(name, cat), location.href).href : new URL("share/county-" + slug(name + "-" + cat) + ".html", location.href).href;
+  async function shareGroup(name, cat) {
+    const g = GC[cat], title = `${g.title} in ${name} County, KY`, url = groupShareUrl(name, cat);
+    if (navigator.share) { try { await navigator.share({ title: title + " — Kentucky Explorer", text: title, url }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+    copy(url);
+  }
+  let gBackHist = false, gScroll = null;  // gBackHist: the county card is the previous history entry (opened from its tile)
+  function openGroup(name, cat, opts = {}) {
+    const c = IDX.county[name], g = GC[cat];
+    if (!c || !g) { toast("List not found"); return false; }
+    const prev = current;
+    current = { type: "group", id: name, cat };
+    gBackHist = !!opts.fromCounty;
+    body.innerHTML = groupHtml(c, g);
+    card.hidden = false; card.classList.add("tall");
+    card.scrollTop = gScroll && gScroll.key === name + "|" + cat ? gScroll.top : 0; gScroll = null;
+    if (isPhone()) setKeyOpen(false);
+    $("#gBack").onclick = () => { if (gBackHist) history.back(); else openItem("county", name, { replace: true, fly: false }); };
+    $("#gShare").onclick = $("#shareBtn").onclick = () => shareGroup(name, cat);
+    $("#copyBtn").onclick = () => copy(groupShareUrl(name, cat));
+    $("#zoomBtn").onclick = () => zoomTo("county", c, true);
+    body.querySelectorAll("[data-jump]").forEach(b => b.onclick = () => { const t = $("#" + b.dataset.jump); if (t) card.scrollTo({ top: t.offsetTop - $(".gbar").offsetHeight - 4, behavior: "smooth" }); });
+    const h = groupHash(name, cat);
+    if (location.hash !== h) history[opts.replace ? "replaceState" : "pushState"](null, "", h);
+    document.title = `${g.title} in ${name} County, KY — Kentucky Explorer`;
+    g.layers.forEach(k => { const d = LAYERS.find(x => x.key === k); if (d && !d.disabled && !map.hasLayer(d.layer)) setLayer(d, true); });
+    if (!(prev && (prev.type === "county" || prev.type === "group") && prev.id === name)) zoomTo("county", c, false);
+    highlight("county", c);
+    return true;
+  }
 
   // ------------------------------------------------------------------ share
   const TITLE = { travel: h => h.id === "all" ? "Kentucky travel nurse assignments" : h.name + " — travel RN jobs", property: p => p.title, hospital: h => h.name, school: s => s.name, college: c => c.name, activity: a => a.name, history: h => h.name, county: c => c.name + " County, KY" };
@@ -565,8 +711,10 @@
   var current = null; let hl = null;  // var: applyHomeFilter() reads it before this line runs
   function openItem(type, id, opts = {}) {
     const it = IDX[type] && IDX[type][id]; if (!it) { toast("Item not found"); return false; }
+    const from = opts.from && GC[opts.from.cat] ? opts.from : null;
     current = { type, id };
-    body.innerHTML = R[type](it) + `<div class="actions">
+    card.classList.remove("tall");
+    body.innerHTML = (from ? `<button type="button" class="gfrom" id="gFrom">‹ ${esc(from.county)} · ${esc(GC[from.cat].title)}</button>` : "") + R[type](it) + `<div class="actions">
         <button class="btn" id="shareBtn">${navigator.share ? "Share…" : "Share"}</button>
         <button class="btn ghost" id="copyBtn">Copy link</button>
         ${it.lat != null || type === "county" ? '<button class="btn ghost" id="zoomBtn">Zoom here</button>' : ""}</div>
@@ -576,6 +724,7 @@
     $("#shareBtn").onclick = () => doShare(type, id);
     $("#copyBtn").onclick = () => copy(shareUrlBest(type, id));
     const zb = $("#zoomBtn"); if (zb) zb.onclick = () => zoomTo(type, it, true);
+    const gf = $("#gFrom"); if (gf) gf.onclick = () => history.back();  // the list is the previous history entry
     const g = $("#gal"); if (g) g.querySelectorAll("img").forEach(img => img.onclick = () => openLB(it.photos, +img.dataset.i));
     const tb = body.querySelector("[data-thumb]");
     if (tb && it.th) tb.onclick = () => openLB([it.th.b || it.th.u], 0, [it.th.k === "satellite" ? "Satellite view · " + SAT.c : (it.th.c || "")], [it.th.u]);
@@ -583,6 +732,7 @@
     if (location.hash !== h) history[opts.replace ? "replaceState" : "pushState"](null, "", h);
     document.title = TITLE[type](it) + " — Kentucky Explorer";
     ensureLayerFor(type, it);
+    if (type === "property" && isHome(it)) applyHomeFilter();  // a home hidden by the Homes filter still shows its pin while open
     if (opts.fly !== false) zoomTo(type, it, false);
     highlight(type, it);
     return true;
@@ -605,16 +755,34 @@
     else if (it.lat != null) { hl = L.circleMarker([it.lat, it.lon], { radius: 20, color: "#e8a317", weight: 3, fill: false, interactive: false }).addTo(map); }
   }
   function closeCard(push = true) {
-    card.hidden = true; current = null; if (hl) { map.removeLayer(hl); hl = null; }
+    card.hidden = true; card.classList.remove("tall"); current = null; if (hl) { map.removeLayer(hl); hl = null; }
     document.title = "Kentucky Explorer";
     if (push && location.hash) history.pushState(null, "", location.pathname + location.search);
   }
   $("#cardClose").onclick = () => closeCard();
-  body.addEventListener("click", e => { const a = e.target.closest("[data-go]"); if (a) { e.preventDefault(); openItem(a.dataset.go, a.dataset.id); } });
+  body.addEventListener("click", e => {
+    const t = e.target.closest("[data-grp]");
+    if (t && current && current.type === "county") { e.preventDefault(); openGroup(current.id, t.dataset.grp, { fromCounty: true }); return; }
+    const a = e.target.closest("[data-go]"); if (!a) return;
+    e.preventDefault();
+    let from = null;
+    if (a.dataset.from && current && current.type === "group") { const [county, cat] = a.dataset.from.split("|"); from = { county, cat }; gScroll = { key: a.dataset.from, top: card.scrollTop }; }
+    openItem(a.dataset.go, a.dataset.id, from ? { from } : {});
+  });
   // swipe-down to close on phones
   (function () { let y0 = null; card.addEventListener("touchstart", e => { y0 = card.scrollTop <= 0 ? e.touches[0].clientY : null; }, { passive: true });
     card.addEventListener("touchend", e => { if (y0 != null && e.changedTouches[0].clientY - y0 > 90) closeCard(); y0 = null; }, { passive: true }); })();
+  function countyId(id) {
+    if (IDX.county[id]) return id;
+    return Object.keys(IDX.county).find(k => k.toLowerCase() === id.toLowerCase().replace(/\s*county$/, "")) || Object.keys(IDX.county).find(k => slug(k) === slug(id.replace(/\s*county$/i, ""))) || id;
+  }
   function route(replace) {
+    const gm = location.hash.replace(/&amp;/g, "&").match(/^#county=([^&]+)&cat=([a-z]+)$/);
+    if (gm) {
+      const id = countyId(decodeURIComponent(gm[1]));
+      if (current && current.type === "group" && current.id === id && current.cat === gm[2]) return;
+      openGroup(id, gm[2], { replace: true }); return;
+    }
     const m = location.hash.match(/^#(property|hospital|school|college|activity|history|county|travel)=(.+)$/);
     if (!m) { if (!card.hidden) closeCard(false); return; }
     const type = m[1]; let id = decodeURIComponent(m[2]);
