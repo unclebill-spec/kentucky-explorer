@@ -828,10 +828,10 @@
   var current = null; let hl = null;  // var: applyHomeFilter() reads it before this line runs
   function openItem(type, id, opts = {}) {
     const it = IDX[type] && IDX[type][id]; if (!it) { toast("Item not found"); return false; }
-    const from = opts.from && GC[opts.from.cat] ? opts.from : null;
+    const from = opts.from && (GC[opts.from.cat] || (opts.from.top && TOPK[opts.from.top])) ? opts.from : null;
     current = { type, id };
     card.classList.remove("tall");
-    body.innerHTML = (from ? `<button type="button" class="gfrom" id="gFrom">‹ ${esc(from.county)} · ${esc(GC[from.cat].title)}</button>` : "") + R[type](it) + `<div class="actions">
+    body.innerHTML = (from ? `<button type="button" class="gfrom" id="gFrom">‹ ${from.top ? esc(TOPK[from.top].title) : esc(from.county) + " · " + esc(GC[from.cat].title)}</button>` : "") + R[type](it) + `<div class="actions">
         <button class="btn" id="shareBtn">${navigator.share ? "Share…" : "Share"}</button>
         <button class="btn ghost" id="copyBtn">Copy link</button>
         ${it.lat != null || type === "county" ? '<button class="btn ghost" id="zoomBtn">Zoom here</button>' : ""}</div>
@@ -885,6 +885,7 @@
     e.preventDefault();
     let from = null;
     if (a.dataset.from && current && current.type === "group") { const [county, cat] = a.dataset.from.split("|"); from = { county, cat }; gScroll = { key: a.dataset.from, top: card.scrollTop }; }
+    else if (a.dataset.from && current && current.type === "top") { from = { top: a.dataset.from.split("|")[1] }; gScroll = { key: a.dataset.from, top: card.scrollTop }; }
     openItem(a.dataset.go, a.dataset.id, from ? { from } : {});
   });
   // swipe-down to close on phones
@@ -901,6 +902,8 @@
       if (current && current.type === "group" && current.id === id && current.cat === gm[2]) return;
       openGroup(id, gm[2], { replace: true }); return;
     }
+    const tm = location.hash.match(/^#(deals|top-buildings|top-businesses)$/);
+    if (tm) { const t = TOPH[tm[1]]; if (current && current.type === "top" && t && current.id === t.k) return; if (t) { openTop(t.k, { replace: true }); return; } }
     const m = location.hash.match(/^#(property|hospital|school|college|activity|history|county|travel|airport|business|building|attraction)=(.+)$/);
     if (!m) { if (!card.hidden) closeCard(false); return; }
     const type = m[1]; let id = decodeURIComponent(m[2]);
@@ -1150,6 +1153,87 @@
   }
   // ================================================================ /more layers
   kyxMoreLate();
+  // ------------------------------------------------------------------ top-10 bubbles (#deals, #top-buildings, #top-businesses)
+  // Three bubbles anchored just south of Kentucky (Tennessee) + a fixed "Top 10s" button; lists come from build.py (scripts/top_lists.py).
+  const TOPD = K.tops || {};
+  const TOPS = [
+    { k: "deals", hash: "deals", type: "property", src: "properties", ll: [35.95, -85.5], icon: G.starDot("#1565c0"), cls: "tb-deals",
+      label: n => `⭐ Deals of the Week (${n})`, title: "⭐ Deals of the Week", h2: n => `The ${n} best home values right now`,
+      sub: "Every home listing (5-acre, 1-acre and near-hospital, ⭐ bargains and others) ranked by price per sq ft (per acre for 5-acre land) vs nearby Zillow listings, criteria fit and extras" },
+    { k: "buildings", hash: "top-buildings", type: "building", src: "buildings", ll: [35.95, -87.98], icon: G.starDot("#2e7d32"), cls: "tb-bldg",
+      label: n => `Top ${n} Odd Buildings`, title: "Top 10 Odd Buildings", h2: n => `Top ${n} odd buildings for sale`,
+      sub: "Ranked by how interesting or historic it is, price per sq ft vs the other odd buildings listed, and condition" },
+    { k: "businesses", hash: "top-businesses", type: "business", src: "businesses", ll: [35.95, -83.02], icon: `<span class="mk biz" style="width:22px;height:22px">$</span>`, cls: "tb-biz",
+      label: n => `Top ${n} Businesses for Sale`, title: "Top 10 Businesses for Sale", h2: n => `Top ${n} businesses for sale`,
+      sub: "Ranked by value (asking price vs stated revenue or cash flow), whether the real estate is included, and appeal (Red River Gorge cabins, RV parks, lake lodging…)" },
+  ].filter(t => (TOPD[t.k] || []).length);
+  const TOPK = {}; TOPS.forEach(t => TOPK[t.k] = t);
+  const TOPH = {}; TOPS.forEach(t => TOPH[t.hash] = t);
+  const topRows = t => (TOPD[t.k] || []).map(r => [r, IDX[t.type] && IDX[t.type][r.id]]).filter(x => x[1]);
+  const acres = a => (+a).toLocaleString(undefined, { maximumFractionDigits: 2 }) + " ac";
+  function topRow(t, r, x) {
+    const from = "top|" + t.k, img = gImg(x.rt || (x.th && x.th.u) || (x.photos || [])[0], t.k === "deals" ? "🏠" : t.k === "buildings" ? "⛪" : "$");
+    const size = [x.sqft && sqft(x.sqft) + " sq ft", x.acres != null && x.acres !== "" && acres(x.acres)].filter(Boolean).join(" · ");
+    const facts = t.k === "deals" ? dot([`<b>#${r.rank} ${money(x.price)}</b>`, x.beds != null && `${esc(x.beds)} bd / ${esc(x.bath_detail ? x.bath_detail.replace(/ full/, "") : x.baths)} ba`, size])
+      : dot([`<b>#${r.rank} ${x.price != null ? money(x.price) : "Price n/a"}</b>`, size || null]);
+    const l3 = dot([x.town && esc(x.town), t.k === "deals" ? (r.bargain ? '<span class="gstar">⭐ Bargain</span>' : null) : esc(x.title)]);
+    return gRow(t.type, x.id, from, img, facts, esc(r.why), l3, true);
+  }
+  function topHtml(t) {
+    const rows = topRows(t), n = rows.length;
+    const nav = TOPS.length > 1 ? `<nav class="gjump tnav" aria-label="Other top lists">${TOPS.map(o => `<a class="tchip${o.k === t.k ? " on" : ""}" href="#${o.hash}">${esc(o.title.replace(/^⭐ /, "⭐ "))}</a>`).join("")}</nav>` : "";
+    return `<div class="gbar"><button type="button" class="gback" id="gBack" aria-label="Back to the map">‹ Map</button>
+        <button type="button" class="gshare" id="gShare" aria-label="Share this list">${navigator.share ? "Share" : "Copy link"}</button></div>
+      <div class="kicker">${esc(t.title)} · <span class="tupd">Updated ${esc(TOPD.updated || "")}</span></div><h2>${esc(t.h2(n))}</h2>
+      <div class="sub">${esc(t.sub)} · tap a row to open it on the map</div>${nav}
+      <div class="glist tlist">${rows.map(([r, x]) => topRow(t, r, x)).join("") || '<div class="gempty">Nothing qualifies right now.</div>'}</div>
+      <div class="actions"><button class="btn" id="shareBtn">${navigator.share ? "Share…" : "Share"}</button><button class="btn ghost" id="copyBtn">Copy link</button><button class="btn ghost" id="zoomBtn">Show all on map</button></div>
+      <div class="small" style="word-break:break-all">Link: <a href="#${t.hash}">#${t.hash}</a></div>`;
+  }
+  const topShareUrl = t => location.protocol === "file:" ? new URL("index.html#" + t.hash, location.href).href : new URL("share/" + t.hash + ".html", location.href).href;
+  async function shareTop(t) {
+    const url = topShareUrl(t);
+    if (navigator.share) { try { await navigator.share({ title: t.title + " — Kentucky Explorer", text: t.title, url }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+    copy(url);
+  }
+  function openTop(key, opts = {}) {
+    const t = TOPK[key]; if (!t) { toast("List not found"); return false; }
+    current = { type: "top", id: key };
+    if (hl) { map.removeLayer(hl); hl = null; }
+    body.innerHTML = topHtml(t);
+    card.hidden = false; card.classList.add("tall");
+    card.scrollTop = gScroll && gScroll.key === "top|" + key ? gScroll.top : 0; gScroll = null;
+    if (isPhone()) setKeyOpen(false);
+    $("#gBack").onclick = () => closeCard();
+    $("#gShare").onclick = $("#shareBtn").onclick = () => shareTop(t);
+    $("#copyBtn").onclick = () => copy(topShareUrl(t));
+    $("#zoomBtn").onclick = () => { const pts = topRows(t).map(([, x]) => [x.lat, x.lon]).filter(p => p[0] != null);
+      if (pts.length) map.flyToBounds(pts, Object.assign({ duration: 0.8, padding: [30, 30] }, window.innerWidth >= 800 ? { paddingBottomRight: [440, 30] } : { paddingBottomRight: [30, Math.round(window.innerHeight * 0.55)] })); };
+    const h = "#" + t.hash;
+    if (location.hash !== h) history[opts.replace ? "replaceState" : "pushState"](null, "", h);
+    document.title = t.title.replace(/^⭐ /, "") + " — Kentucky Explorer";
+    tmenu.hidden = true;
+    return true;
+  }
+  if (TOPS.length) {
+    map.createPane("tops"); map.getPane("tops").style.zIndex = 640;
+    TOPS.forEach(t => {
+      const n = (TOPD[t.k] || []).length;
+      const ic = L.divIcon({ className: "topbub-wrap", iconSize: [0, 0], iconAnchor: [0, 0],
+        html: `<a class="topbub ${t.cls}" href="#${t.hash}" role="button" aria-label="${esc(t.label(n))}: open the list"><span class="tbi">${t.icon}</span><span class="tbt">${esc(t.label(n).replace(/^⭐ /, ""))}</span></a>` });
+      const mk = L.marker(t.ll, { icon: ic, pane: "tops", keyboard: false, title: t.label(n) }).addTo(map);
+      mk.on("click", e => { if (e.originalEvent) { e.originalEvent.preventDefault(); e.originalEvent._kyxHandled = true; } openTop(t.k); });
+    });
+  }
+  // fixed fallback button (bottom right) -> small menu of the three lists
+  const tbtn = document.createElement("button"), tmenu = document.createElement("div");
+  tbtn.id = "topBtn"; tbtn.type = "button"; tbtn.className = "topbtn"; tbtn.innerHTML = "🏆 Top 10s"; tbtn.setAttribute("aria-expanded", "false"); tbtn.setAttribute("aria-controls", "topMenu");
+  tmenu.id = "topMenu"; tmenu.className = "topmenu"; tmenu.hidden = true;
+  tmenu.innerHTML = TOPS.map(t => `<a href="#${t.hash}" data-top="${t.k}"><span class="tbi">${t.icon}</span>${esc(t.label((TOPD[t.k] || []).length).replace(/^⭐ /, ""))}</a>`).join("") + `<div class="small">Updated ${esc(TOPD.updated || "")}</div>`;
+  if (TOPS.length) { document.body.appendChild(tbtn); document.body.appendChild(tmenu); }
+  tbtn.onclick = () => { tmenu.hidden = !tmenu.hidden; tbtn.setAttribute("aria-expanded", !tmenu.hidden); };
+  tmenu.addEventListener("click", e => { const a = e.target.closest("[data-top]"); if (!a) return; e.preventDefault(); openTop(a.dataset.top); });
+  document.addEventListener("click", e => { if (!tmenu.hidden && !e.target.closest("#topMenu,#topBtn")) { tmenu.hidden = true; tbtn.setAttribute("aria-expanded", "false"); } });
   // ------------------------------------------------------------------ start
   // de-clutter when zoomed out: hide minor hospitals, shrink markers
   const zc = () => { const z = map.getZoom(), el = map.getContainer(); el.classList.toggle("z-low", z < 8); el.classList.toggle("z-vlow", z < 7); };
