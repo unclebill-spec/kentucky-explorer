@@ -958,7 +958,7 @@
     PIN_KEY.apt = () => `<div class="ksec"><b>✈ Airports</b>${krow(mk("apt", "✈", 20), "Kentucky airport with airline service", "· code beside the pin")}${krow(mk("apt oos", "✈", 20), "Nearby out-of-state airport (BNA, TYS, HTS, EVV, TRI)")}${krow(mk("apt ga", "✈", 20), "No scheduled flights right now")}</div>`;
     Object.values(MORE_ATT || {}).forEach(([e, label, key]) => { const t = Object.keys(MORE_ATT).find(k => MORE_ATT[k][2] === key); PIN_KEY[key] = () => krow(mk("att at-" + t, e, 20), esc(label)); });
     PIN_KEY.feat = () => `<div class="ksec"><b>★ Kentucky standouts</b> <span class="small">(a short hand-picked list: big parks, gorges, caves, battlefields, landmark homes, plus the famous museums, Newport Aquarium and Ark Encounter)</span>${krow(mk("act stout", "⛰", 20), "Standout site", "· gold ring, shown at every zoom")}</div>`;
-    PIN_KEY._lod = () => `<div class="ksec small"><b>Zoomed out?</b> Until you zoom in to about one county, everyday pins (homes, land, jobs, for-sale, schools, colleges, activities, campgrounds, amusement &amp; water parks, minor history) show as faint dots so the county colors stay readable. Airports, the ★ standouts, Level I/II trauma centers and big regional hospitals (200+ licensed beds) always stay as icons; other hospitals are small red dots until zoom 9, and other museums are faint dots until county zoom.</div>`;
+    PIN_KEY._lod = () => `<div class="ksec small"><b>Zoomed out?</b> Until you zoom in to about one county, everyday pins (homes, land, jobs, schools, colleges, activities, campgrounds, amusement &amp; water parks, minor history) show as faint dots so the county colors stay readable. Airports, businesses &amp; buildings for sale (small icons), the ★ standouts, Level I/II trauma centers and big regional hospitals (200+ licensed beds) always stay as icons; other hospitals are small red dots until zoom 9, and other museums are faint dots until county zoom.</div>`;
   }
   function kyxMoreLate() {
     const A = K.airports || [], BZ = K.businesses || [], BD = K.buildings || [], AT = K.attractions || [];
@@ -1025,7 +1025,7 @@
   // (zoom 11 for schools and minor history). Hospitals, airports, museums, the aquarium and the featured standouts are never dotted.
   // Full icons are only added for the visible area (viewport culling). Each layer's group keeps working for filters (addLayer/removeLayer patched).
   function kyxLOD() {
-    const FULL = { trauma: 9, hosp: 9, a_museum: 10, a_aqua: 10, props: 10, homes: 10, nh: 10, travel: 10, biz: 10, bldg: 10, col: 10, act: 10, a_park: 10, a_water: 10, a_camp: 10, sch: 11, h_hist: 11, h_coal: 11, h_ghost: 11, h_mine: 11 };
+    const FULL = { trauma: 9, hosp: 9, a_museum: 10, a_aqua: 10, props: 10, homes: 10, nh: 10, travel: 10, col: 10, act: 10, a_park: 10, a_water: 10, a_camp: 10, sch: 11, h_hist: 11, h_coal: 11, h_ghost: 11, h_mine: 11 };
     const bigHosp = h => /^Level (I|II)(\s|$)/.test(h.trauma || "") || (h.kind === "general" && (h.lic_beds || 0) >= 200);
     const KEEP = { trauma: bigHosp, hosp: bigHosp };  // always icons even when zoomed out
     const DOTSTY = { trauma: [0.75, 0.6, "#c62828"], hosp: [0.75, 0.6, "#c62828"] };  // [fillOpacity, extra radius, color]: hospitals a bit stronger than ordinary dots
@@ -1089,7 +1089,7 @@
     // always-icon layers sit above the dots when zoomed out: trauma > hospitals > airports > standouts > museums/aquarium
     const lift = [];
     Object.entries(MARK).forEach(([k, m]) => { if (!m.setZIndexOffset) return; const it = k.split(":"), x = (IDX[it[0]] || {})[k.slice(it[0].length + 1)] || {};
-      const zh = it[0] === "hospital" ? (x.trauma ? 9000 : 8000) : it[0] === "airport" ? 7000 : x.featured ? 6000 : it[0] === "attraction" && (x.type === "museum" || x.type === "aquarium") ? 5000 : 0;
+      const zh = it[0] === "hospital" ? (x.trauma ? 9000 : 8000) : it[0] === "airport" ? 7000 : x.featured ? 6000 : it[0] === "business" || it[0] === "building" ? 5500 : it[0] === "attraction" && (x.type === "museum" || x.type === "aquarium") ? 5000 : 0;
       if (zh) lift.push([m, m.options.zIndexOffset || 0, zh]); });
     let lifted = null;
     const zl = () => { const low = map.getZoom() < 10; if (low === lifted) return; lifted = low; lift.forEach(([m, z0, zh]) => m.setZIndexOffset(low ? zh : z0)); };

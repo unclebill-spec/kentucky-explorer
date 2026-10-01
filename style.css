@@ -258,5 +258,8 @@ a.stat.tap:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
 .z-vlow .mk.att{transform:scale(.5)}
 .z-vlow .mk.apt{transform:scale(.58)}
 .mk.stout{box-shadow:0 0 0 2.5px #ffc400,0 1px 4px #0009}
+.z-low .mk.biz,.z-low .mk.bldg{transform:scale(.62)}
+.z-vlow .mk.biz,.z-vlow .mk.bldg{transform:scale(.5)}
+.z-low .plab.biz,.z-low .plab.bldg{display:none}
 .z-low .mk.stout{transform:scale(.72)}
 .z-vlow .mk.stout{transform:scale(.52)}
