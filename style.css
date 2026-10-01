@@ -366,3 +366,12 @@ html.cardfull #map,html.cardfull #topbar,html.cardfull #mapKey,html.cardfull .to
 .z-low .mk.city,.z-vlow .mk.city{transform:none}
 .kcity{position:relative;display:inline-block;width:44px;height:18px}
 .kcity .plab.city{top:2px}
+/* ‹ Back (header, left) whenever there is a previous page; lists use their own sticky bar's button */
+.cardtools{padding-left:8px}
+.cardtools .ctback{display:none;margin-right:auto;width:auto;flex:0 0 auto;border-radius:19px;padding:0 15px 0 11px;font-size:15px;font-weight:800;color:var(--accent)}
+#card.hasback .ctback{display:flex}
+#card.tall .ctback{display:none}
+#card.hasback:not(.tall) #cardBody{padding-top:46px}
+#card.full.hasback:not(.tall) #cardBody{padding-top:52px}
+@media (max-width:520px){#card.full.hasback:not(.tall) #cardBody>:first-child{margin-top:0}}
+#card{overflow-anchor:none}  /* restored scroll positions must not be shifted by scroll anchoring */
