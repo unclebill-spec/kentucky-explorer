@@ -12,7 +12,7 @@
   const toast = msg => { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => t.hidden = true, 2200); };
 
   // ------------------------------------------------------------------ map + base layers
-  const map = L.map("map", { zoomControl: false, preferCanvas: true, minZoom: 6, maxZoom: 18 }).setView([37.75, -85.7], 7);
+  const map = L.map("map", { zoomControl: false, preferCanvas: true, minZoom: 6, maxZoom: 18, zoomSnap: 0.25 }).setView([37.75, -85.7], 7);
   L.control.zoom({ position: "bottomleft" }).addTo(map);
   L.control.scale({ position: "bottomleft", imperial: true, metric: false }).addTo(map);
   const bases = {
@@ -596,7 +596,7 @@
   const zc = () => { const z = map.getZoom(), el = map.getContainer(); el.classList.toggle("z-low", z < 8); el.classList.toggle("z-vlow", z < 7); };
   map.on("zoomend", zc);
   if (location.hash) route(true);
-  else map.fitBounds([[36.5, -89.55], [39.15, -81.95]], { padding: [4, 4] });
+  else map.fitBounds([[36.5, -89.55], [39.15, -81.95]], isPhone() ? { padding: [4, 4] } : { paddingTopLeft: [325, 50], paddingBottomRight: [8, 8] });  // keep the map key from covering the Purchase
   zc();
   window.KYXApp = { openItem, closeCard, map, IDX };
 })();
