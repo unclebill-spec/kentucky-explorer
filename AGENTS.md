@@ -51,7 +51,7 @@ cd /workspace/kentucky/publish && ./publish.sh -m "What changed"    # ~2 min; co
   - `test_prof.py`: profiles.
   - `test_solo.py`: layer buttons and county fit.
   - `test_dbl.py`: double tap.
-  - `test_phone.py`: phone features. `test_focus.py`: county focus (closing a county card).
+  - `test_phone.py`: phone features. `test_focus.py`: county focus (closing a county card). `test_areas.py`: climate lines + Compare areas.
   - Each prints `ALL PASS`. Screenshots go to `perf/shots/`.
 - **Speed:** `profile.py URL LABEL` (4× CPU throttle) and `summ.py a.json b.json`. The box load average is often around 10, so profile alone and repeat runs.
 - **Local servers:** http://127.0.0.1:8765/ serves `explorer/`. Don't `pkill -f http.server`; it kills your own shell and other agents' servers.
@@ -107,7 +107,21 @@ What this means for other work:
 - While `FOCUS` is set, `refreshPoints` shows every pin inside the county (point-in-polygon on the county rings, or the item's `county` field) as a full icon, ignoring zoom tiers, never clustered. Solo buttons and profiles still decide which layers are on; otherwise all pin layers turn on and are restored on exit.
 - Bottom chip "‹ <County> County ✕": ‹ (or Back / ‹ Back) reopens the county card; ✕ leaves. A tap outside the county, a double tap to statewide, or zooming out more than 1.5 levels clears the focus. Cards opened from the focus return to it on X.
 
+## Climate + Compare areas (shipped Oct 1, 2026 evening)
+- **Climate line** on every card with a location (homes, hospitals, schools, colleges, businesses, buildings, attractions, jobs, activities, history, cities, counties): Summer avg (Jun–Aug) + July high/low, Winter avg (Dec–Feb) + January high/low. Homes and county cards add rainy days/yr (≥0.01 in), snow days (≥0.1 in), annual snowfall and precipitation.
+  - Source: NOAA NCEI U.S. Climate Normals 1991–2020 (station normals, tarballs in `climate/raw/`). Never estimated: stations whose value carries NOAA's "E" (estimated) completeness flag are skipped.
+  - Counties use the station inside the county nearest its Census internal point (else the nearest one); points use the nearest station, found in the browser.
+  - Rebuild: `/usr/bin/python3 climate/parse.py && /usr/bin/python3 climate/build_clim.py` → `data/clim.json` (41 KB; build.py copies it to `explorer/data/`).
+- **Compare areas** (`#areas`; 🏙 Areas button above Near me; entry in the Top 10s menu): the 5 KY cities (Louisville, Lexington, Bowling Green, Owensboro, Covington) with their county/metro, side by side, best value per row in green, pros & cons generated from the numbers, then 5 KY-vs-TN pair tables and a sources footnote.
+  - TN pairs are by Census Vintage 2025 population, among TN cities that anchor their own metro/micro area: Louisville↔Memphis, Lexington↔Knoxville, Bowling Green↔Johnson City, Owensboro↔Kingsport, Covington↔Cookeville.
+  - The same KY-vs-TN block shows on those 5 county cards, and as a compact "vs <TN city>" block on home cards within 30 mi of a city or in its metro (OMB 2023 CBSA counties).
+  - Data: `compare/build_areas.py` (run with `/workspace/kentucky/.venv/bin/python`) → `data/areas.json`. Inputs: Census population + Gazetteer; BLS OEWS May 2025 RN medians (KY TSV in `data/statewide/raw/`, TN from the OEWS query system in `compare/raw/`); Realtor.com county median listing price + $/sq ft; Zillow for-sale lots ≥5 ac (`compare/land.py`); SEDA 2025.1 county districts; OSRM drive to the nearest adult Level I/II trauma center (KY list + TN Dept. of Health list); NOAA normals; FBI CDE 2025 crime (`compare/crime.py`; the api.usa.gov DEMO_KEY allows only 10 calls/hour).
+  - Owensboro's RN wage is suppressed by BLS, so it shows as "not published" (no substitute). Permanent RN job counts show "coming soon" until `data/perm_jobs.json` lands.
+  - **To add a state or city:** add rows to `AREAS` in `compare/build_areas.py` (plus its land/crime inputs). `areas.js` renders whatever `areas.json` holds, so the page needs no code change.
+- **Lazy loading:** `areas.js`, `data/clim.json` and `data/areas.json` load on the first card open or `#areas`, never on the first load. publish.sh stages and minifies `areas.js` and copies both JSON files.
+
 ## Known issues / next steps
 - **Missing data:** no Walmart/grocery distances; no HOA fee amounts (only "no HOA" text). Commute filters use free-flow times.
 - **Near me** distances are straight-line, not drive times.
 - **Badges** are per phone and browser (localStorage); clearing site data resets the baseline.
+- **Next big step, after everything else is finished: the Tennessee port.** Build a Tennessee map from this codebase. Start from the TN rows already in `data/areas.json`, the TN trauma list (`data/tn_trauma_jul2026.xlsx`), the TN OEWS areas and the NOAA stations in `climate/stations.json`.

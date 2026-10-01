@@ -468,3 +468,26 @@ html.cardfull .gpsbtn{visibility:hidden}
 #fcBack{padding:0 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 #fcX{padding:0 13px;border-left:1px solid #0003;background:#f3c25a}
 html.cardfull .fchip{visibility:hidden}
+
+/* climate line + Compare areas (areas.js) */
+#climBox:empty{display:none}
+.clim{margin:10px 0 4px;padding:8px 10px;border-radius:10px;background:#f3f7fb;border:1px solid #dde7f0;font-size:13px;line-height:1.45}
+.climl{display:flex;flex-wrap:wrap;gap:2px 12px}
+.cl2{color:var(--muted);font-weight:400;font-size:12px}
+.clsrc{color:var(--muted);font-size:11px;margin-top:3px}
+.areasbtn{bottom:calc(118px + env(safe-area-inset-bottom))}
+.arT td{min-width:104px}
+.arT td.arH{background:#fafafa}
+.arpcs{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin:6px 0 10px}
+.arpc{border:1px solid var(--line);border-radius:10px;padding:8px;font-size:12.5px;line-height:1.4}
+.arpcH{font-weight:800;margin-bottom:3px}
+.arpc .pro{color:#1b5e20}.arpc .con{color:#b71c1c}
+.arpair{margin:8px 0 12px}
+.arpairH{font-weight:800;font-size:14px}
+.arvs{margin:10px 0 4px;border:1px solid #dde7f0;border-radius:10px;padding:8px 10px}
+.arvsH{font-weight:800;font-size:13.5px;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.arvsL{font-weight:600;font-size:12.5px;white-space:nowrap}
+.arvs .cmpt{font-size:12.5px;width:100%}
+.arvs .cmpt th,.arvs .cmpt td{padding:4px 5px;min-width:0}
+.arsrc{color:var(--muted);font-size:11px;line-height:1.45;margin-top:12px}
+.arT th{min-width:96px;max-width:110px;font-size:12px;line-height:1.3}
