@@ -221,6 +221,20 @@
       ${row("KDE rating ES/MS/HS", rat)}${row("Rank in KY", m.sch_rank != null ? "#" + Math.round(m.sch_rank) + " of 120" : null)}
       ${cs && cs.independents ? row("Independent districts", esc(cs.independents)) : ""}</table>`;
   }
+  // thumbnail at the top of each card (data/thumbs.json via build.py -> item.th)
+  const THUMB_TITLE = { hospital: h => h.name, school: s => s.name, college: c => c.name, activity: a => a.name, history: h => h.name, county: c => c.name + " County, Kentucky", property: p => p.title };
+  const SAT = { c: "Imagery: Esri, Maxar, Earthstar Geographics", s: "https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9" };
+  function thumb(type, it) {
+    let t = it.th; if (!t || !t.u) return "";
+    const sat = t.k === "satellite";
+    if (sat) t = Object.assign({}, SAT, t);
+    const name = THUMB_TITLE[type] ? THUMB_TITLE[type](it) : "";
+    const alt = sat ? `Satellite view of ${name}` : `Photo of ${name}`;
+    const src = t.s ? ` · <a href="${esc(t.s)}" target="_blank" rel="noopener">${sat ? "about" : "source"}</a>` : "";
+    return `<figure class="thumb${sat ? " sat" : ""}"><button type="button" class="thumbbtn" data-thumb="1" aria-label="Enlarge ${esc(alt)}">
+      <img src="${esc(t.u)}" alt="${esc(alt)}" loading="lazy" decoding="async" width="400" height="260">${sat ? '<span class="thtag">🛰 Satellite view</span>' : ""}</button>
+      <figcaption class="attr">${sat ? "Satellite view · " : ""}${esc(t.c || "")}${src}</figcaption></figure>`;
+  }
   const R = {};
   R.property = p => {
     const photos = p.photos || [];
@@ -233,7 +247,7 @@
     const ns = p.near_schools || {};
     return `<div class="kicker">${p.standout && p.standout.length ? "★ Standout property" : "Property"}</div><h2>${esc(p.title)}</h2>
       <div class="sub">${esc([p.town, p.county && p.county + " County"].filter(Boolean).join(", "))}</div>
-      ${gal}
+      ${gal || thumb("property", p)}
       ${p.standout && p.standout.length ? `<div class="badges">${p.standout.map(s => `<span class="badge gold">★ ${esc(s)}</span>`).join("")}</div>` : ""}
       ${p.precision === "town" ? `<div class="note">📍 Approximate pin: placed at the town center (${esc(p.town || "town")}); the exact parcel location wasn't published.</div>` : ""}
       ${p.pending ? '<div class="note">Listing details are still being collected (listings.json not ready when this map was built). Re-run build.py to fill in price, acreage and the exact location.</div>' : ""}
@@ -252,7 +266,7 @@
       <table class="kv">${row("County", p.county ? link("county", p.county, p.county + " County") : null)}${row("Listing", ext(p.url, "Open original listing ↗"))}${row("Date seen", esc(p.seen))}${row("Listing updated", p.updated ? esc(p.updated) : null)}${row("Status", p.status ? esc(p.status) : null)}</table>
       ${p.desc ? `<div class="kicker">Description</div><div class="desc">${esc(p.desc)}</div>` : ""}`;
   };
-  R.hospital = h => `<div class="kicker">${h.trauma ? "Trauma center" : h.kind === "general" ? "Hospital" : "Specialty hospital"}</div><h2>${esc(h.name)}</h2>
+  R.hospital = h => `${thumb("hospital", h)}<div class="kicker">${h.trauma ? "Trauma center" : h.kind === "general" ? "Hospital" : "Specialty hospital"}</div><h2>${esc(h.name)}</h2>
     <div class="sub">${esc([h.addr, h.city, h.state].filter(Boolean).join(", "))}</div>
     ${h.trauma ? `<div class="badges"><span class="badge gold">🚑 Trauma ${esc(h.trauma)}</span></div>` : ""}
     <table class="kv">${row("Trauma designation", h.trauma ? `${esc(h.trauma)}${h.trauma_name ? " — listed as “" + esc(h.trauma_name) + "”" : ""}<br><span class="small">${esc(h.trauma_src)}</span>` : "Not on the Kentucky Trauma System list")}
@@ -264,7 +278,7 @@
   R.school = s => {
     const lv = Object.entries(s.levels || {});
     const dr = s.drank || {};
-    return `<div class="kicker">School</div><h2>${esc(s.name)}</h2><div class="sub">${esc(s.district)} · grades ${esc(s.grades)}</div>
+    return `${thumb("school", s)}<div class="kicker">School</div><h2>${esc(s.name)}</h2><div class="sub">${esc(s.district)} · grades ${esc(s.grades)}</div>
     ${lv.length ? `<table class="tbl"><tr><th>Level</th><th>KDE 2025 rating</th><th class="n">Score</th></tr>${lv.map(([L, v]) => `<tr><td>${esc(L)}</td><td>${rbadge(v.rating)}${v.fed ? `<br><span class="small">${esc(v.fed)}</span>` : ""}</td><td class="n">${v.score != null ? fmt1(v.score) : "—"}</td></tr>`).join("")}</table>` : '<div class="note">No 2025 accountability rating for this school/program.</div>'}
     <table class="kv">${row("ACT composite (2024-25)", s.act != null ? esc(s.act) : null)}
     ${Object.entries(dr).map(([L, r]) => row(`District rank (${L})`, `#${esc(r.rank)} of ${esc(r.of)} districts`)).join("")}
@@ -273,17 +287,17 @@
     <div class="kicker">County district context</div>${schoolBlock(s.county)}
     <div class="small">KDE colors: Red &lt; Orange &lt; Yellow &lt; Green &lt; Blue (KDE School Report Card, 2024-25 accountability).</div>`;
   };
-  R.college = c => `<div class="kicker">${esc(c.kind)}</div><h2>${esc(c.name)}</h2><div class="sub">${esc([c.addr, c.city].join(", "))}</div>
+  R.college = c => `${thumb("college", c)}<div class="kicker">${esc(c.kind)}</div><h2>${esc(c.name)}</h2><div class="sub">${esc([c.addr, c.city].join(", "))}</div>
     <table class="kv">${row("County", link("county", c.county, c.county + " County"))}${row("Details", ext(c.src, "NCES College Navigator ↗"))}</table>`;
-  R.activity = a => `<div class="kicker">${esc(a.kind)}</div><h2>${esc(a.name)}</h2>
+  R.activity = a => `${thumb("activity", a)}<div class="kicker">${esc(a.kind)}</div><h2>${esc(a.name)}</h2>
     ${a.desc ? `<div class="desc">${esc(a.desc)}</div>` : ""}
     <table class="kv">${row("County", link("county", a.county, a.county + " County"))}${row("Website", a.web ? ext(a.web, "Website ↗") : null)}
     ${row("Wikipedia", a.wiki ? ext("https://en.wikipedia.org/wiki/" + encodeURIComponent((a.wiki.split(":")[1] || a.wiki).replace(/ /g, "_")), (a.wiki.split(":")[1] || a.wiki) + " ↗") : null)}
     ${row("Map data", ext(a.src, "OpenStreetMap ↗"))}</table>${nearbyProps(a)}`;
   R.history = h => {
     const t = HIST[h.type] || ["", h.type];
-    return `<div class="kicker">${t[0]} ${esc(t[1])}${h.nhl ? " · National Historic Landmark" : ""}</div><h2>${esc(h.name)}</h2>
-    ${h.img ? `<figure class="thumb"><img src="${esc(h.img.thumb)}" alt="${esc(h.name)}" loading="lazy"><figcaption class="attr">Photo: ${esc(h.img.artist)} · ${esc(h.img.license)} · <a href="${esc(h.img.page)}" target="_blank" rel="noopener">Wikimedia Commons</a></figcaption></figure>` : ""}
+    return `${h.th ? thumb("history", h) : ""}<div class="kicker">${t[0]} ${esc(t[1])}${h.nhl ? " · National Historic Landmark" : ""}</div><h2>${esc(h.name)}</h2>
+    ${!h.th && h.img ? `<figure class="thumb"><img src="${esc(h.img.thumb)}" alt="${esc(h.name)}" loading="lazy"><figcaption class="attr">Photo: ${esc(h.img.artist)} · ${esc(h.img.license)} · <a href="${esc(h.img.page)}" target="_blank" rel="noopener">Wikimedia Commons</a></figcaption></figure>` : ""}
     <div class="desc">${esc(h.desc)}</div>
     <table class="kv">${row("County", h.county ? link("county", h.county, h.county + " County") : null)}${row("Source", ext(h.src, (h.src_name || "Source") + " ↗"))}</table>`;
   };
@@ -292,7 +306,7 @@
     const props = (K.properties || []).filter(p => p.county === c.name);
     const ds = c.districts || [];
     const txt = c.text ? Object.entries(c.text).map(([k, v]) => row(k, esc(v))).join("") : "";
-    return `<div class="kicker">County</div><h2>${esc(c.name)} County, Kentucky</h2>
+    return `${thumb("county", c)}<div class="kicker">County</div><h2>${esc(c.name)} County, Kentucky</h2>
       <div class="stats">${stat(c.n.props, "listings")}${stat(c.n.hosp, "hospitals")}${stat(c.n.schools, "schools")}${stat(c.n.colleges, "colleges")}${stat(c.n.acts, "activities")}${stat(c.n.hist, "history")}</div>
       ${sweetKey && c.m[sweetKey] != null ? `<div class="badges"><span class="badge gold">Sweet-spot: ${esc(fmtMetric(metrics.find(m => m.key === sweetKey), c.m[sweetKey]))}</span></div>` : ""}
       ${mrows ? `<div class="kicker">County metrics</div><table class="tbl"><tr><th>Metric</th><th class="n">Value</th><th class="n">Rank</th></tr>${mrows}</table>` : ""}
@@ -342,6 +356,8 @@
     $("#copyBtn").onclick = () => copy(shareUrlBest(type, id));
     const zb = $("#zoomBtn"); if (zb) zb.onclick = () => zoomTo(type, it, true);
     const g = $("#gal"); if (g) g.querySelectorAll("img").forEach(img => img.onclick = () => openLB(it.photos, +img.dataset.i));
+    const tb = body.querySelector("[data-thumb]");
+    if (tb && it.th) tb.onclick = () => openLB([it.th.b || it.th.u], 0, [it.th.k === "satellite" ? "Satellite view · " + SAT.c : (it.th.c || "")], [it.th.u]);
     const h = "#" + type + "=" + encodeURIComponent(id);
     if (location.hash !== h) history[opts.replace ? "replaceState" : "pushState"](null, "", h);
     document.title = TITLE[type](it) + " — Kentucky Explorer";
@@ -390,9 +406,14 @@
 
   // ------------------------------------------------------------------ lightbox (swipe, keys)
   const lbx = $("#lightbox"), lbImg = $("#lbImg");
-  let lbList = [], lbI = 0;
-  function openLB(list, i) { lbList = list; lbI = i; lbx.hidden = false; showLB(); }
-  function showLB() { lbImg.src = lbList[lbI]; $("#lbCount").textContent = `${lbI + 1} / ${lbList.length}`; lbImg.style.transform = ""; }
+  let lbList = [], lbI = 0, lbCap = null, lbFallback = null;
+  function openLB(list, i, caps, fallback) { lbList = list; lbI = i; lbCap = caps || null; lbFallback = fallback || null; lbx.hidden = false; lbx.classList.toggle("single", list.length < 2); showLB(); }
+  function showLB() {
+    const fb = lbFallback && lbFallback[lbI];
+    lbImg.onerror = fb ? () => { lbImg.onerror = null; lbImg.src = fb; } : null;  // larger remote image unavailable -> local thumb
+    lbImg.src = lbList[lbI]; lbImg.style.transform = "";
+    $("#lbCount").textContent = (lbCap && lbCap[lbI]) || (lbList.length > 1 ? `${lbI + 1} / ${lbList.length}` : "");
+  }
   function step(d) { if (!lbList.length) return; lbI = (lbI + d + lbList.length) % lbList.length; showLB(); }
   $("#lbPrev").onclick = () => step(-1); $("#lbNext").onclick = () => step(1); $("#lbClose").onclick = () => lbx.hidden = true;
   lbx.addEventListener("click", e => { if (e.target === lbx || e.target.classList.contains("lbstage")) lbx.hidden = true; });

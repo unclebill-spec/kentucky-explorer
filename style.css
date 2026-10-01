@@ -104,3 +104,13 @@ a.inl{cursor:pointer;text-decoration:underline}
 .z-vlow .mk{transform:scale(.65)}
 .z-vlow .mk.prop{transform:rotate(-45deg) scale(.7)}
 .z-vlow .mk.star{transform:scale(.85)}
+/* card thumbnails (img/thumbs, see fetch_thumbs.py) */
+#cardBody>.thumb:first-child{margin:4px 30px 8px 0}
+.thumb{position:relative}
+.thumbbtn{display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in;position:relative}
+.thumbbtn img{display:block;width:100%;height:auto;aspect-ratio:400/260;max-height:260px;object-fit:cover;border-radius:10px;background:#e3e9eb}
+.thumb.sat .thumbbtn img{object-fit:cover}
+.thtag{position:absolute;left:8px;bottom:8px;background:#000a;color:#fff;font-size:11px;padding:2px 7px;border-radius:10px;pointer-events:none}
+.thumb figcaption{margin-top:3px;line-height:1.3;overflow-wrap:anywhere}
+#lightbox.single .lbnav{display:none}
+.lbcount{left:12px;right:12px;text-align:center;font-size:12px}
