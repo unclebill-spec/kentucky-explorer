@@ -460,3 +460,11 @@ html.cardfull .gpsbtn{visibility:hidden}
 .xh{font-weight:700;margin:14px 0 4px}
 .nrow{display:flex;justify-content:space-between;gap:8px}
 .ctb.ctfav[hidden]{display:none}
+
+/* county focus chip (bottom, between the zoom buttons and Top 10s) */
+.fchip{position:fixed;z-index:1000;left:54px;bottom:calc(26px + env(safe-area-inset-bottom));display:flex;max-width:calc(100vw - 54px - 124px);box-shadow:0 2px 10px #0005;border-radius:20px;overflow:hidden}
+.fchip[hidden]{display:none}
+.fchip button{border:0;height:40px;background:#e8a317;color:#1d1300;font:800 13px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;cursor:pointer;touch-action:manipulation}
+#fcBack{padding:0 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#fcX{padding:0 13px;border-left:1px solid #0003;background:#f3c25a}
+html.cardfull .fchip{visibility:hidden}

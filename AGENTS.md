@@ -51,6 +51,7 @@ cd /workspace/kentucky/publish && ./publish.sh -m "What changed"    # ~2 min; co
   - `test_prof.py`: profiles.
   - `test_solo.py`: layer buttons and county fit.
   - `test_dbl.py`: double tap.
+  - `test_phone.py`: phone features. `test_focus.py`: county focus (closing a county card).
   - Each prints `ALL PASS`. Screenshots go to `perf/shots/`.
 - **Speed:** `profile.py URL LABEL` (4× CPU throttle) and `summ.py a.json b.json`. The box load average is often around 10, so profile alone and repeat runs.
 - **Local servers:** http://127.0.0.1:8765/ serves `explorer/`. Don't `pkill -f http.server`; it kills your own shell and other agents' servers.
@@ -100,6 +101,11 @@ What this means for other work:
 - **PWA:** `manifest.webmanifest` plus `img/icon-192/512/maskable-512.png`.
 - **Offline:** `sw.js?v=<build stamp>` caches the app shell, data, viewed tiles (3000 max) and photos (400 max). Each publish's stamp creates a new worker that deletes the old shell and data caches; `index.html` is network-first, so updates arrive.
 - **Lazy loading:** the pages live in `extras.js` (lazy); only small hooks are in `app.js`. Test: `perf/test_phone.py`.
+
+## County focus (shipped Oct 1, 2026, ~7 PM)
+- Closing a county card (X, or swiping peek → closed) keeps the map on the county: `focusClose()` pushes `#cmap=<County>` (history.state `fz`), refits it to the whole screen (`fitCounty` keeps clear of the pills, search bar, button stack and the bottom chip), and outlines it.
+- While `FOCUS` is set, `refreshPoints` shows every pin inside the county (point-in-polygon on the county rings, or the item's `county` field) as a full icon, ignoring zoom tiers, never clustered. Solo buttons and profiles still decide which layers are on; otherwise all pin layers turn on and are restored on exit.
+- Bottom chip "‹ <County> County ✕": ‹ (or Back / ‹ Back) reopens the county card; ✕ leaves. A tap outside the county, a double tap to statewide, or zooming out more than 1.5 levels clears the focus. Cards opened from the focus return to it on X.
 
 ## Known issues / next steps
 - **Missing data:** no Walmart/grocery distances; no HOA fee amounts (only "no HOA" text). Commute filters use free-flow times.
