@@ -47,20 +47,37 @@
   // ------------------------------------------------------------------ county choropleth
   const metrics = (K.meta && K.meta.metrics) || [];
   const sweetKey = K.meta && K.meta.sweet;
-  const PAL_DIV = ["#b2182b", "#ef8a62", "#fddbc7", "#f7f7f7", "#d1e5f0", "#67a9cf", "#2166ac"];
-  const PAL_SEQ = ["#f7fcf5", "#c7e9c0", "#a1d99b", "#74c476", "#41ab5d", "#238b45", "#005a32"];
-  const PAL_SWEET = ["#fff5eb", "#fee6ce", "#fdd0a2", "#fdae6b", "#fd8d3c", "#e6550d", "#a63603"];
-  function scaleFor(key, pal) {
+  var keyReady = false;  // var (not let): drawCounties() runs before the key section below is initialised
+  const appealKey = K.meta && K.meta.appeal;
+  const AM = (K.meta && K.meta.appeal_method) || null;
+  // one ramp for every metric, best (top) -> worst (bottom); lower-is-better metrics are inverted so green is always the better choice
+  const RAMP = ["#1a7d3a", "#7cc46a", "#f3d64a", "#f08a3a", "#c62f2c"];
+  const BANDS = ["Most appealing", "Very good", "Good", "Fair", "Least appealing"];
+  // metrics with no better/worse direction (population, land area, farm size…) use a neutral blue ramp, highest -> lowest
+  const NEUTRAL = ["#0b3c78", "#2f73b8", "#6aaed6", "#b0d2ea", "#e4eff8"];
+  const NLABELS = ["Highest", "High", "Middle", "Low", "Lowest"];
+  const NODATA = "#c9c9c9";
+  const scaleCache = {};
+  function scaleFor(key) {
+    if (scaleCache[key]) return scaleCache[key];
     const m = metrics.find(x => x.key === key); if (!m) return null;
-    const vals = (K.counties || []).map(c => c.m[key]).filter(v => v != null).sort((a, b) => a - b);
-    if (!vals.length) return null;
-    const diverging = /pp|gl/.test(m.fmt) && !pal;
-    pal = pal || (diverging ? PAL_DIV : PAL_SEQ);
-    let breaks;
-    if (diverging) { const mx = Math.max(Math.abs(vals[0]), Math.abs(vals[vals.length - 1])) || 1; breaks = [-.6, -.3, -.1, .1, .3, .6].map(f => f * mx); }
-    else breaks = [1, 2, 3, 4, 5, 6].map(i => vals[Math.floor(i * (vals.length - 1) / 7)]);
-    const color = v => { if (v == null) return "#ccc"; let i = 0; while (i < breaks.length && v > breaks[i]) i++; const c = m.lower_better ? pal[pal.length - 1 - i] : pal[i]; return c; };
-    return { m, color, min: vals[0], max: vals[vals.length - 1], pal: m.lower_better ? pal.slice().reverse() : pal };
+    const cs = (K.counties || []).filter(c => c.m[key] != null);
+    if (!cs.length) return null;
+    const n = cs.length;
+    const better = m.lower_better && !m.neutral ? (a, b) => a - b : (a, b) => b - a;
+    const sorted = cs.map(c => c.m[key]).sort(better);
+    const clsOf = {};
+    if (key === appealKey) cs.forEach(c => { clsOf[c.name] = Math.max(0, BANDS.indexOf(c.appeal && c.appeal.band)); });
+    else cs.forEach(c => { clsOf[c.name] = Math.min(4, Math.floor(sorted.indexOf(c.m[key]) * 5 / n)); });  // quintiles by rank; tied values share the better class
+    const pal = m.neutral ? NEUTRAL : RAMP, labels = m.neutral ? NLABELS : BANDS;
+    const classes = labels.map((label, k) => {
+      const v = cs.filter(c => clsOf[c.name] === k).map(c => c.m[key]);
+      return { label, color: pal[k], n: v.length, lo: v.length ? Math.min(...v) : null, hi: v.length ? Math.max(...v) : null };
+    });
+    const missing = (K.counties || []).length - n;
+    const cls = c => c.m[key] == null ? -1 : clsOf[c.name];
+    const sc = { m, classes, missing, cls, color: c => { const k = cls(c); return k < 0 ? NODATA : pal[k]; }, labelOf: c => { const k = cls(c); return k < 0 ? "no data" : labels[k]; } };
+    return (scaleCache[key] = sc);
   }
   function fmtMetric(m, v) {
     if (v == null) return "—";
@@ -68,40 +85,52 @@
     if (m.fmt === "gl") return sign(v, 2) + " grade lvls";
     if (m.fmt === "usd") return money(v);
     if (m.fmt === "int") return Math.round(v).toString();
+    if (m.fmt === "score") return fmt1(v);
+    if (m.fmt === "min") return Math.round(v) + " min";
+    if (m.fmt === "mi") return fmt1(v) + " mi";
+    if (m.fmt === "pct") return fmt1(v) + "%";
     return Math.abs(v) >= 100 ? Math.round(v).toLocaleString() : fmt1(v);
   }
-  let curMetric = localStorage.getItem("kyx_metric") || (metrics[0] && metrics[0].key) || "";
-  if (!metrics.find(m => m.key === curMetric)) curMetric = metrics[0] ? metrics[0].key : "";
+  const defMetric = (K.meta && K.meta.default_metric) || (metrics[0] && metrics[0].key) || "";
+  let curMetric = localStorage.getItem("kyx_metric2") || defMetric;  // new storage key so everyone starts on the Appeal score
+  if (!metrics.find(m => m.key === curMetric)) curMetric = defMetric;
   const countyLayer = L.layerGroup(), sweetLayer = L.layerGroup();
   const countyPolys = {};
-  function countyStyle(c, sc) { return { color: "#123642", weight: 0.8, opacity: 0.7, fillColor: sc ? sc.color(c.m[sc.m.key]) : "#000", fillOpacity: sc ? 0.45 : 0.02 }; }
+  function countyStyle(c, sc) { return { color: "#123642", weight: 0.8, opacity: 0.7, fillColor: sc ? sc.color(c) : "#000", fillOpacity: sc ? 0.55 : 0.02 }; }
+  function tipFor(c, sc) {
+    if (!sc) return esc(c.name);
+    const v = c.m[sc.m.key];
+    const a = c.appeal;
+    if (sc.m.key === appealKey && a) return `<b>${esc(c.name)}</b> · Appeal ${esc(fmt1(a.score))} · #${a.rank} of 120<br>${esc(a.band)}`;
+    return `<b>${esc(c.name)}</b>: ${esc(fmtMetric(sc.m, v))} <span class="small">(${esc(sc.labelOf(c))})</span>${a ? `<br>Appeal ${esc(fmt1(a.score))} · #${a.rank}` : ""}`;
+  }
   function drawCounties() {
     countyLayer.clearLayers();
     const sc = scaleFor(curMetric);
     (K.counties || []).forEach(c => {
       const p = L.polygon(c.rings.map(r => r.map(([x, y]) => [y, x])), countyStyle(c, sc));
-      p.bindTooltip(`${esc(c.name)}${sc ? ": " + esc(fmtMetric(sc.m, c.m[sc.m.key])) : ""}`, { sticky: true });
+      p.bindTooltip(tipFor(c, sc), { sticky: true });
       p.on("click", e => { if (!e.originalEvent._kyxHandled) openItem("county", c.name, { fly: false }); });
       countyLayer.addLayer(p); countyPolys[c.name] = p;
     });
     legend(sc, "#legend");
+    if (keyReady) renderKey();
   }
   function drawSweet() {
     sweetLayer.clearLayers();
-    const sc = sweetKey && scaleFor(sweetKey, PAL_SWEET);
+    const sc = sweetKey && scaleFor(sweetKey);
     if (!sc) return;
     (K.counties || []).forEach(c => {
-      const v = c.m[sweetKey];
-      const p = L.polygon(c.rings.map(r => r.map(([x, y]) => [y, x])), { color: "#7a3000", weight: v != null && v >= sc.max * 0.85 ? 2.5 : 0.6, fillColor: sc.color(v), fillOpacity: 0.55 });
-      p.bindTooltip(`${esc(c.name)} — sweet spot: ${esc(fmtMetric(sc.m, v))}`, { sticky: true });
+      const p = L.polygon(c.rings.map(r => r.map(([x, y]) => [y, x])), { color: "#3d2a00", weight: sc.cls(c) === 0 ? 2.5 : 0.6, fillColor: sc.color(c), fillOpacity: 0.6 });
+      p.bindTooltip(`${esc(c.name)} — sweet spot: ${esc(fmtMetric(sc.m, c.m[sweetKey]))} (${esc(sc.labelOf(c))})`, { sticky: true });
       p.on("click", () => openItem("county", c.name, { fly: false }));
       sweetLayer.addLayer(p);
     });
   }
   function legend(sc, sel) {
     const el = $(sel); if (!sc) { el.innerHTML = metrics.length ? "" : '<span class="small">County metrics will appear when data CSVs are available.</span>'; return; }
-    el.innerHTML = `<div class="bar">${sc.pal.map(c => `<span style="background:${c}"></span>`).join("")}</div>
-      <div class="ends"><span>${esc(fmtMetric(sc.m, sc.m.lower_better ? sc.max : sc.min))}</span><span>${sc.m.lower_better ? "better →" : "higher →"}</span><span>${esc(fmtMetric(sc.m, sc.m.lower_better ? sc.min : sc.max))}</span></div>
+    el.innerHTML = `<div class="bar">${sc.classes.map(c => `<span style="background:${c.color}"></span>`).join("")}</div>
+      <div class="ends"><span>${sc.m.neutral ? "highest" : "best"}</span><span>${sc.m.neutral ? "lowest" : "worst"}</span></div>
       <div class="small">${esc(sc.m.desc)}<br>Source: ${esc(sc.m.src)}</div>`;
   }
   const msel = $("#metricSel");
@@ -113,7 +142,7 @@
     ms.forEach(m => { const o = document.createElement("option"); o.value = m.key; o.textContent = m.label; if (m.key === curMetric) o.selected = true; og.appendChild(o); });
     msel.appendChild(og);
   });
-  msel.onchange = () => { curMetric = msel.value; localStorage.setItem("kyx_metric", curMetric); drawCounties(); };
+  msel.onchange = () => { curMetric = msel.value; localStorage.setItem("kyx_metric2", curMetric); drawCounties(); };
   drawCounties(); drawSweet();
 
   // ------------------------------------------------------------------ point layers
@@ -191,7 +220,7 @@
     d.cb = cb; ll.appendChild(lab);
     if (on) d.layer.addTo(map);
   });
-  function setLayer(d, on) { if (on) { d.layer.addTo(map); if (d.key === "cty" || d.key === "sweet") d.layer.eachLayer(l => l.bringToBack && l.bringToBack()); } else map.removeLayer(d.layer); if (d.cb) d.cb.checked = on; }
+  function setLayer(d, on) { if (on) { d.layer.addTo(map); if (d.key === "cty" || d.key === "sweet") d.layer.eachLayer(l => l.bringToBack && l.bringToBack()); } else map.removeLayer(d.layer); if (d.cb) d.cb.checked = on; renderKey(); }
   function ensureLayerFor(type, item) {
     const k = { property: "props", school: "sch", college: "col", activity: "act" }[type]
       || (type === "hospital" ? (item.trauma ? "trauma" : "hosp") : null)
@@ -203,6 +232,103 @@
   document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => { $("#" + b.dataset.close).hidden = true; });
   const S = K.meta && K.meta.sources || {};
   $("#srcNote").innerHTML = "Sources: " + Object.entries(S).map(([k, v]) => `<b>${esc(k)}</b>: ${esc(v)}`).join("; ") + (K.meta ? `<br>Built ${esc(K.meta.built)}` : "");
+
+  // ------------------------------------------------------------------ map key (always visible; collapsible on phones)
+  const keyEl = $("#mapKey"), keyBody = $("#keyBody"), keyTog = $("#keyToggle");
+  const isPhone = () => window.innerWidth < 800;
+  function setKeyOpen(open) { keyEl.classList.toggle("collapsed", !open); keyTog.setAttribute("aria-expanded", open); }
+  setKeyOpen(!isPhone());
+  keyTog.onclick = () => setKeyOpen(keyEl.classList.contains("collapsed"));
+  const mk = (cls, html, size, extra = "") => `<span class="mk ${cls}" style="width:${size}px;height:${size}px;${extra}">${html}</span>`;
+  const krow = (sym, label, note) => `<div class="krow"><span class="ksym">${sym}</span><span>${label}${note ? `<span class="small"> ${note}</span>` : ""}</span></div>`;
+  const PIN_KEY = {
+    props: () => `<div class="ksec"><b>★ Notable properties</b>${krow(mk("star", "★", 22), "Standout property", "(cave, stream/creek, waterfall or backcountry)")}
+      ${krow(mk("prop", "<i>⌂</i>", 20), "Other land listing")}${krow(mk("prop approx", "<i>⌂</i>", 20), "Dashed outline = approximate pin", "(town center)")}</div>`,
+    trauma: () => `<div class="ksec"><b>Trauma centers</b> <span class="small">(KYHA Jan 2026 + border centers)</span>
+      ${krow(mk("trauma", "I", 22), "Level I", "(highest: UK, UofL, Cincinnati, Vanderbilt, Knoxville)")}${krow(mk("trauma", "II", 22), "Level II", "(Pikeville, Evansville, Huntington)")}
+      ${krow(mk("trauma", "III", 22), "Level III")}${krow(mk("trauma", "IV", 22), "Level IV", "(stabilize & transfer)")}${krow(mk("trauma", "IP", 22), "Pediatric Level I", "(Norton Children's)")}</div>`,
+    hosp: () => `<div class="ksec"><b>Other hospitals</b>${krow(mk("hosp", "+", 18), "General / acute-care hospital")}${krow(mk("hosp", "+", 14, "opacity:.75"), "Specialty (psychiatric, rehab, long-term)", "· hidden when zoomed out")}</div>`,
+    sch: () => `<div class="ksec"><b>Schools</b> <span class="small">(KDE 2025 rating, best → lowest)</span>
+      ${["Blue", "Green", "Yellow", "Orange", "Red"].map(r => krow(`<span class="kdot" style="background:${SCOLOR[r]}"></span>`, r)).join("")}${krow('<span class="kdot" style="background:#9e9e9e"></span>', "Not rated")}</div>`,
+    col: () => `<div class="ksec"><b>Colleges</b>${krow(mk("col", "🎓", 20), "College, university or trade school", "(NCES)")}</div>`,
+    act: () => `<div class="ksec"><b>Activities & outdoors</b><div class="kgrid">${Object.entries(ACTI).map(([k, e]) => krow(mk("act", e, 20), esc(k))).join("")}</div></div>`,
+    h_hist: () => krow(mk("hist h-historic", HIST.historic[0], 20), "Historic site / National Historic Landmark"),
+    h_coal: () => krow(mk("hist h-coal_camp", HIST.coal_camp[0], 20), "Historic coal camp"),
+    h_ghost: () => krow(mk("hist h-ghost_town", HIST.ghost_town[0], 20), "Ghost town"),
+    h_mine: () => krow(mk("hist h-mine", HIST.mine[0], 20), "Old mine (USGS MRDS)", "· numbers = clusters"),
+  };
+  function countyKey(sc, title) {
+    if (!sc) return "";
+    const m = sc.m, ap = m.key === appealKey;
+    const rng = c => c.n ? (c.lo === c.hi ? esc(fmtMetric(m, c.lo)) : `${esc(fmtMetric(m, c.lo))} – ${esc(fmtMetric(m, c.hi))}`) : "—";
+    const dir = m.neutral ? "No better/worse direction: blue = highest → lowest." : m.lower_better ? "Lower is better here, so the lowest values are green." : "Higher is better here.";
+    return `<div class="ksec"><div class="ktitle">${esc(title)}</div><div class="kmetric">${esc(m.label)}</div>
+      ${sc.classes.map(c => `<div class="kband"><span class="sw" style="background:${c.color}"></span><span class="kl">${esc(c.label)}</span><span class="kr">${rng(c)}</span><span class="kn">${c.n}</span></div>`).join("")}
+      ${sc.missing ? `<div class="kband"><span class="sw" style="background:${NODATA}"></span><span class="kl">No data</span><span class="kr"></span><span class="kn">${sc.missing}</span></div>` : ""}
+      <div class="small">${ap ? "Bands are fifths of the 120 counties by rank (24 each). " : "Fifths of the counties by rank; last column = number of counties. "}${dir}</div>
+      <div class="kbtns">${AM && /appeal/.test(m.key) ? '<button type="button" class="linkbtn" data-info="appeal">ⓘ How this score works</button>' : ""}<button type="button" class="linkbtn" data-openlayers="1">Change metric</button></div></div>`;
+  }
+  function renderKey() {
+    const on = k => { const d = LAYERS.find(x => x.key === k); return d && d.layer && map.hasLayer(d.layer); };
+    let h = "";
+    if (on("cty")) h += countyKey(scaleFor(curMetric), "Counties colored by");
+    if (on("sweet")) h += countyKey(scaleFor(sweetKey), "Sweet-spot layer");
+    if (!on("cty") && !on("sweet")) h += `<div class="ksec small">County coloring is off. Turn on “Counties” in Layers to color by the Appeal score.</div>`;
+    const pinKeys = ["props", "trauma", "hosp", "sch", "col", "act"], histKeys = ["h_hist", "h_coal", "h_ghost", "h_mine"];
+    const active = pinKeys.filter(on), off = pinKeys.filter(k => !on(k));
+    h += active.map(k => PIN_KEY[k]()).join("");
+    const hOn = histKeys.filter(on), hOff = histKeys.filter(k => !on(k));
+    if (hOn.length) h += `<div class="ksec"><b>History</b>${hOn.map(k => PIN_KEY[k]()).join("")}</div>`;
+    h += krow('<span class="ksel"></span>', "Selected item", "(orange ring)");
+    if (off.length || hOff.length) h += `<details class="ksec koff"><summary>Symbols for layers that are off</summary>${off.map(k => PIN_KEY[k]()).join("")}${hOff.length ? `<div class="ksec"><b>History</b>${hOff.map(k => PIN_KEY[k]()).join("")}</div>` : ""}</details>`;
+    const wasOpen = keyBody.querySelector("details.koff[open]");
+    keyBody.innerHTML = h;
+    if (wasOpen) { const d = keyBody.querySelector("details.koff"); if (d) d.open = true; }
+    const sc = on("cty") ? scaleFor(curMetric) : on("sweet") ? scaleFor(sweetKey) : null;
+    $("#keyMini").innerHTML = sc ? sc.classes.map(c => `<span style="background:${c.color}"></span>`).join("") : "";
+    $("#keyMetric").textContent = sc ? sc.m.label.replace(/^★\s*/, "") : "";
+  }
+  keyEl.addEventListener("click", e => {
+    if (e.target.closest("[data-openlayers]")) { lp.hidden = false; lb.setAttribute("aria-expanded", true); if (isPhone()) setKeyOpen(false); msel.focus(); }
+  });
+  keyReady = true; renderKey();
+
+  // ------------------------------------------------------------------ "How this score works" popover
+  const info = $("#infoPop"), infoBody = $("#infoBody");
+  function appealInfoHtml() {
+    if (!AM) return "<p>The Appeal score method file (ky_county_appeal_method.json) was not available when this map was built.</p>";
+    const w = AM.weights, br = AM.band_ranges || [];
+    const r = (pts, name, how) => `<tr><td class="n"><b>${pts}</b></td><td><b>${name}</b><br><span class="small">${how}</span></td></tr>`;
+    return `<h2>How the Appeal score works</h2>
+      <p>A 0–100 score built for a <b>two-nurse household</b>: most of the weight is on what a nurse's pay buys, given where the jobs are. Every input is a published data set; every county is scored against Kentucky's other 119.</p>
+      <div class="kicker">Nurse financial value · ${w.afford + w.hosp + w.l12} points</div>
+      <table class="tbl wtbl">
+      ${r(w.afford, "RN pay vs. home price", "Area RN median annual wage (BLS OEWS, May 2025) ÷ county median home value (ACS 2020–24). Scored as a percentile: 100 = the wage buys the most house in KY. Two RN incomes double the ratio but don't change the ranking.")}
+      ${r(w.hosp, "Drive to the nearest acute-care hospital", `Where the nurse jobs are: ${AM.job_hospitals} hospitals = Kentucky's CMS acute-care hospitals (incl. the 2 VA medical centers), Norton Children's, and the 5 border Level I/II centers. Critical-access (≤25 beds), rural emergency, psychiatric and military hospitals are left out. 100 at ≤${AM.hosp_min[0]} min, falling to 0 at ${AM.hosp_min[1]} min.`)}
+      ${r(w.l12, "Drive to the nearest Level I/II trauma center", `The big teaching/tertiary employers (${esc(AM.l12_centers.join("; "))}). 100 at ≤${AM.l12_min[0]} min, 0 at ${AM.l12_min[1]} min.`)}
+      </table>
+      <div class="kicker">Everything else · ${w.land + w.school + w.trauma} points</div>
+      <table class="tbl wtbl">
+      ${r(w.land, "Land suitability", "Existing land score: % of land in farms, rainfall, number of farms, cropland share, dry-summer risk, surface water (NASS 2022, NOAA).")}
+      ${r(w.school, "Schools", "Existing school score: county district reading+math vs. Kentucky and the U.S. (KDE 2024-25, SEDA 2025.1).")}
+      ${r(w.trauma, "Trauma access for the family", `Drive to the nearest adult trauma center of any level (I–IV, ${AM.trauma_centers} centers). 100 at ≤${AM.trauma_min[0]} min, 0 at ${AM.trauma_min[1]} min.`)}
+      </table>
+      <p class="small"><b>Score</b> = Σ (component 0–100 × points) ÷ 100. The county card shows each county's breakdown.</p>
+      <div class="kicker">Bands on the map</div>
+      <table class="tbl">${AM.bands.map((b, i) => `<tr><td><span class="sw" style="background:${RAMP[i]}"></span> ${esc(b)}</td><td class="n">${br[i] ? fmt1(br[i][0]) + " – " + fmt1(br[i][1]) : ""}</td><td class="n small">ranks ${i * 24 + 1}–${i * 24 + 24}</td></tr>`).join("")}</table>
+      <div class="kicker">Caveats</div>
+      <ul class="small">
+        <li>Drive times: ${esc(AM.drive_source)}, from each county's 2020 Census population centroid, fetched ${esc(AM.drive_fetched)}. No traffic: real rush-hour times are longer.</li>
+        <li>RN wages are BLS area medians (all settings), shared by every county in an area. ${esc(AM.owensboro_note)}</li>
+        <li>Out-of-state hospitals are included only if they are Level I/II trauma centers, so border counties (e.g. near Clarksville, Union City, Huntington's other hospitals) may be under-credited.</li>
+        <li>Hospital size beyond the critical-access cut-off isn't in the data; a few "acute-care" hospitals are small.</li>
+      </ul>
+      <p class="small">Data: <code>data/statewide/ky_county_appeal.csv</code> · method: <code>maps/statewide/notes.md</code> · code: <code>scripts/appeal_build.py</code></p>`;
+  }
+  function openInfo() { infoBody.innerHTML = appealInfoHtml(); info.hidden = false; $("#infoClose").focus(); }
+  $("#infoClose").onclick = () => { info.hidden = true; };
+  info.addEventListener("click", e => { if (e.target === info) info.hidden = true; });
+  document.addEventListener("click", e => { if (e.target.closest("[data-info]")) { e.preventDefault(); openInfo(); } });
 
   // ------------------------------------------------------------------ card rendering
   const link = (type, id, text) => `<a class="inl" data-go="${esc(type)}" data-id="${esc(id)}">${esc(text)}</a>`;
@@ -301,12 +427,28 @@
     <div class="desc">${esc(h.desc)}</div>
     <table class="kv">${row("County", h.county ? link("county", h.county, h.county + " County") : null)}${row("Source", ext(h.src, (h.src_name || "Source") + " ↗"))}</table>`;
   };
+  function appealBlock(c) {
+    const a = c.appeal; if (!a) return "";
+    const k = Math.max(0, BANDS.indexOf(a.band)), w = (AM && AM.weights) || {};
+    const comp = [["RN pay vs. home price", a.afford, w.afford, `${money(a.wage)} RN median${a.wage_flag ? "†" : ""} ÷ ${money(a.home)} home = ${a.ratio != null ? a.ratio.toFixed(2) : "—"}`],
+      ["Drive to acute-care hospital", a.hosp, w.hosp, `${esc(a.jh.name)} · ${Math.round(a.jh.min)} min / ${fmt1(a.jh.mi)} mi`],
+      ["Drive to Level I/II trauma", a.l12, w.l12, `${esc(a.l12h.name)} (Level ${esc(a.l12h.level)}) · ${Math.round(a.l12h.min)} min / ${fmt1(a.l12h.mi)} mi`],
+      ["Land suitability", a.land, w.land, "land score"], ["Schools", a.school, w.school, "school score"],
+      ["Trauma access (any level)", a.trauma, w.trauma, `${esc(a.trh.name)} (Level ${esc(a.trh.level)}) · ${Math.round(a.trh.min)} min`]];
+    return `<div class="appeal" style="--band:${RAMP[k]}"><div class="ascore"><b>${fmt1(a.score)}</b><span>/100</span></div>
+      <div class="ameta"><div class="kicker" style="margin-top:0">Appeal score</div><div class="arank">#${a.rank} of 120 · <span class="aband">${esc(a.band)}</span></div>
+      <div class="small">Nurse financial value ${fmt1(a.nfv)}/100 · <button type="button" class="linkbtn" data-info="appeal">ⓘ How this score works</button></div></div></div>
+      <details class="abreak"><summary>Score breakdown</summary><table class="tbl"><tr><th>Component</th><th class="n">0–100</th><th class="n">pts</th></tr>
+      ${comp.map(([n, v, wt, d]) => `<tr><td>${n}<br><span class="small">${d}</span></td><td class="n">${fmt1(v)}</td><td class="n">${v != null && wt ? fmt1(v * wt / 100) : "—"}<span class="small">/${wt}</span></td></tr>`).join("")}</table>
+      ${a.wage_flag ? `<div class="small">† ${esc(a.wage_flag)}.</div>` : ""}<div class="small">RN wage area: ${esc(a.area)}. Drive times are free-flow (no traffic) from the county's population center.</div></details>`;
+  }
   R.county = c => {
     const mrows = metrics.map(m => { const v = c.m[m.key]; if (v == null) return ""; const all = K.counties.map(x => x.m[m.key]).filter(x => x != null).sort((a, b) => m.lower_better ? a - b : b - a); return `<tr><td>${esc(m.label)}</td><td class="n">${esc(fmtMetric(m, v))}</td><td class="n small">#${all.indexOf(v) + 1}/${all.length}</td></tr>`; }).join("");
     const props = (K.properties || []).filter(p => p.county === c.name);
     const ds = c.districts || [];
     const txt = c.text ? Object.entries(c.text).map(([k, v]) => row(k, esc(v))).join("") : "";
     return `${thumb("county", c)}<div class="kicker">County</div><h2>${esc(c.name)} County, Kentucky</h2>
+      ${appealBlock(c)}
       <div class="stats">${stat(c.n.props, "listings")}${stat(c.n.hosp, "hospitals")}${stat(c.n.schools, "schools")}${stat(c.n.colleges, "colleges")}${stat(c.n.acts, "activities")}${stat(c.n.hist, "history")}</div>
       ${sweetKey && c.m[sweetKey] != null ? `<div class="badges"><span class="badge gold">Sweet-spot: ${esc(fmtMetric(metrics.find(m => m.key === sweetKey), c.m[sweetKey]))}</span></div>` : ""}
       ${mrows ? `<div class="kicker">County metrics</div><table class="tbl"><tr><th>Metric</th><th class="n">Value</th><th class="n">Rank</th></tr>${mrows}</table>` : ""}
@@ -352,6 +494,7 @@
         ${it.lat != null || type === "county" ? '<button class="btn ghost" id="zoomBtn">Zoom here</button>' : ""}</div>
         <div class="small" style="word-break:break-all">Link: <a href="#${esc(type)}=${esc(encodeURIComponent(id))}">#${esc(type)}=${esc(id)}</a></div>`;
     card.hidden = false; card.scrollTop = 0;
+    if (isPhone()) setKeyOpen(false);
     $("#shareBtn").onclick = () => doShare(type, id);
     $("#copyBtn").onclick = () => copy(shareUrlBest(type, id));
     const zb = $("#zoomBtn"); if (zb) zb.onclick = () => zoomTo(type, it, true);
@@ -424,7 +567,7 @@
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1); else if (dy > 120) lbx.hidden = true; else lbImg.style.transform = ""; tx = null; });
   document.addEventListener("keydown", e => {
     if (!lbx.hidden) { if (e.key === "ArrowRight") step(1); else if (e.key === "ArrowLeft") step(-1); else if (e.key === "Escape") lbx.hidden = true; return; }
-    if (e.key === "Escape") { if (!lp.hidden) lp.hidden = true; else if (!card.hidden) closeCard(); }
+    if (e.key === "Escape") { if (!info.hidden) info.hidden = true; else if (!lp.hidden) lp.hidden = true; else if (!card.hidden) closeCard(); }
   });
 
   // ------------------------------------------------------------------ search

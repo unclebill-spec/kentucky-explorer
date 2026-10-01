@@ -49,6 +49,17 @@
   <div class="sect small" id="srcNote"></div>
 </aside>
 
+<aside id="mapKey" aria-label="Map key">
+  <button type="button" id="keyToggle" class="keyhead" aria-expanded="true" aria-controls="keyBody">
+    <b>Map key</b><span id="keyMini" class="keymini" aria-hidden="true"></span><span id="keyMetric" class="keymetric"></span><span class="chev" aria-hidden="true">▾</span>
+  </button>
+  <div id="keyBody"></div>
+</aside>
+
+<div id="infoPop" hidden role="dialog" aria-modal="true" aria-label="How this score works">
+  <div class="infobox"><button type="button" class="x infox" id="infoClose" aria-label="Close">×</button><div id="infoBody"></div></div>
+</div>
+
 <section id="card" hidden aria-live="polite">
   <div class="grab" aria-hidden="true"></div>
   <button class="x cardx" id="cardClose" aria-label="Close card">×</button>
