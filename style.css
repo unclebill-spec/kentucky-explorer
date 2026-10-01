@@ -301,3 +301,15 @@ a.stat.tap:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
 .topbub.tb-deals{max-width:112px}
 .tlist .g1{white-space:normal}
 .topbub{width:max-content}
+/* travel-job bubbles (nurse-cap style) + Apply link on list rows */
+.topbub.tb-job{background:#fff;color:#123642}
+.topbub.tb-er{box-shadow:0 2px 8px #0007,0 0 0 2.5px #c62f2c}
+.topbub.tb-oj{box-shadow:0 2px 8px #0007,0 0 0 2.5px #1a7d3a}
+.topbub.tb-job .tbi svg,.topmenu .tbi svg[viewBox="0 0 36 22"]{width:32px;height:20px}
+.trow{position:relative}
+.trow .grow{padding-right:74px}
+.tapply{position:absolute;right:24px;top:50%;transform:translateY(-50%);background:var(--accent);color:#fff;border-radius:16px;padding:7px 10px;font-size:13px;font-weight:700;text-decoration:none;min-height:34px;display:inline-flex;align-items:center;white-space:nowrap}
+.tapply:active{filter:brightness(.9)}
+.trow .grow>.gchev{display:none}
+.trow .grow{padding-right:92px}
+.tapply{right:4px}

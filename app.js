@@ -902,7 +902,7 @@
       if (current && current.type === "group" && current.id === id && current.cat === gm[2]) return;
       openGroup(id, gm[2], { replace: true }); return;
     }
-    const tm = location.hash.match(/^#(deals|top-buildings|top-businesses)$/);
+    const tm = location.hash.match(/^#(deals|top-buildings|top-businesses|top-er-jobs|top-other-jobs)$/);
     if (tm) { const t = TOPH[tm[1]]; if (current && current.type === "top" && t && current.id === t.k) return; if (t) { openTop(t.k, { replace: true }); return; } }
     const m = location.hash.match(/^#(property|hospital|school|college|activity|history|county|travel|airport|business|building|attraction)=(.+)$/);
     if (!m) { if (!card.hidden) closeCard(false); return; }
@@ -1166,12 +1166,23 @@
     { k: "businesses", hash: "top-businesses", type: "business", src: "businesses", ll: [35.95, -83.02], icon: `<span class="mk biz" style="width:22px;height:22px">$</span>`, cls: "tb-biz",
       label: n => `Top ${n} Businesses for Sale`, title: "Top 10 Businesses for Sale", h2: n => `Top ${n} businesses for sale`,
       sub: "Ranked by value (asking price vs stated revenue or cash flow), whether the real estate is included, and appeal (Red River Gorge cabins, RV parks, lake lodging…)" },
+    { k: "er_jobs", hash: "top-er-jobs", type: "travel", job: true, ll: [35.0, -86.74], icon: G.nurseCap("ER", "#c62f2c"), cls: "tb-job tb-er",
+      label: n => `Top ${n} ER Travel Jobs`, title: "Top 10 ER Travel Jobs", h2: n => `Top ${n} ER travel nurse jobs by weekly pay`,
+      sub: "Emergency Department / ER / ED / Trauma ER travel RN jobs (no peds ED), highest posted weekly pay first (high end of any range)" },
+    { k: "other_jobs", hash: "top-other-jobs", type: "travel", job: true, ll: [35.0, -84.26], icon: G.nurseCap("RN", "#1a7d3a"), cls: "tb-job tb-oj",
+      label: n => `Top ${n} Non-ER Travel Jobs`, title: "Top 10 Non-ER Travel Jobs", h2: n => `Top ${n} non-ER travel nurse jobs by weekly pay`,
+      sub: "Every other specialty (ICU, PCU, tele, cath lab, PACU…; no OR, mom-baby, women's or peds), highest posted weekly pay first (high end of any range)" },
   ].filter(t => (TOPD[t.k] || []).length);
   const TOPK = {}; TOPS.forEach(t => TOPK[t.k] = t);
   const TOPH = {}; TOPS.forEach(t => TOPH[t.hash] = t);
-  const topRows = t => (TOPD[t.k] || []).map(r => [r, IDX[t.type] && IDX[t.type][r.id]]).filter(x => x[1]);
+  const topRows = t => (TOPD[t.k] || []).map(r => [r, IDX[t.type] && IDX[t.type][r.hid || r.id]]).filter(x => x[1] && (!t.job || x[1].jobs.some(j => j.id === x[0].id)));
   const acres = a => (+a).toLocaleString(undefined, { maximumFractionDigits: 2 }) + " ac";
   function topRow(t, r, x) {
+    if (t.job) {
+      const j = x.jobs.find(j => j.id === r.id), from = "top|" + t.k;
+      return `<div class="trow">${gRow("travel", x.id, from, gImg(x.th && x.th.u, "💼"), `<b class="gpay">#${r.rank} ${tjPay(j)}/wk</b> · ${esc(j.u || j.sp || "RN")}`,
+        `<b>${esc(shortHosp(x.name))}</b>${x.city ? " · " + esc(x.city) : ""}`, dot([j.sh && esc(j.sh), j.ag && esc(j.ag)]), true)}${j.url ? `<a class="tapply" href="${esc(j.url)}" target="_blank" rel="noopener" aria-label="Apply for this job (opens ${esc(host(j.url))})">Apply ↗</a>` : ""}</div>`;
+    }
     const from = "top|" + t.k, img = gImg(x.rt || (x.th && x.th.u) || (x.photos || [])[0], t.k === "deals" ? "🏠" : t.k === "buildings" ? "⛪" : "$");
     const size = [x.sqft && sqft(x.sqft) + " sq ft", x.acres != null && x.acres !== "" && acres(x.acres)].filter(Boolean).join(" · ");
     const facts = t.k === "deals" ? dot([`<b>#${r.rank} ${money(x.price)}</b>`, x.beds != null && `${esc(x.beds)} bd / ${esc(x.bath_detail ? x.bath_detail.replace(/ full/, "") : x.baths)} ba`, size])
