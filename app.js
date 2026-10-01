@@ -189,7 +189,7 @@
   (K.hospitals || []).forEach(h => {
     const tr = h.trauma;
     const lv = tr ? (tr.match(/Level (I{1,3}V?|IV)/) || [0, ""])[1] + (/Pediatric/.test(tr) ? "P" : "") : "";
-    const mk = L.marker([h.lat, h.lon], { icon: tr ? icon("trauma", lv, 28) : icon("hosp", "+", h.kind === "general" ? 22 : 18), zIndexOffset: tr ? 500 : 0, title: h.name, opacity: h.kind === "general" ? 1 : 0.75 });
+    const mk = L.marker([h.lat, h.lon], { icon: tr ? icon("trauma", lv, 28) : icon("hosp" + (h.kind === "general" ? "" : " spec"), "+", h.kind === "general" ? 22 : 18), zIndexOffset: tr ? 500 : 0, title: h.name, opacity: h.kind === "general" ? 1 : 0.75 });
     mk.bindTooltip(esc(h.name) + (tr ? " — Trauma " + esc(tr) : h.kind !== "general" ? " (specialty)" : ""));
     reg("hospital", h.id, mk).addTo(tr ? L_trauma : L_hosp);
   });
@@ -267,6 +267,7 @@
     { key: "cty", label: "Counties (colored by metric below)", layer: countyLayer, on: true },
     { key: "sweet", label: "Sweet-spot counties", layer: sweetLayer, on: false, disabled: !sweetKey, note: sweetKey ? "" : " (data pending)" },
   ];
+  kyxMoreLayers(LAYERS);  // airports, businesses/buildings for sale, attractions (see "more layers" block near the end)
   let saved = {}; try { saved = JSON.parse(localStorage.getItem("kyx_layers") || "{}"); } catch (e) { }
   const ll = $("#layerList");
   LAYERS.forEach(d => {
@@ -318,9 +319,10 @@
   }
   function setLayer(d, on) { if (on) { d.layer.addTo(map); if (d.key === "cty" || d.key === "sweet") d.layer.eachLayer(l => l.bringToBack && l.bringToBack()); } else map.removeLayer(d.layer); if (d.cb) d.cb.checked = on; renderKey(); }
   function ensureLayerFor(type, item) {
-    const k = { property: isNH(item) ? "nh" : isHome(item) ? "homes" : "props", school: "sch", college: "col", activity: "act", travel: "travel" }[type]
+    const k = (MORE_LAYER_FOR && MORE_LAYER_FOR._feat(item)) || { property: isNH(item) ? "nh" : isHome(item) ? "homes" : "props", school: "sch", college: "col", activity: "act", travel: "travel" }[type]
       || (type === "hospital" ? (item.trauma ? "trauma" : "hosp") : null)
-      || (type === "history" ? { mine: "h_mine", coal_camp: "h_coal", ghost_town: "h_ghost", historic: "h_hist" }[item.type] : null);
+      || (type === "history" ? { mine: "h_mine", coal_camp: "h_coal", ghost_town: "h_ghost", historic: "h_hist" }[item.type] : null)
+      || (MORE_LAYER_FOR && MORE_LAYER_FOR[type] ? MORE_LAYER_FOR[type](item) : null);
     const d = LAYERS.find(x => x.key === k); if (d && !map.hasLayer(d.layer)) setLayer(d, true);
   }
   const lb = $("#layersBtn"), lp = $("#layersPanel");
@@ -362,6 +364,7 @@
     h_ghost: () => krow(mk("hist h-ghost_town", HIST.ghost_town[0], 20), "Ghost town"),
     h_mine: () => krow(mk("hist h-mine", HIST.mine[0], 20), "Old mine (USGS MRDS)", "· numbers = clusters"),
   };
+  kyxMorePinKey(PIN_KEY);
   function countyKey(sc, title) {
     if (!sc) return "";
     const m = sc.m, ap = m.key === appealKey;
@@ -379,13 +382,16 @@
     if (on("cty")) h += countyKey(scaleFor(curMetric), "Counties colored by");
     if (on("sweet")) h += countyKey(scaleFor(sweetKey), "Sweet-spot layer");
     if (!on("cty") && !on("sweet")) h += `<div class="ksec small">County coloring is off. Turn on “Counties” in Layers to color by the Appeal score.</div>`;
-    const pinKeys = ["props", "homes", "nh", "travel", "trauma", "hosp", "sch", "col", "act"], histKeys = ["h_hist", "h_coal", "h_ghost", "h_mine"];
+    const pinKeys = ["props", "homes", "nh", "biz", "bldg", "travel", "trauma", "hosp", "apt", "feat", "sch", "col", "act"].filter(k => PIN_KEY[k]), histKeys = ["h_hist", "h_coal", "h_ghost", "h_mine"];
+    const atKeys = (MORE_ATT_KEYS || []).filter(k => PIN_KEY[k]), aOn = atKeys.filter(on), aOff = atKeys.filter(k => !on(k));
     const active = pinKeys.filter(on), off = pinKeys.filter(k => !on(k));
     h += active.map(k => PIN_KEY[k]()).join("");
     const hOn = histKeys.filter(on), hOff = histKeys.filter(k => !on(k));
     if (hOn.length) h += `<div class="ksec"><b>History</b>${hOn.map(k => PIN_KEY[k]()).join("")}</div>`;
+    if (aOn.length) h += `<div class="ksec"><b>Attractions</b>${aOn.map(k => PIN_KEY[k]()).join("")}</div>`;
     h += krow('<span class="ksel"></span>', "Selected item", "(orange ring)");
-    if (off.length || hOff.length) h += `<details class="ksec koff"><summary>Symbols for layers that are off</summary>${off.map(k => PIN_KEY[k]()).join("")}${hOff.length ? `<div class="ksec"><b>History</b>${hOff.map(k => PIN_KEY[k]()).join("")}</div>` : ""}</details>`;
+    if (PIN_KEY._lod) h += PIN_KEY._lod();
+    if (off.length || hOff.length || aOff.length) h += `<details class="ksec koff"><summary>Symbols for layers that are off</summary>${off.map(k => PIN_KEY[k]()).join("")}${hOff.length ? `<div class="ksec"><b>History</b>${hOff.map(k => PIN_KEY[k]()).join("")}</div>` : ""}${aOff.length ? `<div class="ksec"><b>Attractions</b>${aOff.map(k => PIN_KEY[k]()).join("")}</div>` : ""}</details>`;
     const wasOpen = keyBody.querySelector("details.koff[open]");
     keyBody.innerHTML = h;
     if (wasOpen) { const d = keyBody.querySelector("details.koff"); if (d) d.open = true; }
@@ -845,7 +851,7 @@
       if (current && current.type === "group" && current.id === id && current.cat === gm[2]) return;
       openGroup(id, gm[2], { replace: true }); return;
     }
-    const m = location.hash.match(/^#(property|hospital|school|college|activity|history|county|travel)=(.+)$/);
+    const m = location.hash.match(/^#(property|hospital|school|college|activity|history|county|travel|airport|business|building|attraction)=(.+)$/);
     if (!m) { if (!card.hidden) closeCard(false); return; }
     const type = m[1]; let id = decodeURIComponent(m[2]);
     if (!IDX[type][id] && type === "county") { id = Object.keys(IDX.county).find(k => k.toLowerCase() === id.toLowerCase().replace(/\s*county$/, "")) || id; }
@@ -886,7 +892,7 @@
   const si = $("#search"), res = $("#results"); let hits = [], sel = 0;
   si.addEventListener("input", () => {
     const q = si.value.trim().toLowerCase(); if (q.length < 2) { res.hidden = true; return; }
-    const pri = { county: 0, property: 1, travel: 2, hospital: 2, history: 3, activity: 4, college: 5, school: 6 };
+    const pri = { county: 0, property: 1, business: 1, building: 1, travel: 2, hospital: 2, airport: 2, history: 3, activity: 4, attraction: 4, college: 5, school: 6 };
     hits = all.filter(x => x.name.toLowerCase().includes(q) || (x.sub || "").toLowerCase().includes(q) || (x.extra || "").includes(q)).sort((a, b) => (a.name.toLowerCase().startsWith(q) ? 0 : 1) - (b.name.toLowerCase().startsWith(q) ? 0 : 1) || pri[a.type] - pri[b.type]).slice(0, 30);
     sel = 0; res.innerHTML = hits.map((h, i) => `<div data-i="${i}" class="${i === 0 ? "sel" : ""}">${esc(h.name)}<br><small>${LABEL[h.type]}${h.sub ? " · " + esc(h.sub) : ""}</small></div>`).join("") || "<div><small>No matches</small></div>";
     res.hidden = false;
@@ -900,6 +906,193 @@
   function pick(h) { res.hidden = true; si.value = ""; si.blur(); openItem(h.type, h.id); }
   document.addEventListener("click", e => { if (!e.target.closest(".searchwrap")) res.hidden = true; });
 
+  // ================================================================ more layers: airports, businesses & buildings for sale, attractions, zoom-level de-clutter
+  // Function declarations are hoisted; hooks call them from the layer panel, map key and start sections.
+  var MORE_PIN, MORE_LAYER_FOR, MORE_ATT, MORE_ATT_KEYS;  // var (no initialiser): filled by kyxMoreLayers() before renderKey()/ensureLayerFor() use them
+  function kyxMoreLayers(LAYERS) {
+    const A = K.airports || [], BZ = K.businesses || [], BD = K.buildings || [], AT = K.attractions || [];
+    IDX.airport = {}; IDX.business = {}; IDX.building = {}; IDX.attraction = {};
+    A.forEach(x => IDX.airport[x.id] = x); BZ.forEach(x => IDX.business[x.id] = x); BD.forEach(x => IDX.building[x.id] = x); AT.forEach(x => IDX.attraction[x.id] = x);
+    // type -> [icon, layer label, layer key, short name]
+    MORE_ATT = { amusement: ["🎢", "Amusement & theme parks", "a_park", "Amusement park"], water: ["🌊", "Water parks", "a_water", "Water park"],
+      aquarium: ["🐟", "Aquariums", "a_aqua", "Aquarium"], museum: ["🏛", "Museums", "a_museum", "Museum"], camp: ["⛺", "Campgrounds (state park, Corps, national forest, private)", "a_camp", "Campground"] };
+    MORE_ATT_KEYS = Object.values(MORE_ATT).map(v => v[2]);
+    const priceK = v => v == null ? "" : v >= 1e6 ? "$" + (v / 1e6).toFixed(1).replace(/\.0$/, "") + "M" : "$" + Math.round(v / 1000) + "k";
+    const L_apt = L.layerGroup(), L_biz = L.layerGroup(), L_bldg = L.layerGroup(), L_at = {};
+    Object.keys(MORE_ATT).forEach(t => L_at[t] = L.layerGroup());
+    A.forEach(a => {
+      const ic = L.divIcon({ className: "", html: `<div class="mk apt${a.oos ? " oos" : ""}${a.nonstops ? "" : " ga"}" style="width:28px;height:28px">✈</div><b class="plab apt">${esc(a.code)}</b>`, iconSize: [28, 28], iconAnchor: [14, 14] });
+      const mk = L.marker([a.lat, a.lon], { icon: ic, zIndexOffset: 3000, title: a.name });
+      mk.bindTooltip(`✈ ${esc(a.name)} (${esc(a.code)}) · ${a.nonstops ? a.nonstops + " nonstop destinations" : "no scheduled airline service"}`);
+      reg("airport", a.id, mk).addTo(L_apt);
+    });
+    const saleIcon = (cls, sym, x) => L.divIcon({ className: "", html: `<div class="mk ${cls}" style="width:26px;height:26px">${sym}</div>${x.price ? `<b class="plab ${cls}">${priceK(x.price)}</b>` : ""}`, iconSize: [26, 26], iconAnchor: [13, 13] });
+    BZ.forEach(x => { const mk = L.marker([x.lat, x.lon], { icon: saleIcon("biz", "🏪", x), zIndexOffset: 1200, title: x.title });
+      mk.bindTooltip(`🏪 ${esc(x.title)}${x.price ? " · " + money(x.price) : ""} · ${esc(x.kind)}${x.town ? " · " + esc(x.town) : ""}`); reg("business", x.id, mk).addTo(L_biz); });
+    BD.forEach(x => { const mk = L.marker([x.lat, x.lon], { icon: saleIcon("bldg", "🔔", x), zIndexOffset: 1200, title: x.title });
+      mk.bindTooltip(`🔔 ${esc(x.title)}${x.price ? " · " + money(x.price) : ""}${x.was ? " · was: " + esc(x.was) : ""}${x.town ? " · " + esc(x.town) : ""}`); reg("building", x.id, mk).addTo(L_bldg); });
+    AT.forEach(x => { const t = MORE_ATT[x.type]; if (!t) return;
+      const mk = L.marker([x.lat, x.lon], { icon: icon("att at-" + x.type, t[0], 24), zIndexOffset: 100, title: x.name });
+      mk.bindTooltip(`${t[0]} ${esc(x.name)} (${esc(t[3])})`); reg("attraction", x.id, mk).addTo(L_at[x.type]); });
+    const ins = (after, rows) => { const i = LAYERS.findIndex(d => d.key === after); LAYERS.splice(i < 0 ? LAYERS.length : i + 1, 0, ...rows); };
+    ins("nh", [{ key: "biz", label: "🏪 Businesses for sale (under $1M)", layer: L_biz, on: true, n: BZ.length, disabled: !BZ.length },
+      { key: "bldg", label: "🔔 Interesting buildings for sale (under $600k)", layer: L_bldg, on: true, n: BD.length, disabled: !BD.length }]);
+    ins("hosp", [{ key: "apt", label: "✈ Airports (KY + nearby hubs)", layer: L_apt, on: true, n: A.length, disabled: !A.length }]);
+    ins("act", [{ key: "attr", label: "Attractions", group: true }, ...Object.entries(MORE_ATT).map(([t, v]) => ({ key: v[2], label: v[0] + " " + v[1], layer: L_at[t],
+      on: t !== "camp", n: AT.filter(x => x.type === t).length, sub: true, disabled: !AT.some(x => x.type === t) }))]);
+    // featured standouts: curated outdoor + history sites (featured flag from data/featured.json) move into their own always-on layer
+    const L_feat = L.layerGroup(); let nFeat = 0;
+    [["activity", K.activities, () => L_act], ["history", K.history, h => L_hist[h.type] || L_hist.historic]].forEach(([type, xs, grp]) => (xs || []).forEach(x => {
+      if (!x.featured) return; const m = MARK[type + ":" + x.id]; if (!m) return;
+      grp(x).removeLayer(m); const o = m.options.icon.options;
+      m.setIcon(L.divIcon(Object.assign({}, o, { html: o.html.replace('class="mk ', 'class="mk stout ') }))); m.setZIndexOffset(2500); L_feat.addLayer(m); nFeat++; }));
+    ins("apt", [{ key: "feat", label: "★ Kentucky standouts (Red River Gorge, Mammoth Cave, Cumberland Gap…)", layer: L_feat, on: true, n: nFeat, disabled: !nFeat }]);
+    MORE_PIN = ["biz", "bldg", "apt", "feat"];
+    MORE_LAYER_FOR = { _feat: it => it && it.featured ? "feat" : null, airport: () => "apt", business: () => "biz", building: () => "bldg", attraction: it => MORE_ATT[it.type] && MORE_ATT[it.type][2] };
+  }
+  function kyxMorePinKey(PIN_KEY) {
+    const mk = (cls, html, size) => `<span class="mk ${cls}" style="width:${size}px;height:${size}px">${html}</span>`;
+    const krow = (sym, label, note) => `<div class="krow"><span class="ksym">${sym}</span><span>${label}${note ? `<span class="small"> ${note}</span>` : ""}</span></div>`;
+    PIN_KEY.biz = () => `<div class="ksec"><b>🏪 Businesses for sale</b> <span class="small">(under $1M asking; Crexi &amp; Zillow, seen ${esc((K.businesses || [])[0] ? K.businesses[0].seen : "")})</span>${krow(mk("biz", "🏪", 20), "Business for sale", "· tag beside the pin = asking price")}</div>`;
+    PIN_KEY.bldg = () => `<div class="ksec"><b>🔔 Interesting buildings for sale</b> <span class="small">(under $600k: old churches, banks, schools, stores…)</span>${krow(mk("bldg", "🔔", 20), "Building for sale", "· tag = asking price")}</div>`;
+    PIN_KEY.apt = () => `<div class="ksec"><b>✈ Airports</b>${krow(mk("apt", "✈", 20), "Kentucky airport with airline service", "· code beside the pin")}${krow(mk("apt oos", "✈", 20), "Nearby out-of-state airport (BNA, TYS, HTS, EVV, TRI)")}${krow(mk("apt ga", "✈", 20), "No scheduled flights right now")}</div>`;
+    Object.values(MORE_ATT || {}).forEach(([e, label, key]) => { const t = Object.keys(MORE_ATT).find(k => MORE_ATT[k][2] === key); PIN_KEY[key] = () => krow(mk("att at-" + t, e, 20), esc(label)); });
+    PIN_KEY.feat = () => `<div class="ksec"><b>★ Kentucky standouts</b> <span class="small">(a short hand-picked list: big parks, gorges, caves, battlefields, landmark homes)</span>${krow(mk("act stout", "⛰", 20), "Standout site", "· gold ring, shown at every zoom")}</div>`;
+    PIN_KEY._lod = () => `<div class="ksec small"><b>Zoomed out?</b> Until you zoom in to about one county, everyday pins (homes, land, jobs, for-sale, schools, colleges, activities, campgrounds, amusement &amp; water parks, minor history) show as faint dots so the county colors stay readable. Hospitals, airports, museums, the aquarium and the ★ standouts always stay as icons.</div>`;
+  }
+  function kyxMoreLate() {
+    const A = K.airports || [], BZ = K.businesses || [], BD = K.buildings || [], AT = K.attractions || [];
+    const ATT = MORE_ATT;
+    Object.assign(THUMB_TITLE, { airport: a => `${a.name} (${a.code})`, business: x => x.title, building: x => x.title, attraction: x => x.name });
+    Object.assign(TITLE, { airport: a => `${a.name} (${a.code})`, business: x => x.title + " — business for sale", building: x => x.title + " — building for sale", attraction: x => x.name });
+    Object.assign(LABEL, { airport: "Airport", business: "Business for sale", building: "Building for sale", attraction: "Attraction" });
+    const sqft = v => v ? Math.round(v).toLocaleString() : "—";
+    const wikiUrl = t => "https://en.wikipedia.org/wiki/" + encodeURIComponent(String(t).replace(/ /g, "_"));
+    R.airport = a => `${thumb("airport", a)}<div class="kicker">✈ ${a.oos ? "Airport · out of state, near Kentucky" : "Kentucky airport"}</div><h2>${esc(a.name)} (${esc(a.code)})</h2>
+      <div class="sub">${esc(a.city)}, ${esc(a.state)}</div>${a.note ? `<div class="note">ℹ️ ${esc(a.note)}</div>` : ""}
+      <div class="stats">${stat(a.nonstops != null ? a.nonstops : "—", "nonstop destinations")}${stat((a.airlines || []).length, "airlines")}${stat(esc(a.code), "airport code")}</div>
+      ${(a.airlines || []).length ? `<div class="kicker">Airlines</div><div class="badges">${a.airlines.map(x => `<span class="badge">${esc(x)}</span>`).join("")}</div>` : ""}
+      ${(a.dests || []).length ? `<div class="kicker">Some nonstop destinations</div><div class="desc">${esc(a.dests.join(" · "))}${a.nonstops > a.dests.length ? " …" : ""}</div>` : ""}
+      <table class="kv">${row("County", a.county ? link("county", a.county, a.county + " County") : esc(a.state))}${row("Wikipedia", a.wiki ? ext(a.wiki, "Airlines & destinations ↗") : null)}</table>
+      <div class="small">Nonstop count = destinations in Wikipedia's airlines &amp; destinations table (seasonal routes included), checked Oct 2026.</div>${nearbyProps(a)}`;
+    function saleCard(x, kind) {
+      const photos = x.photos || [];
+      const gal = photos.length ? `<div class="gal" id="gal">${photos.map((u, i) => `<img src="${esc(u)}" data-i="${i}" loading="${i < 2 ? "eager" : "lazy"}" alt="Photo ${i + 1} of ${esc(x.title)}">`).join("")}</div><div class="galcount">${photos.length} photo${photos.length > 1 ? "s" : ""} · swipe or tap to enlarge</div>` : "";
+      const ppsf = x.price && x.sqft ? "$" + Math.round(x.price / x.sqft).toLocaleString() : "—";
+      return `<div class="kicker">${kind === "business" ? "🏪 Business for sale · " + esc(x.kind) : "🔔 Interesting building for sale" + (x.was ? " · was: " + esc(x.was) : "")}</div><h2>${esc(x.title)}</h2>
+        <div class="sub">${esc(x.address || [x.town, x.county && x.county + " County"].filter(Boolean).join(", "))}</div>${gal}
+        <div class="badges">${x.biz_only ? '<span class="badge">Business only · no real estate</span>' : kind === "business" ? '<span class="badge">Real estate included</span>' : ""}${x.auction ? '<span class="badge gold">Auction</span>' : ""}</div>
+        ${x.note ? `<div class="note">⚠️ ${esc(x.note)}</div>` : ""}
+        <div class="stats">${stat(money(x.price), "asking price")}${stat(sqft(x.sqft), "sq ft")}${stat(x.acres ? fmt1(x.acres) : "—", "acres")}${stat(ppsf, "per sq ft")}${stat(x.year_built ? esc(x.year_built) : "—", "built")}${stat(esc(x.seen || "—"), "date seen")}</div>
+        <table class="kv">${row(kind === "business" ? "Business" : "What it was", esc(kind === "business" ? x.kind : (x.was || x.kind)))}${row("Address", x.address ? esc(x.address) : null)}
+        ${row("County", x.county ? link("county", x.county, x.county + " County") : null)}
+        ${row("Nearest hospital", x.near_hosp ? `${link("hospital", x.near_hosp.id, x.near_hosp.name)} · ${x.near_hosp.miles} mi straight-line` : null)}
+        ${row("Listing", ext(x.url, "Open on " + (x.source || "source") + " ↗"))}${row("Broker", x.broker ? esc(x.broker) : null)}${row("Status", x.status ? esc(String(x.status).replace(/_/g, " ").toLowerCase()) : null)}
+        ${row("Listed", x.listed ? esc(x.listed) : null)}${row("Updated", x.updated ? esc(x.updated) : null)}${row("Date seen", esc(x.seen))}</table>
+        ${x.headline ? `<div class="small">${esc(x.headline)}</div>` : ""}${x.desc ? `<div class="kicker">Description</div><div class="desc">${esc(x.desc)}</div>` : ""}
+        <div class="small">Asking price as posted; listings change, so confirm on the source.</div>`;
+    }
+    R.business = x => saleCard(x, "business");
+    R.building = x => saleCard(x, "building");
+    R.attraction = a => { const t = ATT[a.type] || ["★", a.kind, "", a.kind];
+      const isRec = /recreation\.gov|reserveamerica/.test(a.web || "");
+      return `${thumb("attraction", a)}<div class="kicker">${t[0]} ${esc(t[3])}${a.sub && a.sub.toLowerCase() !== t[3].toLowerCase() ? " · " + esc(a.sub) : ""}</div><h2>${esc(a.name)}</h2>
+      <div class="sub">${esc(a.county ? a.county + " County, KY" : "Kentucky")}</div>${a.desc ? `<div class="desc">${esc(a.desc)}</div>` : ""}
+      <table class="kv">${row("Campsites", a.sites ? esc(a.sites) : null)}${row("Run by", a.operator ? esc(a.operator) : null)}${row("Lake / area", a.area ? esc(a.area) : null)}${row("Nightly fee", a.price ? esc(a.price) : null)}
+      ${row("County", a.county ? link("county", a.county, a.county + " County") : null)}${row(isRec ? "Reserve" : "Website", a.web ? ext(a.web, isRec ? "Reservations & details ↗" : (host(a.web) || "Website") + " ↗") : null)}
+      ${row("Wikipedia", a.wp ? ext(wikiUrl(a.wp), a.wp + " ↗") : null)}${row("Map data", a.osm ? ext(a.osm, "OpenStreetMap ↗") : a.wd ? ext("https://www.wikidata.org/wiki/" + a.wd, "Wikidata ↗") : null)}</table>${nearbyProps(a)}`; };
+    // county grouping pages
+    const at_order = ["amusement", "water", "aquarium", "museum", "camp"];
+    GCATS.push({ k: "business", n: "biz", label: "businesses for sale", one: "business for sale", title: "Businesses for sale", icon: "🏪", layers: ["biz"] },
+      { k: "buildings", n: "bldg", label: "buildings for sale", one: "building for sale", title: "Interesting buildings for sale", icon: "🔔", layers: ["bldg"] },
+      { k: "attractions", n: "attr", label: "attractions", one: "attraction", title: "Attractions", icon: "🎢", layers: MORE_ATT_KEYS.slice() });
+    GCATS.slice(-3).forEach(g => GC[g.k] = g);
+    gItems.business = n => BZ.filter(x => x.county === n);
+    gItems.buildings = n => BD.filter(x => x.county === n);
+    gItems.attractions = n => AT.filter(x => x.county === n);
+    const byPrice = (a, b) => (a.price == null) - (b.price == null) || (a.price || 0) - (b.price || 0);
+    GB.business = (c, xs, from) => ({ sub: "Sorted by asking price, lowest first", secs: [["Businesses for sale", xs.slice().sort(byPrice).map(x => gRow("business", x.id, from, gImg(x.rt, "🏪"),
+      `<b>${x.price != null ? money(x.price) : "Price n/a"}</b> · ${esc(x.kind)}`, esc(x.title), dot([x.town && esc(x.town), x.sqft && sqft(x.sqft) + " sq ft", x.biz_only && "business only"])))]] });
+    GB.buildings = (c, xs, from) => ({ sub: "Sorted by asking price, lowest first", secs: [["Buildings for sale", xs.slice().sort(byPrice).map(x => gRow("building", x.id, from, gImg(x.rt, "🔔"),
+      `<b>${x.price != null ? money(x.price) : "Price n/a"}</b>${x.was ? " · was: " + esc(x.was) : ""}`, esc(x.title), dot([x.town && esc(x.town), x.sqft && sqft(x.sqft) + " sq ft"])))]] });
+    GB.attractions = (c, xs, from) => ({ sub: "Grouped by type", jump: true, secs: at_order.map(t => [ATT[t][0] + " " + ATT[t][1].replace(/ \(.*\)$/, ""), xs.filter(x => x.type === t).sort((a, b) => a.name.localeCompare(b.name)).map(x =>
+      gRow("attraction", x.id, from, gImg(x.th && x.th.u, ATT[t][0]), `<b>${esc(x.name)}</b>`, `${ATT[t][0]} ${esc(ATT[t][3])}${x.sub ? " · " + esc(x.sub) : ""}${x.sites ? " · " + x.sites + " sites" : ""}`,
+        x.desc ? esc(firstSentence(x.desc)) : x.web ? esc(host(x.web)) : ""))]).filter(s => s[1].length) });
+    kyxLOD();
+  }
+  // ---------------------------------------------------------------- zoom-level de-clutter (LOD)
+  // Below about county zoom, everyday pin layers become faint, small canvas dots (no icons, no labels); full icons come back at zoom 10
+  // (zoom 11 for schools and minor history). Hospitals, airports, museums, the aquarium and the featured standouts are never dotted.
+  // Full icons are only added for the visible area (viewport culling). Each layer's group keeps working for filters (addLayer/removeLayer patched).
+  function kyxLOD() {
+    const FULL = { props: 10, homes: 10, nh: 10, travel: 10, biz: 10, bldg: 10, col: 10, act: 10, a_park: 10, a_water: 10, a_camp: 10, sch: 11, h_hist: 11, h_coal: 11, h_ghost: 11, h_mine: 11 };
+    const FB = { props: "#e8a317", homes: "#00897b", nh: "#1565c0", travel: "#1a7d3a", biz: "#e65100", bldg: "#8e244d", a_park: "#c2185b", a_water: "#0288d1", a_camp: "#5b7f1f" };
+    map.createPane("lodPane").style.zIndex = 450;
+    const dotR = L.canvas({ pane: "lodPane", padding: 0.3, tolerance: 5 });
+    const REV = new Map(); Object.entries(MARK).forEach(([k, m]) => REV.set(m, k));
+    const open = l => { const k = REV.get(l); if (k) { const i = k.indexOf(":"); openItem(k.slice(0, i), k.slice(i + 1)); } };
+    const cc = {};
+    function colorOf(l, fb) {
+      if (l instanceof L.CircleMarker) return l.options.fillColor || fb;
+      const html = (l.options.icon && l.options.icon.options.html) || "";
+      if (cc[html] !== undefined) return cc[html] || fb;
+      const m = html.match(/background:\s*(#[0-9a-f]{3,8}|rgb[^;"]+)/i);
+      let c = m ? m[1] : "";
+      if (!c) { const tmp = document.createElement("div"); tmp.style.cssText = "position:absolute;left:-9999px;top:0"; tmp.innerHTML = html; document.body.appendChild(tmp);
+        const el = tmp.querySelector(".mk"); c = el ? getComputedStyle(el).backgroundColor : ""; tmp.remove();
+        if (!c || c === "transparent" || /rgba\(0, 0, 0, 0\)/.test(c)) c = ""; }
+      cc[html] = c; return c || fb;
+    }
+    const LOD = L.Layer.extend({
+      initialize(d) {
+        this.d = d; this.g = d.layer; this.shown = new Set(); this.tier = null; this.dirty = true;
+        const self = this, g = this.g, add = g.addLayer, rem = g.removeLayer;
+        g.addLayer = function (l) { add.call(g, l); self.dirty = true; self._soon(); return g; };
+        g.removeLayer = function (l) { rem.call(g, l); self.dirty = true; if (self.shown.has(l)) { if (self._map) self._map.removeLayer(l); self.shown.delete(l); } self._soon(); return g; };
+      },
+      onAdd(m) { this._map = m; this.tier = null; m.on("zoomend", this._upd, this); m.on("moveend", this._cull, this); this._upd(); },
+      onRemove(m) { m.off("zoomend", this._upd, this); m.off("moveend", this._cull, this); this._clear(); this.tier = null; },
+      _soon() { if (!this._map || this._t) return; this._t = setTimeout(() => { this._t = null; this._upd(); }, 40); },
+      _upd() {
+        if (!this._map) return;
+        const z = this._map.getZoom(), t = z >= FULL[this.d.key] ? "full" : "dot";
+        if (t !== this.tier) { this._clear(); this.tier = t; this.dirty = true; }
+        if (t === "dot") { if (this.dirty) { this._clearDots(); this._dots(); } this._size(z); } else this._cull();
+        this.dirty = false;
+      },
+      _cull() {
+        if (this.tier !== "full" || !this._map) return;
+        const m = this._map, b = m.getBounds().pad(0.3);
+        this.g.eachLayer(l => { const inb = b.contains(l.getLatLng()); if (inb && !this.shown.has(l)) { m.addLayer(l); this.shown.add(l); } else if (!inb && this.shown.has(l)) { m.removeLayer(l); this.shown.delete(l); } });
+      },
+      _clearDots() { if (this.dl && this._map) this._map.removeLayer(this.dl); this.dl = null; this.rz = null; },
+      _clear() { this._clearDots(); this.shown.forEach(l => this._map && this._map.removeLayer(l)); this.shown.clear(); },
+      _size(z) { const r = z < 7 ? 1.8 : z < 8 ? 2.2 : z < 9 ? 2.6 : 3; if (r === this.rz || !this.dl) return; this.rz = r; this.dl.eachLayer(c => c.setRadius(r)); },
+      _dots() {
+        const fb = FB[this.d.key] || "#607d8b", lg = L.layerGroup();
+        this.g.eachLayer(l => { const cm = L.circleMarker(l.getLatLng(), { renderer: dotR, radius: 2.2, stroke: false, fillColor: colorOf(l, fb), fillOpacity: 0.42 });
+          const tt = l.getTooltip && l.getTooltip(); if (tt) cm.bindTooltip(tt.getContent());
+          cm.on("click", e => { if (e.originalEvent) e.originalEvent._kyxHandled = true; open(l); }); lg.addLayer(cm); });
+        this.dl = lg.addTo(this._map);
+      },
+    });
+    LAYERS.forEach(d => {
+      if (!d.layer || d.group || !FULL[d.key]) return;
+      const was = map.hasLayer(d.layer); if (was) map.removeLayer(d.layer);
+      d.layer = new LOD(d); if (was) d.layer.addTo(map);
+    });
+    // always-icon layers sit above the dots when zoomed out: trauma > hospitals > airports > standouts > museums/aquarium
+    const lift = [];
+    Object.entries(MARK).forEach(([k, m]) => { if (!m.setZIndexOffset) return; const it = k.split(":"), x = (IDX[it[0]] || {})[k.slice(it[0].length + 1)] || {};
+      const zh = it[0] === "hospital" ? (x.trauma ? 9000 : 8000) : it[0] === "airport" ? 7000 : x.featured ? 6000 : it[0] === "attraction" && (x.type === "museum" || x.type === "aquarium") ? 5000 : 0;
+      if (zh) lift.push([m, m.options.zIndexOffset || 0, zh]); });
+    let lifted = null;
+    const zl = () => { const low = map.getZoom() < 10; if (low === lifted) return; lifted = low; lift.forEach(([m, z0, zh]) => m.setZIndexOffset(low ? zh : z0)); };
+    map.on("zoomend", zl); zl();
+    if (keyReady) renderKey();
+  }
+  // ================================================================ /more layers
+  kyxMoreLate();
   // ------------------------------------------------------------------ start
   // de-clutter when zoomed out: hide minor hospitals, shrink markers
   const zc = () => { const z = map.getZoom(), el = map.getContainer(); el.classList.toggle("z-low", z < 8); el.classList.toggle("z-vlow", z < 7); };
