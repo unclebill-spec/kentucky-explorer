@@ -32,7 +32,7 @@
   });
 
   // ------------------------------------------------------------------ indexes
-  const IDX = { property: {}, hospital: {}, school: {}, college: {}, activity: {}, history: {}, county: {} };
+  const IDX = { property: {}, hospital: {}, school: {}, college: {}, activity: {}, history: {}, county: {}, travel: {} };
   const MARK = {};  // "type:id" -> marker/layer
   (K.properties || []).forEach(x => IDX.property[x.id] = x);
   (K.hospitals || []).forEach(x => IDX.hospital[x.id] = x);
@@ -146,7 +146,7 @@
   drawCounties(); drawSweet();
 
   // ------------------------------------------------------------------ point layers
-  const L_props = L.layerGroup(), L_hosp = L.layerGroup(), L_trauma = L.layerGroup(), L_sch = L.layerGroup(), L_col = L.layerGroup(), L_act = L.layerGroup();
+  const L_props = L.layerGroup(), L_homes = L.layerGroup(), L_hosp = L.layerGroup(), L_trauma = L.layerGroup(), L_sch = L.layerGroup(), L_col = L.layerGroup(), L_act = L.layerGroup();
   const L_hist = {
     mine: L.markerClusterGroup({ maxClusterRadius: 45, showCoverageOnHover: false, iconCreateFunction: cl => L.divIcon({ className: "", html: `<div class="mk h-mine" style="width:30px;height:30px">${cl.getChildCount()}</div>`, iconSize: [30, 30] }) }),
     coal_camp: L.layerGroup(), ghost_town: L.layerGroup(), historic: L.layerGroup()
@@ -156,7 +156,18 @@
   const ACTI = { "Park": "🌲", "Park / public land": "🏞", "Waterfall": "💧", "Cave": "🕳", "Distillery": "🥃", "Natural arch": "🌉", "Attraction": "🎡", "Hiking trail": "🥾" };
 
   function reg(type, id, mk) { MARK[type + ":" + id] = mk; mk.on("click", e => { if (e.originalEvent) e.originalEvent._kyxHandled = true; openItem(type, id, { fly: false }); }); return mk; }
-  (K.properties || []).forEach(p => {
+  const isHome = p => p.cat === "1-acre-home";
+  const HOMES = (K.properties || []).filter(isHome), LANDS = (K.properties || []).filter(p => !isHome(p));
+  const homeMk = {};
+  let hf = { maxp: 0, mina: 0 }; try { hf = Object.assign(hf, JSON.parse(localStorage.getItem("kyx_homefilter") || "{}")); } catch (e) { }
+  HOMES.forEach(p => {
+    if (p.lat == null || p.lon == null) return;
+    const approx = p.precision === "town", feat = p.standout && p.standout.length;
+    const mk = L.marker([p.lat, p.lon], { icon: icon("home" + (feat ? " feat" : "") + (approx ? " approx" : ""), "<i>🏠</i>", 26), zIndexOffset: 1500, title: p.title });
+    mk.bindTooltip(`🏠 ${esc(p.title)}${p.price ? " · " + money(p.price) : ""}${p.acres ? " · " + p.acres + " ac" : ""}${p.beds ? " · " + esc(p.beds) + " bd/" + esc(p.baths) + " ba" : ""}`);
+    homeMk[p.id] = mk; reg("property", p.id, mk).addTo(L_homes);
+  });
+  LANDS.forEach(p => {
     if (p.lat == null || p.lon == null) return;
     const star = p.standout && p.standout.length;
     const approx = p.precision === "town";
@@ -191,12 +202,49 @@
     mk.bindTooltip(`${esc(h.name)} — ${esc(t[1])}`); reg("history", h.id, mk).addTo(L_hist[h.type] || L_hist.historic);
   });
 
+  // ------------------------------------------------------------------ travel-nurse assignments (../data/travel_jobs.json -> build.py -> K.travel)
+  const TJ = K.travel || { meta: {}, hospitals: [] }, TJM = TJ.meta || {};
+  const TJB = TJM.bands || [];
+  const L_travel = L.layerGroup();
+  const tjPay = j => j.lo != null && j.lo !== j.hi ? `${money(j.lo)}–${money(j.hi).slice(1)}` : money(j.hi);
+  const tjK = v => "$" + (v / 1000).toFixed(1) + "k";
+  const tjIcon = h => L.divIcon({ className: "", html: `<div class="mk tj${h.band === 2 ? " dk" : ""}" style="background:${RAMP[h.band] || RAMP[4]}">${tjK(h.top)}</div>`, iconSize: [44, 22], iconAnchor: [22, 11] });
+  TJ.hospitals.forEach(h => {
+    IDX.travel[h.id] = h;
+    const mk = L.marker([h.lat, h.lon], { icon: tjIcon(h), zIndexOffset: 2500 + Math.round(h.top / 10), title: h.name });
+    mk.bindTooltip(`💼 ${esc(h.name)} · top ${money(h.top)}/wk · ${h.n} travel RN job${h.n > 1 ? "s" : ""}`);
+    reg("travel", h.id, mk).addTo(L_travel);
+  });
+  const TJ_ALL = TJ.hospitals.flatMap(h => h.jobs.map(j => Object.assign({ h }, j))).sort((a, b) => b.hi - a.hi || (b.lo || 0) - (a.lo || 0));
+  if (TJ.hospitals.length) IDX.travel.all = { id: "all", name: "All travel nurse assignments (ranked by weekly pay)", city: `${TJ_ALL.length} jobs` };
+  const TJ_NOTE = () => `<div class="small tjnote">💵 Pay is <b>gross weekly pay as posted</b> by the agency (taxable wage + stipends, before taxes); a range is shown when the posting gives one, and the high end is used for ranking. Travel postings change often (seen ${esc(TJM.date_seen || "")}); confirm on the source.</div>`;
+  const tjJob = (j, withHosp) => `<div class="tjrow"><div class="tjtop"><b class="tjpay">${tjPay(j)}/wk</b> <span>${esc(j.u || j.sp)}</span>${withHosp ? ` · ${link("travel", j.h.id, j.h.name)}<span class="small"> (${esc(j.h.city || "")})</span>` : ""}</div>
+      <div class="small">${esc(j.sh || "—")} · ${esc(j.len || "length n/a")} · start ${esc(j.st || "n/a")} · ${esc(j.ag || "")}${j.na > 1 ? ` <span title="${esc(j.pn || "")}">(+${j.na - 1} more agenc${j.na > 2 ? "ies" : "y"})</span>` : ""}</div>
+      <div class="small">${j.fac ? `Posted as “${esc(j.fac)}” · ` : ""}${esc(j.src || "")}${j.po ? " · posted " + esc(j.po) : ""} · <a href="${esc(j.url)}" target="_blank" rel="noopener">Apply / view ↗</a></div></div>`;
+  function travelCard(h) {
+    if (h.id === "all") return `<div class="kicker">💼 Travel nurse assignments</div><h2>All ${TJ_ALL.length} jobs, ranked by weekly pay</h2>
+      <div class="sub">${TJ.hospitals.length} Kentucky hospitals · tap a hospital name for its card</div>${TJ_NOTE()}${TJ_ALL.map(j => tjJob(j, true)).join("")}${travelExcl()}`;
+    const b = TJB[h.band] || {};
+    return `${thumb("travel", h)}<div class="kicker">💼 Travel nurse assignments</div><h2>${esc(h.name)}</h2>
+      <div class="sub">${esc([h.city, h.county && h.county + " County"].filter(Boolean).join(", "))}</div>
+      <div class="badges"><span class="badge" style="background:${RAMP[h.band]};color:${h.band === 2 ? "#222" : "#fff"}">Top pay ${money(h.top)}/wk · ${esc(b.label || "")}</span></div>
+      <div class="stats">${stat(money(h.top), "top weekly pay")}${stat(h.n, "travel RN jobs")}${stat(money(h.jobs[h.jobs.length - 1].hi), "lowest (high end)")}</div>
+      ${TJ_NOTE()}<div class="kicker">Jobs, highest weekly pay first</div>${h.jobs.map(j => tjJob(j, false)).join("")}
+      <table class="kv">${row("Hospital", h.hospital_id ? link("hospital", h.hospital_id, "Hospital details (trauma level, ER, website)") : null)}${row("County", h.county ? link("county", h.county, h.county + " County") : null)}${row("All jobs", '<a href="#travel=all">Every Kentucky travel job, ranked by pay</a>')}</table>${nearbyProps(h)}`;
+  }
+  function travelExcl() {
+    const ex = TJM.excluded || {}; const n = Object.values(ex).reduce((a, b) => a + b, 0);
+    return n ? `<details class="small"><summary>Left out: ${n} postings</summary>${Object.entries(ex).map(([k, v]) => `${v} · ${esc(k)}`).join("<br>")}${TJM.dups ? `<br>${TJM.dups} · duplicate postings` : ""}<br>Sources: ${Object.entries(TJM.sources || {}).map(([k, v]) => `${esc(k)} — ${esc(v)}`).join("; ")}</details>` : "";
+  }
+
   // ------------------------------------------------------------------ layer panel
   const nHist = t => (K.history || []).filter(h => h.type === t).length;
   const LAYERS = [
-    { key: "props", label: "★ Notable Properties", layer: L_props, on: true, n: (K.properties || []).length },
+    { key: "props", label: "★ Notable Properties (5+ acres)", layer: L_props, on: true, n: LANDS.length },
+    { key: "homes", label: "🏠 Homes (1+ acre, 3bd/2ba, under $425k)", layer: L_homes, on: true, n: HOMES.length, filter: true },
     { key: "trauma", label: "Trauma centers", layer: L_trauma, on: true, n: (K.hospitals || []).filter(h => h.trauma).length },
     { key: "hosp", label: "Other hospitals", layer: L_hosp, on: true, n: (K.hospitals || []).filter(h => !h.trauma).length },
+    { key: "travel", label: "💼 Travel nurse assignments (by weekly pay)", layer: L_travel, on: false, n: TJ_ALL.length || null, disabled: !TJ.hospitals.length, note: TJ.hospitals.length ? "" : " (no data)" },
     { key: "sch", label: "Schools (KDE color rating)", layer: L_sch, on: false, n: (K.schools || []).length },
     { key: "col", label: "Colleges & universities", layer: L_col, on: false, n: (K.colleges || []).length },
     { key: "act", label: "Activities & outdoors", layer: L_act, on: false, n: (K.activities || []).length },
@@ -218,11 +266,29 @@
     const cb = lab.querySelector("input");
     cb.onchange = () => { setLayer(d, cb.checked); saved[d.key] = cb.checked; localStorage.setItem("kyx_layers", JSON.stringify(saved)); };
     d.cb = cb; ll.appendChild(lab);
+    if (d.filter) { d.cnt = lab.querySelector(".cnt"); ll.appendChild(homeFilterEl()); }
     if (on) d.layer.addTo(map);
   });
+  applyHomeFilter();
+  // simple filter for the Homes layer (max price, min acres); remembered in localStorage
+  function homeFilterEl() {
+    const w = document.createElement("div"); w.className = "hfilter sub"; w.id = "homeFilter";
+    const opt = (vals, cur, f) => vals.map(v => `<option value="${v}" ${+cur === v ? "selected" : ""}>${f(v)}</option>`).join("");
+    w.innerHTML = `<label class="hf">Max price <select id="hfPrice">${opt([0, 200000, 250000, 300000, 350000, 400000], hf.maxp, v => v ? "$" + v / 1000 + "k" : "Any (≤$425k)")}</select></label>
+      <label class="hf">Min acres <select id="hfAcres">${opt([0, 2, 5, 10, 20], hf.mina, v => v ? v + "+ ac" : "Any (1+)")}</select></label>`;
+    w.querySelectorAll("select").forEach(s => s.onchange = () => { hf = { maxp: +$("#hfPrice").value, mina: +$("#hfAcres").value }; localStorage.setItem("kyx_homefilter", JSON.stringify(hf)); applyHomeFilter(); });
+    return w;
+  }
+  function homePass(p) { return (!hf.maxp || (p.price != null && p.price <= hf.maxp)) && (!hf.mina || (p.acres != null && p.acres >= hf.mina)); }
+  function applyHomeFilter() {
+    let n = 0;
+    HOMES.forEach(p => { const mk = homeMk[p.id]; if (!mk) return; const ok = homePass(p) || (current && current.id === p.id); if (ok) { n++; if (!L_homes.hasLayer(mk)) L_homes.addLayer(mk); } else if (L_homes.hasLayer(mk)) L_homes.removeLayer(mk); });
+    const d = LAYERS.find(x => x.key === "homes"); if (d && d.cnt) d.cnt.textContent = n === HOMES.length ? String(n) : `${n} of ${HOMES.length}`;
+    if (keyReady) renderKey();
+  }
   function setLayer(d, on) { if (on) { d.layer.addTo(map); if (d.key === "cty" || d.key === "sweet") d.layer.eachLayer(l => l.bringToBack && l.bringToBack()); } else map.removeLayer(d.layer); if (d.cb) d.cb.checked = on; renderKey(); }
   function ensureLayerFor(type, item) {
-    const k = { property: "props", school: "sch", college: "col", activity: "act" }[type]
+    const k = { property: isHome(item) ? "homes" : "props", school: "sch", college: "col", activity: "act", travel: "travel" }[type]
       || (type === "hospital" ? (item.trauma ? "trauma" : "hosp") : null)
       || (type === "history" ? { mine: "h_mine", coal_camp: "h_coal", ghost_town: "h_ghost", historic: "h_hist" }[item.type] : null);
     const d = LAYERS.find(x => x.key === k); if (d && !map.hasLayer(d.layer)) setLayer(d, true);
@@ -242,11 +308,17 @@
   const mk = (cls, html, size, extra = "") => `<span class="mk ${cls}" style="width:${size}px;height:${size}px;${extra}">${html}</span>`;
   const krow = (sym, label, note) => `<div class="krow"><span class="ksym">${sym}</span><span>${label}${note ? `<span class="small"> ${note}</span>` : ""}</span></div>`;
   const PIN_KEY = {
-    props: () => `<div class="ksec"><b>★ Notable properties</b>${krow(mk("star", "★", 22), "Standout property", "(cave, stream/creek, waterfall or backcountry)")}
+    props: () => `<div class="ksec"><b>★ Notable properties</b> <span class="small">(5+ acres)</span>${krow(mk("star", "★", 22), "Standout property", "(cave, stream/creek, waterfall or backcountry)")}
       ${krow(mk("prop", "<i>⌂</i>", 20), "Other land listing")}${krow(mk("prop approx", "<i>⌂</i>", 20), "Dashed outline = approximate pin", "(town center)")}</div>`,
+    homes: () => `<div class="ksec"><b>🏠 Homes</b> <span class="small">(1+ acre, 3+ bd, 2+ full ba, ≤ $425k, active)</span>
+      ${krow(mk("home", "<i>🏠</i>", 20), "Home listing")}${krow(mk("home feat", "<i>🏠</i>", 20), "Gold ring = creek/stream, cave, waterfall or backcountry")}
+      ${hf.maxp || hf.mina ? `<div class="small">Filter on: ${hf.maxp ? "≤ " + money(hf.maxp) : ""}${hf.maxp && hf.mina ? ", " : ""}${hf.mina ? hf.mina + "+ acres" : ""} · <button type="button" class="linkbtn" data-openlayers="1">change</button></div>` : ""}</div>`,
     trauma: () => `<div class="ksec"><b>Trauma centers</b> <span class="small">(KYHA Jan 2026 + border centers)</span>
       ${krow(mk("trauma", "I", 22), "Level I", "(highest: UK, UofL, Cincinnati, Vanderbilt, Knoxville)")}${krow(mk("trauma", "II", 22), "Level II", "(Pikeville, Evansville, Huntington)")}
       ${krow(mk("trauma", "III", 22), "Level III")}${krow(mk("trauma", "IV", 22), "Level IV", "(stabilize & transfer)")}${krow(mk("trauma", "IP", 22), "Pediatric Level I", "(Norton Children's)")}</div>`,
+    travel: () => `<div class="ksec"><b>💼 Travel nurse assignments</b> <span class="small">(pin = hospital, colored by its top weekly pay, best → lowest)</span>
+      ${TJB.map((b, i) => `<div class="kband"><span class="sw" style="background:${RAMP[i]}"></span><span class="kl">${esc(b.label)}</span><span class="kr small">${i === 0 ? "per week" : ""}</span><span class="kn">${b.n}</span></div>`).join("")}
+      ${TJ_NOTE()}<div class="kbtns"><a class="linkbtn" href="#travel=all">📋 All ${TJ_ALL.length} jobs ranked by pay</a></div></div>`,
     hosp: () => `<div class="ksec"><b>Other hospitals</b>${krow(mk("hosp", "+", 18), "General / acute-care hospital")}${krow(mk("hosp", "+", 14, "opacity:.75"), "Specialty (psychiatric, rehab, long-term)", "· hidden when zoomed out")}</div>`,
     sch: () => `<div class="ksec"><b>Schools</b> <span class="small">(KDE 2025 rating, best → lowest)</span>
       ${["Blue", "Green", "Yellow", "Orange", "Red"].map(r => krow(`<span class="kdot" style="background:${SCOLOR[r]}"></span>`, r)).join("")}${krow('<span class="kdot" style="background:#9e9e9e"></span>', "Not rated")}</div>`,
@@ -274,7 +346,7 @@
     if (on("cty")) h += countyKey(scaleFor(curMetric), "Counties colored by");
     if (on("sweet")) h += countyKey(scaleFor(sweetKey), "Sweet-spot layer");
     if (!on("cty") && !on("sweet")) h += `<div class="ksec small">County coloring is off. Turn on “Counties” in Layers to color by the Appeal score.</div>`;
-    const pinKeys = ["props", "trauma", "hosp", "sch", "col", "act"], histKeys = ["h_hist", "h_coal", "h_ghost", "h_mine"];
+    const pinKeys = ["props", "homes", "travel", "trauma", "hosp", "sch", "col", "act"], histKeys = ["h_hist", "h_coal", "h_ghost", "h_mine"];
     const active = pinKeys.filter(on), off = pinKeys.filter(k => !on(k));
     h += active.map(k => PIN_KEY[k]()).join("");
     const hOn = histKeys.filter(on), hOff = histKeys.filter(k => !on(k));
@@ -348,7 +420,7 @@
       ${cs && cs.independents ? row("Independent districts", esc(cs.independents)) : ""}</table>`;
   }
   // thumbnail at the top of each card (data/thumbs.json via build.py -> item.th)
-  const THUMB_TITLE = { hospital: h => h.name, school: s => s.name, college: c => c.name, activity: a => a.name, history: h => h.name, county: c => c.name + " County, Kentucky", property: p => p.title };
+  const THUMB_TITLE = { travel: h => h.name, hospital: h => h.name, school: s => s.name, college: c => c.name, activity: a => a.name, history: h => h.name, county: c => c.name + " County, Kentucky", property: p => p.title };
   const SAT = { c: "Imagery: Esri, Maxar, Earthstar Geographics", s: "https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9" };
   function thumb(type, it) {
     let t = it.th; if (!t || !t.u) return "";
@@ -369,16 +441,18 @@
     const drives = (p.drives || []).length ? `<div class="kicker">Hospital drive times</div>
       <table class="tbl"><tr><th>Hospital</th><th class="n">Miles</th><th class="n">7 AM</th><th class="n">7 PM</th></tr>
       ${p.drives.map(d => `<tr><td>${esc(d.hospital)}${d.traffic_aware ? "" : '<br><span class="small">free-flow, no traffic data</span>'}${d.source ? `<br><span class="small">${esc(d.source)}</span>` : ""}</td>
-        <td class="n">${fmt1(d.miles)}</td><td class="n">${d.range_7am ? esc(d.range_7am) + " min" : (d.min_7am != null ? Math.round(d.min_7am) + " min" : "—")}</td><td class="n">${d.range_7pm ? esc(d.range_7pm) + " min" : (d.min_7pm != null ? Math.round(d.min_7pm) + " min" : "—")}</td></tr>`).join("")}</table>` : "";
+        <td class="n">${fmt1(d.miles)}</td>${d.min_7am == null && d.min_7pm == null && !d.range_7am && d.minutes_free_flow != null ? `<td class="n" colspan="2">~${Math.round(d.minutes_free_flow)} min<br><span class="small">no traffic</span></td></tr>` : `<td class="n">${d.range_7am ? esc(d.range_7am) + " min" : (d.min_7am != null ? Math.round(d.min_7am) + " min" : "—")}</td><td class="n">${d.range_7pm ? esc(d.range_7pm) + " min" : (d.min_7pm != null ? Math.round(d.min_7pm) + " min" : "—")}</td></tr>`}`).join("")}</table>` : "";
     const ns = p.near_schools || {};
-    return `<div class="kicker">${p.standout && p.standout.length ? "★ Standout property" : "Property"}</div><h2>${esc(p.title)}</h2>
+    const home = isHome(p);
+    return `<div class="kicker">${home ? "🏠 Home · 1+ acre, 3bd/2ba, under $425k" + (p.standout && p.standout.length ? " · ★ standout" : "") : p.standout && p.standout.length ? "★ Standout property" : "Property"}</div><h2>${esc(p.title)}</h2>
       <div class="sub">${esc([p.town, p.county && p.county + " County"].filter(Boolean).join(", "))}</div>
       ${gal || thumb("property", p)}
       ${p.standout && p.standout.length ? `<div class="badges">${p.standout.map(s => `<span class="badge gold">★ ${esc(s)}</span>`).join("")}</div>` : ""}
       ${p.precision === "town" ? `<div class="note">📍 Approximate pin: placed at the town center (${esc(p.town || "town")}); the exact parcel location wasn't published.</div>` : ""}
       ${p.pending ? '<div class="note">Listing details are still being collected (listings.json not ready when this map was built). Re-run build.py to fill in price, acreage and the exact location.</div>' : ""}
       <div class="stats">${stat(money(p.price), "price")}${stat(p.acres != null ? fmt1(p.acres) : "—", "acres")}${stat(ppa || "—", "per acre")}
-        ${stat(`${p.beds != null ? esc(p.beds) : "—"} / ${p.baths != null ? esc(p.baths) : "—"}`, "bed / bath")}${stat(p.dwellings != null ? esc(p.dwellings) : "—", "dwellings")}${stat(esc(p.seen || "—"), "date seen")}</div>
+        ${stat(`${p.beds != null ? esc(p.beds) : "—"} / ${p.baths != null ? esc(p.baths) : "—"}`, "bed / bath")}${home ? stat(p.sqft ? Math.round(p.sqft).toLocaleString() : "—", "sq ft") + stat(p.year_built ? esc(p.year_built) : "—", "built") : stat(p.dwellings != null ? esc(p.dwellings) : "—", "dwellings")}${stat(esc(p.seen || "—"), "date seen")}</div>
+      ${home && p.dwellings ? `<table class="kv">${row("Dwellings", esc(p.dwellings))}</table>` : ""}
       ${p.water && p.water.length ? `<div class="kicker">Water & cave features</div><div class="badges">${p.water.map(w => `<span class="badge">💧 ${esc(w)}</span>`).join("")}</div>` : ""}
       ${p.features && p.features.length ? `<div class="kicker">Features</div><div class="badges">${p.features.map(w => `<span class="badge">${esc(w)}</span>`).join("")}</div>` : ""}
       <div class="kicker">Health care</div><table class="kv">
@@ -401,6 +475,9 @@
     ${row("County", h.county ? link("county", h.county, h.county + " County") : esc(h.state || "out of state"))}
     ${row("Phone", h.phone ? `<a href="tel:${esc(h.phone)}">${esc(h.phone)}</a>` : null)}${row("Website", h.web ? ext(h.web, "Website ↗") : null)}
     ${row("Map data", h.osm ? ext(h.osm, "OpenStreetMap ↗") : esc(h.note || ""))}</table>${nearbyProps(h)}`;
+  R.travel = travelCard;
+  const _hospCard = R.hospital;  // hospital card: link to its travel jobs
+  R.hospital = h => { const t = TJ.hospitals.find(x => x.hospital_id === h.id); return _hospCard(h) + (t ? `<div class="kicker">💼 Travel nurse assignments</div><table class="kv">${row("Travel RN jobs", `${link("travel", t.id, t.n + " job" + (t.n > 1 ? "s" : "") + ", top " + money(t.top) + "/wk")}`)}</table>` : ""); };
   R.school = s => {
     const lv = Object.entries(s.levels || {});
     const dr = s.drank || {};
@@ -457,7 +534,7 @@
       ${row("Nearest trauma center", c.near_trauma ? `${link("hospital", c.near_trauma.id, c.near_trauma.name)} · ${esc(c.near_trauma.trauma)} · ~${c.near_trauma.miles} mi from county center` : null)}</table>
       <div class="kicker">Schools</div>${schoolBlock(c.name)}
       ${ds.length ? `<table class="tbl"><tr><th>District</th><th class="n">vs KY</th><th class="n">vs US</th><th>ES/MS/HS</th></tr>${ds.map(d => `<tr><td>${esc(d.name)}</td><td class="n">${esc(sign(d.pp_vs_ky, 0))}</td><td class="n">${esc(sign(d.gl_vs_us, 1))}</td><td>${rbadge(d.es)} ${rbadge(d.ms)} ${rbadge(d.hs)}</td></tr>`).join("")}</table>` : ""}
-      ${props.length ? `<div class="kicker">Properties here</div><table class="kv">${props.map(p => row(p.standout && p.standout.length ? "★" : "⌂", link("property", p.id, p.title) + (p.price ? " · " + money(p.price) : ""))).join("")}</table>` : ""}`;
+      ${props.length ? `<div class="kicker">Properties here</div><table class="kv">${props.map(p => row(isHome(p) ? "🏠" : p.standout && p.standout.length ? "★" : "⌂", link("property", p.id, p.title) + (p.price ? " · " + money(p.price) : ""))).join("")}</table>` : ""}`;
   };
   function nearbyProps(pt) {
     const near = (K.properties || []).filter(p => p.lat != null).map(p => [p, hav(pt.lat, pt.lon, p.lat, p.lon)]).filter(x => x[1] < 25).sort((a, b) => a[1] - b[1]).slice(0, 5);
@@ -466,7 +543,7 @@
   function hav(a, b, c, d) { const R = 3958.8, r = Math.PI / 180, x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(x)); }
 
   // ------------------------------------------------------------------ share
-  const TITLE = { property: p => p.title, hospital: h => h.name, school: s => s.name, college: c => c.name, activity: a => a.name, history: h => h.name, county: c => c.name + " County, KY" };
+  const TITLE = { travel: h => h.id === "all" ? "Kentucky travel nurse assignments" : h.name + " — travel RN jobs", property: p => p.title, hospital: h => h.name, school: s => s.name, college: c => c.name, activity: a => a.name, history: h => h.name, county: c => c.name + " County, KY" };
   function itemUrl(type, id) { return new URL("index.html#" + type + "=" + encodeURIComponent(id), location.href).href; }
   function shareUrl(type, id) { return new URL("share/" + type + "-" + slug(id) + ".html", location.href).href; }
   function shareUrlBest(type, id) { return location.protocol === "file:" ? itemUrl(type, id) : shareUrl(type, id); }
@@ -484,7 +561,7 @@
 
   // ------------------------------------------------------------------ open / close + deep links
   const card = $("#card"), body = $("#cardBody");
-  let current = null, hl = null;
+  var current = null; let hl = null;  // var: applyHomeFilter() reads it before this line runs
   function openItem(type, id, opts = {}) {
     const it = IDX[type] && IDX[type][id]; if (!it) { toast("Item not found"); return false; }
     current = { type, id };
@@ -510,6 +587,7 @@
     return true;
   }
   function zoomTo(type, it, force) {
+    if (type === "travel" && it.lat == null) return;  // the ranked list has no single location
     const pad = window.innerWidth >= 800 ? { paddingBottomRight: [440, 0] } : { paddingBottomRight: [0, Math.round(window.innerHeight * 0.55)] };
     if (type === "county") { const b = it.bbox; map.flyToBounds([[b[1], b[0]], [b[3], b[2]]], Object.assign({ duration: 0.8, padding: [20, 20] }, pad)); return; }
     const z = type === "property" ? 13 : 14;
@@ -536,7 +614,7 @@
   (function () { let y0 = null; card.addEventListener("touchstart", e => { y0 = card.scrollTop <= 0 ? e.touches[0].clientY : null; }, { passive: true });
     card.addEventListener("touchend", e => { if (y0 != null && e.changedTouches[0].clientY - y0 > 90) closeCard(); y0 = null; }, { passive: true }); })();
   function route(replace) {
-    const m = location.hash.match(/^#(property|hospital|school|college|activity|history|county)=(.+)$/);
+    const m = location.hash.match(/^#(property|hospital|school|college|activity|history|county|travel)=(.+)$/);
     if (!m) { if (!card.hidden) closeCard(false); return; }
     const type = m[1]; let id = decodeURIComponent(m[2]);
     if (!IDX[type][id] && type === "county") { id = Object.keys(IDX.county).find(k => k.toLowerCase() === id.toLowerCase().replace(/\s*county$/, "")) || id; }
@@ -573,11 +651,11 @@
   // ------------------------------------------------------------------ search
   const all = [];
   Object.entries(IDX).forEach(([type, o]) => Object.values(o).forEach(it => all.push({ type, id: type === "county" ? it.name : it.id, name: type === "county" ? it.name + " County" : (it.title || it.name), sub: type === "property" ? [it.town, it.county].filter(Boolean).join(", ") : type === "history" ? (HIST[it.type] || [, ""])[1] : (it.kind || it.district || it.city || "") })));
-  const LABEL = { property: "Property", hospital: "Hospital", school: "School", college: "College", activity: "Activity", history: "History", county: "County" };
+  const LABEL = { travel: "Travel RN jobs", property: "Property / home", hospital: "Hospital", school: "School", college: "College", activity: "Activity", history: "History", county: "County" };
   const si = $("#search"), res = $("#results"); let hits = [], sel = 0;
   si.addEventListener("input", () => {
     const q = si.value.trim().toLowerCase(); if (q.length < 2) { res.hidden = true; return; }
-    const pri = { county: 0, property: 1, hospital: 2, history: 3, activity: 4, college: 5, school: 6 };
+    const pri = { county: 0, property: 1, travel: 2, hospital: 2, history: 3, activity: 4, college: 5, school: 6 };
     hits = all.filter(x => x.name.toLowerCase().includes(q) || (x.sub || "").toLowerCase().includes(q)).sort((a, b) => (a.name.toLowerCase().startsWith(q) ? 0 : 1) - (b.name.toLowerCase().startsWith(q) ? 0 : 1) || pri[a.type] - pri[b.type]).slice(0, 30);
     sel = 0; res.innerHTML = hits.map((h, i) => `<div data-i="${i}" class="${i === 0 ? "sel" : ""}">${esc(h.name)}<br><small>${LABEL[h.type]}${h.sub ? " · " + esc(h.sub) : ""}</small></div>`).join("") || "<div><small>No matches</small></div>";
     res.hidden = false;

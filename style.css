@@ -87,6 +87,13 @@ a.inl{cursor:pointer;text-decoration:underline}
 .mk.trauma{background:#8b0000;border-color:#ffd54f;font-size:11px}
 .mk.prop{background:var(--accent);border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
 .mk.prop i{transform:rotate(45deg);font-style:normal}
+.mk.home{background:#1565c0;border-radius:7px;font-size:13px}
+.mk.home i{font-style:normal;line-height:1}
+.mk.home.feat{border-color:#ffc107;box-shadow:0 0 0 2px #e8a31799,0 1px 4px #0006}
+.mk.home.approx{border-style:dashed}
+#layerList .hfilter{display:flex;flex-wrap:wrap;gap:4px 10px;padding:0 0 6px 26px}
+#layerList .hfilter label.hf{display:flex;align-items:center;gap:4px;padding:0;font-size:12px;color:var(--muted)}
+#layerList .hfilter select{font-size:12px;padding:2px 4px;max-width:130px}
 .mk.star{background:radial-gradient(circle at 35% 30%,#ffe082,#e8a317 60%,#b26a00);border-color:#fff;font-size:17px;animation:pulse 2.2s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 #e8a317aa}70%{box-shadow:0 0 0 14px #e8a31700}100%{box-shadow:0 0 0 0 #e8a31700}}
 .mk.col{background:#6a1b9a;font-size:12px}
@@ -167,3 +174,11 @@ a.inl{cursor:pointer;text-decoration:underline}
 .infox{position:sticky;top:0;float:right}
 .wtbl td.n{vertical-align:top;font-size:16px;width:34px}
 .infobox ul{padding-left:18px;margin:4px 0}
+/* travel-nurse assignments layer */
+.mk.tj{border-radius:11px;font-size:11px;letter-spacing:-.2px;white-space:nowrap;border-width:1.5px}
+.mk.tj.dk{color:#222}
+.z-vlow .mk.tj{transform:scale(.8)}
+.tjrow{border-top:1px solid var(--line);padding:7px 0 6px}
+.tjrow .tjtop{font-size:14px}
+.tjpay{color:var(--ink);margin-right:4px}
+.tjnote{background:#f6f8f0;border-left:3px solid var(--gold);padding:5px 8px;margin:6px 0;border-radius:4px}
