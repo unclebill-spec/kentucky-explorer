@@ -278,16 +278,7 @@ a.stat.tap:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
 
 /* ---- top-10 bubbles south of Kentucky (#deals, #top-buildings, #top-businesses) + fixed fallback button ---- */
 .topbub-wrap{background:none;border:0}
-.topbub{position:absolute;left:0;top:0;transform:translate(-50%,-50%);display:flex;align-items:center;gap:5px;max-width:112px;padding:5px 8px 5px 5px;border-radius:18px;
-  background:#fff;color:#0d2a4d;font:800 11px/1.15 system-ui,-apple-system,sans-serif;text-decoration:none;white-space:normal;box-shadow:0 2px 8px #0007,0 0 0 2px #ffd600;cursor:pointer;-webkit-tap-highlight-color:transparent;animation:tbpulse 2.6s ease-in-out 3}
-.topbub .tbi{flex:0 0 auto;display:flex}.topbub .tbi svg{width:22px;height:22px;display:block}
-.topbub.tb-deals{background:#1565c0;color:#fff}
-.topbub.tb-bldg{background:#2e7d32;color:#fff}
-.topbub.tb-biz{background:#1b5e20;color:#fff}
 .topbub .mk.biz,.topmenu .mk.biz{display:inline-flex;align-items:center;justify-content:center;transform:none!important;box-shadow:0 0 0 1.5px #fff}
-.topbub:active{transform:translate(-50%,-50%) scale(.95)}
-@media (hover:hover){.topbub:hover{filter:brightness(1.1)}}
-@keyframes tbpulse{0%,100%{box-shadow:0 2px 8px #0007,0 0 0 2px #ffd600}50%{box-shadow:0 2px 8px #0007,0 0 0 5px #ffd60099}}
 .topbtn{position:fixed;z-index:1000;right:8px;bottom:calc(26px + env(safe-area-inset-bottom));border:0;border-radius:20px;padding:9px 13px;min-height:40px;background:#1565c0;color:#fff;font-weight:800;box-shadow:0 2px 10px #0006,0 0 0 2px #ffd600}
 .topmenu{position:fixed;z-index:1001;right:8px;bottom:calc(74px + env(safe-area-inset-bottom));background:#fff;border-radius:12px;box-shadow:0 6px 24px #0005;padding:6px;min-width:230px}
 .topmenu a{display:flex;align-items:center;gap:8px;padding:9px 8px;min-height:40px;color:var(--ink);text-decoration:none;font-weight:700;border-radius:8px}
@@ -298,14 +289,8 @@ a.stat.tap:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
 .tnav .tchip{border:1px solid #bcd9d9;background:#f3f8f8;color:var(--accent);border-radius:16px;padding:6px 10px;font-size:13px;font-weight:600;min-height:34px;text-decoration:none;display:inline-flex;align-items:center}
 .tnav .tchip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .tupd{color:#1a6a2f;font-weight:700}
-.topbub.tb-deals{max-width:112px}
 .tlist .g1{white-space:normal}
-.topbub{width:max-content}
 /* travel-job bubbles (nurse-cap style) + Apply link on list rows */
-.topbub.tb-job{background:#fff;color:#123642}
-.topbub.tb-er{box-shadow:0 2px 8px #0007,0 0 0 2.5px #c62f2c}
-.topbub.tb-oj{box-shadow:0 2px 8px #0007,0 0 0 2.5px #1a7d3a}
-.topbub.tb-job .tbi svg,.topmenu .tbi svg[viewBox="0 0 36 22"]{width:32px;height:20px}
 .trow{position:relative}
 .trow .grow{padding-right:74px}
 .tapply{position:absolute;right:24px;top:50%;transform:translateY(-50%);background:var(--accent);color:#fff;border-radius:16px;padding:7px 10px;font-size:13px;font-weight:700;text-decoration:none;min-height:34px;display:inline-flex;align-items:center;white-space:nowrap}
@@ -313,3 +298,29 @@ a.stat.tap:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
 .trow .grow>.gchev{display:none}
 .trow .grow{padding-right:92px}
 .tapply{right:4px}
+
+/* ---- top-10 bubbles: one grid just south of Kentucky, 2 rows (3 + 2). All five share size, shape, font and style; each has its own color.
+   Width is in screen pixels (fits 3 across a 360 px phone), so they can't overlap at any zoom. ---- */
+.topgrid{position:absolute;left:0;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;--tbw:min(122px,calc((100vw - 30px) / 3))}
+.toprow{display:flex;gap:6px;justify-content:center}
+.topbub{box-sizing:border-box;width:var(--tbw);height:50px;flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:4px 6px 4px 4px;border-radius:14px;overflow:hidden;
+  color:#fff;font:800 11px/1.13 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-decoration:none;white-space:normal;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  box-shadow:0 2px 8px #0007,0 0 0 2px #fff;animation:tbpulse 2.6s ease-in-out 3}
+.leaflet-container a.topbub,.leaflet-container a.topbub:hover,a.topbub:visited{color:#fff}
+.topbub .tbi{flex:0 0 28px;width:28px;height:28px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center}
+.topbub .tbi svg{width:22px;height:22px;display:block}
+.topbub .tbi svg[viewBox="0 0 36 22"]{width:24px;height:15px}
+.topbub .tbi .mk.biz{width:20px!important;height:20px!important;font-size:12px;box-shadow:none;border-width:1.5px}
+.topbub .tbt{min-width:0;overflow-wrap:break-word}
+.topbub .tbt small{display:block;font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;opacity:.9}
+.topbub.tb-deals{background:#1565c0}
+.topbub.tb-bldg{background:#6a1b9a}
+.topbub.tb-biz{background:#c43e00}
+.topbub.tb-er{background:#c62828}
+.topbub.tb-oj{background:#00796b}
+.topbub:active{transform:scale(.95)}
+@media (hover:hover){.topbub:hover{filter:brightness(1.12)}}
+@keyframes tbpulse{0%,100%{box-shadow:0 2px 8px #0007,0 0 0 2px #fff}50%{box-shadow:0 2px 8px #0007,0 0 0 4px #ffd600cc}}
+@media (max-width:370px){.topbub{font-size:10.3px}.topbub .tbt small{font-size:9px}}
+.topmenu .tbi svg[viewBox="0 0 36 22"]{width:32px;height:20px}
+.cardload{padding:28px 6px;color:var(--muted);font-weight:600}
