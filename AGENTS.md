@@ -90,16 +90,18 @@ What this means for other work:
 - **Phone-first:** test at 412×915 with touch. Thumb-sized controls (≥ 32 px), clear of each other.
 - Bill gets short, plain reports with before/after numbers and screenshot paths.
 
+## Phone features (shipped Oct 1, 2026 evening)
+- **Bottom sheet:** cards opened from a pin or county tap start as a 150 px peek bar (title). Tap it or swipe up for the full card; swipe down goes full → peek → closed. Deep links and lists open full. County taps now fit the county above the peek bar.
+- **Favorites:** ♡ in the card header on homes, travel jobs, buildings and businesses. Saved in localStorage `kyx_favs`. List at `#favs`; share link `#favs=<base64url>`, which offers "Add all".
+- **Near me** (📍 button above Top 10s): `#near`. Uses browser geolocation; shows a blue dot and the nearest 3 of each kind, by straight-line distance. The location is never stored or sent anywhere.
+- **Directions** (🧭) on every item card opens Google Maps directions to the item (counties by name).
+- **"New" / "↓ Price" badges** since the last visit: `kyx_seen` snapshot of ids and prices. A visit starts after 30+ minutes away; the first visit only records the baseline. Shown on cards and list rows, in a load toast, and at `#new`.
+- **Compare:** "⚖ Compare" on home cards (up to 3, `kyx_cmp`). `#compare` or `#compare=id,id,id` shows a side-by-side table with the best value in each row highlighted.
+- **PWA:** `manifest.webmanifest` plus `img/icon-192/512/maskable-512.png`.
+- **Offline:** `sw.js?v=<build stamp>` caches the app shell, data, viewed tiles (3000 max) and photos (400 max). Each publish's stamp creates a new worker that deletes the old shell and data caches; `index.html` is network-first, so updates arrive.
+- **Lazy loading:** the pages live in `extras.js` (lazy); only small hooks are in `app.js`. Test: `perf/test_phone.py`.
+
 ## Known issues / next steps
-- **Card height:** on phones the card is 72 % of the screen, so a county opened from the map fits only a ~106 px strip above it. The bottom-sheet peek (below) fixes this.
 - **Missing data:** no Walmart/grocery distances; no HOA fee amounts (only "no HOA" text). Commute filters use free-flow times.
-- **Queued phone features (approved by Bill, Oct 1):**
-  1. Bottom-sheet cards that open as a small peek bar and swipe up.
-  2. Favorites: heart on homes, jobs, buildings and businesses, plus a list and a share link.
-  3. "Near me" GPS button.
-  4. Directions button (Google Maps) on every card.
-  5. "New" and "↓ Price" badges since the last visit, tracked in localStorage.
-  6. Compare 2–3 homes side by side.
-  7. Installable PWA: manifest and icons.
-  8. Offline service worker caching the shell, data and viewed tiles, with the cache version bumped on each publish.
-- **Rules for that work:** keep the 1.1 s load (lazy-load extras), keep the defaults and the Back stack, and test at 412×915.
+- **Near me** distances are straight-line, not drive times.
+- **Badges** are per phone and browser (localStorage); clearing site data resets the baseline.

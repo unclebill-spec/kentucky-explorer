@@ -426,3 +426,37 @@ html.cardfull .profbar{visibility:hidden}
 @media (min-width:800px){.lstack{top:calc(68px + env(safe-area-inset-top))}#card:not([hidden]) ~ .lstack{right:436px}}
 html.cardfull .lstack{visibility:hidden}
 .kcl{border-radius:50%;background:#0f6b6fdd;color:#fff;font:800 12px/1 system-ui,sans-serif;text-align:center;box-shadow:0 0 0 3px #fff9,0 2px 6px #0006;cursor:pointer}
+
+/* ---- bottom sheet (phones): peek bar ---- */
+@media (max-width:799px){
+  #card.peek{max-height:calc(150px + env(safe-area-inset-bottom));overflow:hidden;cursor:pointer}
+  #card.peek .thumb,#card.peek .thumbbtn,#card.peek .gal,#card.peek [data-thumb],#card.peek .nbline{display:none}
+  #card.peek::after{content:"⌃  Tap or swipe up for details";position:absolute;left:0;right:0;bottom:0;padding:26px 0 calc(8px + env(safe-area-inset-bottom));text-align:center;
+    font:700 12px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--accent);background:linear-gradient(#fff0,#fff 45%);pointer-events:none}
+  #card.peek .ctmap,#card.peek #cardExp{display:none}
+}
+/* favorites heart, badges, directions/compare, near-me button */
+.ctfav{font-size:19px;color:#c62828}
+.ctfav.on{background:#fdecea}
+.nbdg{display:inline-block;font:800 10.5px/1 system-ui,sans-serif;padding:3px 6px;border-radius:6px;margin-right:6px;vertical-align:1px;letter-spacing:.2px}
+.nbdg.new{background:#e8f5e9;color:#1b5e20;border:1px solid #a5d6a7}
+.nbdg.cut{background:#fff3e0;color:#b45309;border:1px solid #fcd34d}
+.nbline{font-size:13px;margin:4px 0 8px;padding:6px 10px;background:#f6faf6;border-radius:8px}
+.gpsbtn{position:fixed;z-index:1000;right:8px;bottom:calc(76px + env(safe-area-inset-bottom));height:34px;padding:0 12px;border-radius:17px;border:0;background:#fff;color:var(--ink);
+  font:700 13px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;box-shadow:0 2px 8px #0005;cursor:pointer;touch-action:manipulation}
+html.cardfull .gpsbtn{visibility:hidden}
+.tmx{border-top:1px solid var(--line);margin-top:4px;padding-top:4px}
+#toast a{color:#9be7ea;font-weight:700}
+.medot{width:16px;height:16px;border-radius:50%;background:#1e88e5;border:3px solid #fff;box-shadow:0 0 0 2px #1e88e580,0 1px 6px #0006}
+/* compare table */
+.cmpwrap{overflow-x:auto;margin:8px -16px;padding:0 16px;-webkit-overflow-scrolling:touch}
+.cmpt{border-collapse:collapse;font-size:13px;min-width:100%}
+.cmpt th,.cmpt td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;min-width:96px}
+.cmpt th{color:var(--muted);font-weight:600;min-width:84px;position:sticky;left:0;background:#fff}
+.cmpt td.best{background:#e8f5e9;font-weight:700}
+.cmpt img{width:100%;max-width:140px;height:80px;object-fit:cover;border-radius:6px}
+.xact{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.xact .btn{min-height:38px;text-decoration:none;display:inline-flex;align-items:center}
+.xh{font-weight:700;margin:14px 0 4px}
+.nrow{display:flex;justify-content:space-between;gap:8px}
+.ctb.ctfav[hidden]{display:none}

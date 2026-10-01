@@ -5,6 +5,7 @@ Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which 
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
 ## 2026-10-01
+- 18:32 ET: Phone features: peek-bar bottom sheet (fixes the small county-fit strip), Favorites with share link, Near me (GPS), Directions on every card, New / ↓ Price badges since the last visit, Compare 2–3 homes, installable PWA, offline service worker. Repo: CHANGELOG.md + AGENTS.md; publish.sh takes a commit message, adds CHANGELOG entries, pulls before work and push, and scans for secrets before every push
 - 17:50: **Double tap toggles zoom.** Leaflet's double-click zoom is off. Zoomed in → flies out to the statewide start view; at or near the start view → zooms in on the tapped spot (fits the county under it, else zoom 10). Mouse double-click does the same. Single taps wait 250 ms, so a double tap never opens a card. Each double-tap zoom is its own Back step.
 - 17:04: **Profiles P1–P4.** "All / Bill / P2–P4" pills top-left. Each has a settings panel with Housing, Jobs, Area/commute and Layers filters. Profiles are saved in the browser and filter pins, Top 10s, county counts and lists. Share link: `#profile=`. Lazy-loaded (`profiles.js` + `data/pf.js`).
 - 17:04: **Solo layer buttons** (right-hand stack): Jobs, 5+ ac, 1+ ac, Near-hospital, Bargain, Biz, Odd buildings, Sights, School, All. Each shows only that kind at every zoom (trauma centers, airports and cities stay). Grid clusters appear when more than 250 are in view while zoomed out.
