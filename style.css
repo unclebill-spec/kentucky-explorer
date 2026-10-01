@@ -324,3 +324,45 @@ a.stat.tap:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
 @media (max-width:370px){.topbub{font-size:10.3px}.topbub .tbt small{font-size:9px}}
 .topmenu .tbi svg[viewBox="0 0 36 22"]{width:32px;height:20px}
 .cardload{padding:28px 6px;color:var(--muted);font-weight:600}
+/* card header tools: share · expand · close (sticky, overlay the top-right corner; take no height) */
+.cardtools{position:sticky;top:0;z-index:6;height:0;display:flex;justify-content:flex-end;align-items:flex-start;gap:6px;padding:0 8px 0 0;overflow:visible;pointer-events:none}
+.cardtools .ctb{pointer-events:auto;margin-top:7px;width:38px;height:38px;flex:0 0 38px;border-radius:50%;border:0;background:#fffffff0;box-shadow:0 1px 5px #0003;font-size:20px;line-height:1;color:#123642;display:flex;align-items:center;justify-content:center;padding:0;-webkit-tap-highlight-color:transparent;cursor:pointer}
+.cardtools .ctb:active{transform:scale(.94)}
+.cardtools .ctb svg{fill:currentColor}
+.cardtools .cardx{position:static;float:none;font-size:26px;color:#123642}
+.cardtools .ctmap{display:none;width:auto;flex:0 0 auto;border-radius:19px;padding:0 13px;font-size:14px;font-weight:700;background:var(--accent);color:#fff}
+#cardBody h2{margin-right:4px}
+#cardBody>.kicker:first-child,#cardBody>.gfrom:first-child{margin-right:136px}
+#cardBody>.thumb:first-child,#cardBody>.gal:first-child{margin-top:8px}
+#card.tall #cardShare{display:none}
+.gbar{padding-right:100px}
+/* full-screen card */
+#card.full{top:0;left:0;right:0;bottom:0;width:auto;max-height:none;height:100%;border-radius:0;z-index:2500;box-shadow:none;padding-bottom:env(safe-area-inset-bottom)}
+#card.full .grab{display:none}
+#card.full .ctmap{display:flex}
+#card.full #cardBody{max-width:880px;margin:0 auto;padding:6px 18px 48px}
+#card.full .gbar{margin:0 -18px;padding-right:250px}
+#card.full .gal{margin:8px -18px 4px;padding:0}
+#card.full .gal img{flex:0 0 100%;height:min(62vh,600px);border-radius:0}
+#card.full .thumb img,#card.full .thumbbtn img{max-height:min(62vh,600px)}
+#card.full #cardBody h2{font-size:23px}
+#card.full #cardBody>.kicker:first-child,#card.full #cardBody>.gfrom:first-child{margin-right:250px}
+@media (max-width:520px){#card.full .gbar{padding-right:16px;margin-top:52px}#card.full #cardBody>.kicker:first-child,#card.full #cardBody>.gfrom:first-child{margin-right:0;margin-top:52px}#card.full #cardBody>.thumb:first-child,#card.full #cardBody>.gal:first-child{margin-top:52px}}
+html.cardfull #map,html.cardfull #topbar,html.cardfull #mapKey,html.cardfull .topbtn{visibility:hidden}
+/* bigger invisible hit area on every map pin (>= 44x44 px) without changing how it looks */
+.leaflet-marker-icon:not(.topbub-wrap)::before{content:"";position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%}
+/* tap chooser (two or more pins about equally close) */
+.tappop .leaflet-popup-content{margin:8px 8px 6px}
+.tapch-h{font:700 12px/1.2 system-ui,sans-serif;color:#56707a;margin:0 26px 6px 4px;text-transform:uppercase;letter-spacing:.04em}
+.tapch button{display:flex;align-items:center;gap:9px;width:100%;min-height:44px;border:0;border-top:1px solid #e3eaec;background:none;padding:6px 4px;text-align:left;font:600 14px/1.25 system-ui,sans-serif;color:#123642;cursor:pointer}
+.tapch button:active{background:#e3f0f0}
+.tcico{flex:0 0 30px;display:flex;justify-content:center}
+.tcico .mk{position:static;transform:none!important;animation:none}
+.tct small{display:block;font-weight:500;color:#6b8088;font-size:12px}
+/* 5 largest cities: tiny skyscraper + population, under every other pin, at every zoom */
+.mk.city{background:none;border:0;box-shadow:none;border-radius:0;width:12px;height:16px;filter:drop-shadow(0 1px 1px #0007)}
+.plab.city{left:13px;top:1px;font:800 9.5px/13px system-ui,-apple-system,sans-serif;color:#263238;padding:0 4px;border-radius:3px;box-shadow:0 1px 2px #0005;background:#ffffffe8}
+.z-vlow .plab.city,.z-low .plab.city{display:block}
+.z-low .mk.city,.z-vlow .mk.city{transform:none}
+.kcity{position:relative;display:inline-block;width:44px;height:18px}
+.kcity .plab.city{top:2px}
