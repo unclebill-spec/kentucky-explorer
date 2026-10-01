@@ -239,14 +239,14 @@ a.stat.tap:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
 .mk.apt{background:#0d47a1;border-radius:8px;font-size:15px}
 .mk.apt.oos{background:#546e7a}
 .mk.apt.ga{background:#90a4ae}
-.mk.biz{background:#e65100;border-radius:6px;font-size:13px}
+.mk.biz{background:#1b5e20;color:#69f0ae;border-radius:6px;font-size:15px;font-weight:900;font-family:system-ui,-apple-system,sans-serif}
 .mk.bldg{background:#8e244d;border-radius:6px;font-size:13px}
 .mk.att{border-radius:7px;font-size:13px}
 .mk.at-camp{background:#5b7f1f}.mk.at-aquarium{background:#00838f}.mk.at-museum{background:#3949ab}.mk.at-amusement{background:#c2185b}.mk.at-water{background:#0288d1}
 .plab{position:absolute;left:25px;top:4px;background:#fff;color:#222;font:700 10.5px/15px system-ui,-apple-system,sans-serif;padding:0 5px 0 6px;border-radius:3px 8px 8px 3px;box-shadow:0 1px 3px #0006;white-space:nowrap;pointer-events:none}
 .plab.apt{color:#0d47a1;top:6px;left:28px;border-radius:4px}
-.plab.biz{color:#bf360c;border-left:3px solid #e65100}
-.plab.bldg{color:#8e244d;border-left:3px solid #8e244d}
+.plab.biz{color:#1b5e20;border-left:3px solid #1b5e20}
+.plab.bldg{color:#2e7d32;border-left:3px solid #2e7d32}
 .z-vlow .plab{display:none}
 /* zoomed out: always-on icons (hospitals, airports, museums, aquarium, standouts) stay readable but compact */
 .z-low .mk.trauma{transform:scale(.7)}
@@ -263,3 +263,15 @@ a.stat.tap:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
 .z-low .plab.biz,.z-low .plab.bldg{display:none}
 .z-low .mk.stout{transform:scale(.72)}
 .z-vlow .mk.stout{transform:scale(.52)}
+
+/* ---- SVG glyph pins (houses, bargain/building stars, school caps, diplomas, outdoor, nursing cross, nurse's cap) ---- */
+.mk.sv{background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;filter:drop-shadow(0 1px 1.2px #000b)}
+.mk.sv svg{display:block;overflow:visible}
+.mk.sv.stout{filter:drop-shadow(0 0 1.6px #ffc400) drop-shadow(0 0 1.6px #ffc400) drop-shadow(0 1px 1px #0009)}
+.ksym .mk.sv{width:auto!important;height:auto!important;display:inline-flex}
+.mk.tjc{transform:none}
+.z-vlow .mk.tjc{transform:scale(.85)}
+.note.deal{background:#e3f2fd;border-left:4px solid #1565c0;color:#0d2a4d}
+.kv.nb td{padding:3px 4px;font-size:13px;line-height:1.35;vertical-align:top}
+.kv.nb td:first-child{white-space:nowrap;width:1%}
+.ksym{flex:0 0 auto;min-width:26px}

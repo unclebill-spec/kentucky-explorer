@@ -43,6 +43,43 @@
   (K.counties || []).forEach(x => IDX.county[x.name] = x);
 
   const icon = (cls, html, size = 26) => L.divIcon({ className: "", html: `<div class="mk ${cls}" style="width:${size}px;height:${size}px">${html}</div>`, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
+  // ---- small SVG pin glyphs (phone-legible); G.* return <svg>, sicon() wraps one as a marker, ksv() as a map-key symbol
+  const SVGI = (w, h, body) => `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">${body}</svg>`;
+  const RED_HOUSE = "#d32f2f";
+  const DIPLOMA = `<path d="M3.5 5.5h13v8h-13z" fill="#f6ead0" stroke="#7a5a2b" stroke-width="1.1"/><ellipse cx="3.5" cy="9.5" rx="1.7" ry="4" fill="#e8d3a6" stroke="#7a5a2b" stroke-width="1"/><ellipse cx="16.5" cy="9.5" rx="1.7" ry="4" fill="#e8d3a6" stroke="#7a5a2b" stroke-width="1"/><path d="M9 5.5v8M11 5.5v8" stroke="#c62828" stroke-width="1.7"/><path d="M10 13.2l-2.2 4.3 2.2-1.1 2.2 1.1z" fill="#c62828"/>`;
+  const CAP = (fill, dx = 0) => `<g transform="translate(${dx},0)"><path d="M11 1.5 21.5 6 11 10.5.5 6z" fill="${fill}" stroke="#222" stroke-width="1.1" stroke-linejoin="round"/><path d="M5 8.2v4.3c0 1.6 2.7 2.9 6 2.9s6-1.3 6-2.9V8.2L11 10.8z" fill="${fill}" stroke="#222" stroke-width="1.1"/><path d="M19.5 6.9v5.4" stroke="#222" stroke-width="1.1"/><circle cx="19.5" cy="13" r="1.4" fill="#ffd600" stroke="#222" stroke-width=".7"/></g>`;
+  const G = {
+    house: cross => SVGI(24, 24, `<path d="M12 1.8 23 11.6h-3V22.4H4V11.6H1z" fill="${RED_HOUSE}" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/>` + (cross
+      ? `<rect x="6.6" y="13.2" width="10.8" height="4" rx=".5" fill="#fff"/><rect x="10" y="9.8" width="4" height="10.8" rx=".5" fill="#fff"/>`
+      : `<rect x="10" y="15.4" width="4" height="7" fill="#fff" opacity=".9"/>`)),
+    starDot: fill => SVGI(24, 24, `<circle cx="12" cy="12" r="10.6" fill="${fill}" stroke="#fff" stroke-width="1.8"/><path d="M12 4.4l2.3 4.7 5.2.7-3.8 3.6.9 5.1L12 16l-4.6 2.5.9-5.1-3.8-3.6 5.2-.7z" fill="#ffd600"/>`),
+    cap: fill => SVGI(22, 18, CAP(fill)),
+    diploma: () => SVGI(20, 18, DIPLOMA),
+    univ: () => SVGI(40, 18, DIPLOMA + CAP("#7b1fa2", 18)),
+    tree: () => SVGI(22, 22, `<path d="M11 1 3 12h4l-3 5h14l-3-5h4z" fill="#2e7d32" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/><rect x="9.6" y="17" width="2.8" height="4" fill="#5d4037"/>`),
+    mountain: () => SVGI(22, 22, `<path d="M1 20 8.5 5.5l4 6 3-4.5L21 20z" fill="#8d6e63" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/><path d="M8.5 5.5l2.4 3.6-1.5-.5-.9 1-1-1-1.4.4z" fill="#fff"/>`),
+    lake: () => SVGI(22, 22, `<circle cx="11" cy="11" r="9.8" fill="#1e88e5" stroke="#fff" stroke-width="1.6"/><path d="M4.8 9.3q1.55-1.5 3.1 0t3.1 0 3.1 0 3.1 0M4.8 13.7q1.55-1.5 3.1 0t3.1 0 3.1 0 3.1 0" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>`),
+    cave: () => SVGI(22, 22, `<path d="M1 20 9 5l3.5 5 2.5-3.5L21 20z" fill="#9e9e9e" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/><path d="M7.3 20v-3.4a3.7 3.7 0 0 1 7.4 0V20z" fill="#1b1b1b"/>`),
+    park: () => SVGI(22, 22, `<rect x="1" y="1" width="20" height="20" rx="4" fill="#5d4037" stroke="#fff" stroke-width="1.5"/><path d="M7 3.6 3.4 9.4h2.1l-1.7 2.7h6.4L8.5 9.4h2.1z" fill="#fff"/><rect x="6.4" y="12" width="1.3" height="2.6" fill="#fff"/><path d="M10.8 12.4h7.4M10.4 15.3h8.2M12.6 12.4l-1.7 5.7M16.4 12.4l1.7 5.7" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/>`),
+    tent: () => SVGI(22, 22, `<rect x="1" y="1" width="20" height="20" rx="4" fill="#558b2f" stroke="#fff" stroke-width="1.5"/><path d="M11 4.2 3.6 17.6h14.8z" fill="#fff"/><path d="M11 9.6 8.3 17.6h5.4z" fill="#558b2f"/>`),
+    nurse: () => SVGI(20, 20, `<rect x="1" y="1" width="18" height="18" rx="4.5" fill="#fff" stroke="#c62828" stroke-width="1.6"/><path d="M8 4.3h4v3.7h3.7v4H12v3.7H8V12H4.3V8H8z" fill="#d32f2f"/>`),
+    nurseCap: (txt, ring) => SVGI(36, 22, `<path d="M2.5 20 5.6 5.2Q18 .6 30.4 5.2L33.5 20z" fill="#fff" stroke="${ring}" stroke-width="2.2" stroke-linejoin="round"/><text x="18" y="16.4" text-anchor="middle" font-size="11" font-weight="800" fill="#1a1a1a" font-family="system-ui,-apple-system,Segoe UI,sans-serif">${txt}</text>`),
+  };
+  const sicon = (cls, svg, w, h) => L.divIcon({ className: "", html: `<div class="mk sv ${cls}" style="width:${w}px;height:${h}px">${svg}</div>`, iconSize: [w, h], iconAnchor: [w / 2, h / 2] });
+  const ksv = svg => `<span class="mk sv">${svg}</span>`;
+  // outdoor glyph: campground > cave > park sign > lake / mountain / tree keyword heuristic; non-outdoor kinds keep their emoji
+  function outdoorGlyph(a) {
+    const n = a.name || "", k = a.kind || "";
+    if (k === "Distillery" || k === "Attraction") return null;
+    if (/campground|\brv\b|camp ?site/i.test(n)) return "tent";
+    if (k === "Cave" || /\bcaves?\b|cavern/i.test(n)) return "cave";
+    if (/^Park/.test(k) && /\bpark\b|recreation area/i.test(n) && !/wildlife management|forest/i.test(n)) return "park";
+    if (k === "Waterfall") return "lake";
+    if (k === "Natural arch") return "mountain";
+    if (/lake|river|falls|spring|creek|pond|reservoir|\bfork\b|branch|\bdam\b|marina|landing/i.test(n)) return "lake";
+    if (/gorge|peak|mountain|\bmtn\b|knob|overlook|ridge|bluff|\brock|cliff|arch|bridge|summit|pinnacle|\bgap\b|\btop\b|point|breaks|hollow/i.test(n)) return "mountain";
+    return "tree";
+  }
 
   // ------------------------------------------------------------------ county choropleth
   const metrics = (K.meta && K.meta.metrics) || [];
@@ -164,7 +201,7 @@
   const sqft = v => v ? Math.round(v).toLocaleString() : "—";
   NHOMES.forEach(p => {
     if (p.lat == null || p.lon == null) return;
-    const mk = L.marker([p.lat, p.lon], { icon: icon("nh", "<i>🏠</i>", 26), zIndexOffset: 1600, title: p.title });
+    const mk = L.marker([p.lat, p.lon], { icon: p.bargain ? sicon("barg", G.starDot("#1565c0"), 24, 24) : sicon("hs nhh", G.house(true), 24, 24), zIndexOffset: p.bargain ? 3500 : 1600, title: p.title });
     mk.bindTooltip(`🏥 ${esc(p.title)}${p.price ? " · " + money(p.price) : ""} · ${sqft(p.sqft)} sq ft · ${esc(p.beds)} bd/${esc(p.baths)} ba${p.nh ? ` · ~${esc(p.nh.minutes_free_flow)} min to ${esc(p.nh.name)}` : ""}`);
     nhMk[p.id] = mk; reg("property", p.id, mk).addTo(L_nh);
   });
@@ -173,7 +210,7 @@
   HOMES.forEach(p => {
     if (p.lat == null || p.lon == null) return;
     const approx = p.precision === "town", feat = p.standout && p.standout.length;
-    const mk = L.marker([p.lat, p.lon], { icon: icon("home" + (feat ? " feat" : "") + (approx ? " approx" : ""), "<i>🏠</i>", 26), zIndexOffset: 1500, title: p.title });
+    const mk = L.marker([p.lat, p.lon], { icon: p.bargain ? sicon("barg", G.starDot("#1565c0"), 24, 24) : sicon("hs", G.house(false), 22, 22), zIndexOffset: p.bargain ? 3500 : 1500, title: p.title });
     mk.bindTooltip(`🏠 ${esc(p.title)}${p.price ? " · " + money(p.price) : ""}${p.acres ? " · " + p.acres + " ac" : ""}${p.beds ? " · " + esc(p.beds) + " bd/" + esc(p.baths) + " ba" : ""}`);
     homeMk[p.id] = mk; reg("property", p.id, mk).addTo(L_homes);
   });
@@ -181,29 +218,31 @@
     if (p.lat == null || p.lon == null) return;
     const star = p.standout && p.standout.length;
     const approx = p.precision === "town";
-    const ic = star ? icon("star" + (approx ? " approx" : ""), "★", 34) : icon("prop" + (approx ? " approx" : ""), "<i>⌂</i>", 28);
-    const mk = L.marker([p.lat, p.lon], { icon: ic, zIndexOffset: star ? 2000 : 1000, title: p.title });
+    const ic = p.bargain ? sicon("barg", G.starDot("#1565c0"), 24, 24) : sicon("hs", G.house(false), 22, 22);
+    const mk = L.marker([p.lat, p.lon], { icon: ic, zIndexOffset: p.bargain ? 3500 : star ? 2000 : 1000, title: p.title });
     mk.bindTooltip(`${esc(p.title)}${p.price ? " · " + money(p.price) : ""}${p.acres ? " · " + p.acres + " ac" : ""}${star ? " ★ " + esc(p.standout.join(", ")) : ""}`);
     reg("property", p.id, mk).addTo(L_props);
   });
   (K.hospitals || []).forEach(h => {
     const tr = h.trauma;
     const lv = tr ? (tr.match(/Level (I{1,3}V?|IV)/) || [0, ""])[1] + (/Pediatric/.test(tr) ? "P" : "") : "";
-    const mk = L.marker([h.lat, h.lon], { icon: tr ? icon("trauma", lv, 28) : icon("hosp" + (h.kind === "general" ? "" : " spec"), "+", h.kind === "general" ? 22 : 18), zIndexOffset: tr ? 500 : 0, title: h.name, opacity: h.kind === "general" ? 1 : 0.75 });
+    const mk = L.marker([h.lat, h.lon], { icon: tr ? icon("trauma", lv, 28) : sicon("hosp" + (h.kind === "general" ? "" : " spec"), G.nurse(), h.kind === "general" ? 20 : 17, h.kind === "general" ? 20 : 17), zIndexOffset: tr ? 500 : 0, title: h.name, opacity: h.kind === "general" ? 1 : 0.75 });
     mk.bindTooltip(esc(h.name) + (tr ? " — Trauma " + esc(tr) : h.kind !== "general" ? " (specialty)" : ""));
     reg("hospital", h.id, mk).addTo(tr ? L_trauma : L_hosp);
   });
   (K.schools || []).forEach(s => {
-    const mk = L.circleMarker([s.lat, s.lon], { radius: 6, weight: 1.5, color: "#fff", fillColor: SCOLOR[s.rating] || "#9e9e9e", fillOpacity: 0.95 });
+    const mk = L.marker([s.lat, s.lon], { icon: sicon("sch", G.cap(SCOLOR[s.rating] || "#9e9e9e"), 22, 18), title: s.name });
     mk.bindTooltip(`${esc(s.name)}${s.rating ? " — " + esc(s.rating) : ""}`);
     reg("school", s.id, mk).addTo(L_sch);
   });
   (K.colleges || []).forEach(c => {
-    const mk = L.marker([c.lat, c.lon], { icon: icon("col", "🎓", 24), title: c.name });
+    const cc = /community|technical|trade|beauty/i.test(c.kind || "");
+    const mk = L.marker([c.lat, c.lon], { icon: cc ? sicon("col", G.diploma(), 20, 18) : sicon("col", G.univ(), 40, 18), title: c.name });
     mk.bindTooltip(esc(c.name)); reg("college", c.id, mk).addTo(L_col);
   });
   (K.activities || []).forEach(a => {
-    const mk = L.marker([a.lat, a.lon], { icon: icon("act", ACTI[a.kind] || "★", 24), title: a.name });
+    const og = outdoorGlyph(a);
+    const mk = L.marker([a.lat, a.lon], { icon: og ? sicon("act og-" + og, G[og](), 22, 22) : icon("act", ACTI[a.kind] || "★", 24), title: a.name });
     mk.bindTooltip(`${esc(a.name)} (${esc(a.kind)})`); reg("activity", a.id, mk).addTo(L_act);
   });
   (K.history || []).forEach(h => {
@@ -218,7 +257,8 @@
   const L_travel = L.layerGroup();
   const tjPay = j => j.lo != null && j.lo !== j.hi ? `${money(j.lo)}–${money(j.hi).slice(1)}` : money(j.hi);
   const tjK = v => "$" + (v / 1000).toFixed(1) + "k";
-  const tjIcon = h => L.divIcon({ className: "", html: `<div class="mk tj${h.band === 2 ? " dk" : ""}" style="background:${RAMP[h.band] || RAMP[4]}">${tjK(h.top)}</div>`, iconSize: [44, 22], iconAnchor: [22, 11] });
+  const capK = v => (Math.round(v / 100) / 10).toFixed(1);  // $1,180 -> 1.2 (thousands, nearest $100)
+  const tjIcon = h => L.divIcon({ className: "", html: `<div class="mk sv tjc" style="width:36px;height:22px">${G.nurseCap(capK(h.top), RAMP[h.band] || RAMP[4])}</div>`, iconSize: [36, 22], iconAnchor: [18, 11] });
   TJ.hospitals.forEach(h => {
     IDX.travel[h.id] = h;
     const mk = L.marker([h.lat, h.lon], { icon: tjIcon(h), zIndexOffset: 2500 + Math.round(h.top / 10), title: h.name });
@@ -257,7 +297,7 @@
     { key: "hosp", label: "Other hospitals", layer: L_hosp, on: true, n: (K.hospitals || []).filter(h => !h.trauma).length },
     { key: "travel", label: "💼 Travel nurse assignments (by weekly pay)", layer: L_travel, on: false, n: TJ_ALL.length || null, disabled: !TJ.hospitals.length, note: TJ.hospitals.length ? "" : " (no data)" },
     { key: "sch", label: "Schools (KDE color rating)", layer: L_sch, on: false, n: (K.schools || []).length },
-    { key: "col", label: "Colleges & universities", layer: L_col, on: false, n: (K.colleges || []).length },
+    { key: "col", label: "Colleges & universities", layer: L_col, on: true, n: (K.colleges || []).length },
     { key: "act", label: "Activities & outdoors", layer: L_act, on: false, n: (K.activities || []).length },
     { key: "hist", label: "History", group: true },
     { key: "h_hist", label: "🏛 Historic sites & landmarks", layer: L_hist.historic, on: false, n: nHist("historic"), sub: true },
@@ -340,25 +380,25 @@
   const mk = (cls, html, size, extra = "") => `<span class="mk ${cls}" style="width:${size}px;height:${size}px;${extra}">${html}</span>`;
   const krow = (sym, label, note) => `<div class="krow"><span class="ksym">${sym}</span><span>${label}${note ? `<span class="small"> ${note}</span>` : ""}</span></div>`;
   const PIN_KEY = {
-    props: () => `<div class="ksec"><b>★ Notable properties</b> <span class="small">(5+ acres)</span>${krow(mk("star", "★", 22), "Standout property", "(cave, stream/creek, waterfall or backcountry)")}
-      ${krow(mk("prop", "<i>⌂</i>", 20), "Other land listing")}${krow(mk("prop approx", "<i>⌂</i>", 20), "Dashed outline = approximate pin", "(town center)")}</div>`,
+    props: () => `<div class="ksec"><b>Home + 5 acres or more</b> <span class="small">(5+ acres, 2+ bd / 2+ ba, up to $500k)</span>${krow(ksv(G.house(false)), "Red house = home on land", "(5-acre and 1-acre searches)")}</div>`,
+    bargain: () => `<div class="ksec"><b>⭐ Bargain homes</b>${krow(ksv(G.starDot("#1565c0")), "Meets every criterion and is priced well below nearby listings", "· shown at every zoom; the card says why")}</div>`,
     homes: () => `<div class="ksec"><b>🏠 Homes</b> <span class="small">(1+ acre, 3+ bd, 2+ full ba, ≤ $425k, active)</span>
-      ${krow(mk("home", "<i>🏠</i>", 20), "Home listing", "(teal)")}${krow(mk("home feat", "<i>🏠</i>", 20), "Gold ring = creek/stream, cave, waterfall or backcountry")}
+      ${krow(ksv(G.house(false)), "Home on 1+ acre", "(red house)")}
       ${hf.maxp || hf.mina ? `<div class="small">Filter on: ${hf.maxp ? "≤ " + money(hf.maxp) : ""}${hf.maxp && hf.mina ? ", " : ""}${hf.mina ? hf.mina + "+ acres" : ""} · <button type="button" class="linkbtn" data-openlayers="1">change</button></div>` : ""}</div>`,
     nh: () => `<div class="ksec"><b>🏥 Near-hospital homes</b> <span class="small">(1,600+ sq ft, 3+ bd, 2+ full ba, under $325k, active, good condition, ≤ 10 min free-flow to a hospital with a 24/7 ER of 10+ beds)</span>
-      ${krow(mk("nh", "<i>🏠</i>", 20), "Near-hospital home", "(blue; houses, townhomes and condos)")}
+      ${krow(ksv(G.house(true)), "Near-hospital home", "(red house with a white nursing cross; houses, townhomes, condos)")}
       ${nfText() ? `<div class="small">Filter on: ${esc(nfText())} · <button type="button" class="linkbtn" data-openlayers="1">change</button></div>` : ""}</div>`,
     trauma: () => `<div class="ksec"><b>Trauma centers</b> <span class="small">(KYHA Jan 2026 + border centers)</span>
       ${krow(mk("trauma", "I", 22), "Level I", "(highest: UK, UofL, Cincinnati, Vanderbilt, Knoxville)")}${krow(mk("trauma", "II", 22), "Level II", "(Pikeville, Evansville, Huntington)")}
       ${krow(mk("trauma", "III", 22), "Level III")}${krow(mk("trauma", "IV", 22), "Level IV", "(stabilize & transfer)")}${krow(mk("trauma", "IP", 22), "Pediatric Level I", "(Norton Children's)")}</div>`,
-    travel: () => `<div class="ksec"><b>💼 Travel nurse assignments</b> <span class="small">(pin = hospital, colored by its top weekly pay, best → lowest)</span>
+    travel: () => `<div class="ksec"><b>💼 Travel nurse assignments</b> <span class="small">(white nurse's cap at the hospital = its top weekly pay in $1,000s, e.g. 2.4 = $2,400/wk; outline color = pay band)</span>${krow(ksv(G.nurseCap("2.4", RAMP[0])), "Top pay $2,400/week")}
       ${TJB.map((b, i) => `<div class="kband"><span class="sw" style="background:${RAMP[i]}"></span><span class="kl">${esc(b.label)}</span><span class="kr small">${i === 0 ? "per week" : ""}</span><span class="kn">${b.n}</span></div>`).join("")}
       ${TJ_NOTE()}<div class="kbtns"><a class="linkbtn" href="#travel=all">📋 All ${TJ_ALL.length} jobs ranked by pay</a></div></div>`,
-    hosp: () => `<div class="ksec"><b>Other hospitals</b>${krow(mk("hosp", "+", 18), "General / acute-care hospital")}${krow(mk("hosp", "+", 14, "opacity:.75"), "Specialty (psychiatric, rehab, long-term)", "· hidden when zoomed out")}</div>`,
+    hosp: () => `<div class="ksec"><b>Other hospitals</b>${krow(ksv(G.nurse()), "Hospital (not a trauma center)", "· nursing cross; shown from zoom 9")}</div>`,
     sch: () => `<div class="ksec"><b>Schools</b> <span class="small">(KDE 2025 rating, best → lowest)</span>
-      ${["Blue", "Green", "Yellow", "Orange", "Red"].map(r => krow(`<span class="kdot" style="background:${SCOLOR[r]}"></span>`, r)).join("")}${krow('<span class="kdot" style="background:#9e9e9e"></span>', "Not rated")}</div>`,
-    col: () => `<div class="ksec"><b>Colleges</b>${krow(mk("col", "🎓", 20), "College, university or trade school", "(NCES)")}</div>`,
-    act: () => `<div class="ksec"><b>Activities & outdoors</b><div class="kgrid">${Object.entries(ACTI).map(([k, e]) => krow(mk("act", e, 20), esc(k))).join("")}</div></div>`,
+      <div class="kgrid">${["Blue", "Green", "Yellow", "Orange", "Red"].map(r => krow(ksv(G.cap(SCOLOR[r])), r)).join("")}${krow(ksv(G.cap("#9e9e9e")), "Not rated")}</div></div>`,
+    col: () => `<div class="ksec"><b>Colleges</b> <span class="small">(NCES)</span>${krow(ksv(G.univ()), "College or university")}${krow(ksv(G.diploma()), "Community / technical college or trade school", "(KCTCS etc.)")}</div>`,
+    act: () => `<div class="ksec"><b>Activities & outdoors</b><div class="kgrid">${krow(ksv(G.park()), "Park (state, national, city, county)")}${krow(ksv(G.tent()), "Campground")}${krow(ksv(G.cave()), "Cave")}${krow(ksv(G.mountain()), "Gorge, peak, arch, overlook")}${krow(ksv(G.lake()), "Lake, river, waterfall, spring")}${krow(ksv(G.tree()), "Forest, trail, wildlife area")}${krow(mk("act", ACTI.Distillery, 20), "Distillery")}${krow(mk("act", ACTI.Attraction, 20), "Zoo / attraction")}</div></div>`,
     h_hist: () => krow(mk("hist h-historic", HIST.historic[0], 20), "Historic site / National Historic Landmark"),
     h_coal: () => krow(mk("hist h-coal_camp", HIST.coal_camp[0], 20), "Historic coal camp"),
     h_ghost: () => krow(mk("hist h-ghost_town", HIST.ghost_town[0], 20), "Ghost town"),
@@ -382,9 +422,10 @@
     if (on("cty")) h += countyKey(scaleFor(curMetric), "Counties colored by");
     if (on("sweet")) h += countyKey(scaleFor(sweetKey), "Sweet-spot layer");
     if (!on("cty") && !on("sweet")) h += `<div class="ksec small">County coloring is off. Turn on “Counties” in Layers to color by the Appeal score.</div>`;
-    const pinKeys = ["props", "homes", "nh", "biz", "bldg", "travel", "trauma", "hosp", "apt", "feat", "sch", "col", "act"].filter(k => PIN_KEY[k]), histKeys = ["h_hist", "h_coal", "h_ghost", "h_mine"];
+    const pinKeys = ["props", "homes", "nh", "bargain", "biz", "bldg", "travel", "trauma", "hosp", "apt", "feat", "sch", "col", "act"].filter(k => k === "bargain" ? (K.properties || []).some(p => p.bargain) : PIN_KEY[k]), histKeys = ["h_hist", "h_coal", "h_ghost", "h_mine"];
     const atKeys = (MORE_ATT_KEYS || []).filter(k => PIN_KEY[k]), aOn = atKeys.filter(on), aOff = atKeys.filter(k => !on(k));
-    const active = pinKeys.filter(on), off = pinKeys.filter(k => !on(k));
+    const onK = k => k === "bargain" ? on("homes") || on("nh") || on("props") : on(k);
+    const active = pinKeys.filter(onK), off = pinKeys.filter(k => !onK(k));
     h += active.map(k => PIN_KEY[k]()).join("");
     const hOn = histKeys.filter(on), hOff = histKeys.filter(k => !on(k));
     if (hOn.length) h += `<div class="ksec"><b>History</b>${hOn.map(k => PIN_KEY[k]()).join("")}</div>`;
@@ -473,6 +514,14 @@
       <figcaption class="attr">${sat ? "Satellite view · " : ""}${esc(t.c || "")}${src}</figcaption></figure>`;
   }
   const R = {};
+  function nearbyBlock(nb) {
+    if (!nb) return "";
+    const H = h => h ? `${link("hospital", h.id, h.n)} · ${h.min != null ? `<b>~${esc(h.min)} min</b> <span class="small">drive (${esc(h.src || "OSRM")})</span>` : `<b>~${fmt1(h.rd)} road mi</b> <span class="small">approx (${fmt1(h.mi)} mi straight-line × 1.3)</span>`}${h.tr ? " · " + esc(h.tr) : ""}${h.er ? ` · ${esc(h.er)} ER beds` : h.erl ? ` · ER ${esc(h.erl)}` : ""}` : null;
+    const P = (nb.poi || []).map(q => `${link(q.t, q.id, q.n)} <span class="small">${fmt1(q.mi)} mi</span>`).join("<br>");
+    const S = lv => { const x = (nb.s || {})[lv]; return x ? `${link("school", x.id, x.n)} ${rbadge(x.r)}${x.d != null ? ` <span class="small">${x.d >= 0 ? "+" : ""}${fmt1(x.d)} pts vs KY avg</span>` : ""} <span class="small">· ${fmt1(x.mi)} mi</span>` : null; };
+    return `<div class="kicker">Nearby</div><table class="kv nb">${row("🏥 Hospital", H(nb.h))}${nb.t && (!nb.h || nb.t.id !== nb.h.id) ? row("🚑 Level I/II", H(nb.t)) : ""}${row("📍 Places", P || null)}${row("🎓 Elementary", S("ES"))}${row("🎓 Middle", S("MS"))}${row("🎓 High", S("HS"))}</table>`;
+  }
+  const dealNote = p => p.bargain ? `<div class="note deal">⭐ <b>Bargain:</b> ${esc(p.deal || "")}</div>` : "";
   R.property = p => {
     const photos = p.photos || [];
     const gal = photos.length ? `<div class="gal" id="gal">${photos.map((u, i) => `<img src="${esc(u)}" data-i="${i}" loading="${i < 2 ? "eager" : "lazy"}" alt="Photo ${i + 1} of ${esc(p.title)}">`).join("")}</div><div class="galcount">${photos.length} photo${photos.length > 1 ? "s" : ""} · swipe or tap to enlarge</div>` : "";
@@ -492,6 +541,7 @@
       ${p.pending ? '<div class="note">Listing details are still being collected (listings.json not ready when this map was built). Re-run build.py to fill in price, acreage and the exact location.</div>' : ""}
       <div class="stats">${stat(money(p.price), "price")}${stat(p.acres != null ? fmt1(p.acres) : "—", "acres")}${stat(ppa || "—", "per acre")}
         ${stat(`${p.beds != null ? esc(p.beds) : "—"} / ${p.baths != null ? esc(p.baths) : "—"}`, "bed / bath")}${home ? stat(p.sqft ? Math.round(p.sqft).toLocaleString() : "—", "sq ft") + stat(p.year_built ? esc(p.year_built) : "—", "built") : stat(p.dwellings != null ? esc(p.dwellings) : "—", "dwellings")}${stat(esc(p.seen || "—"), "date seen")}</div>
+      ${dealNote(p)}${nearbyBlock(p.nearby)}
       ${home ? `<table class="kv">${row("Address", p.address ? esc(p.address) : null)}${row("Baths", p.bath_detail ? esc(p.bath_detail) : null)}${row("Dwellings", p.dwellings ? esc(p.dwellings) : null)}</table>` : ""}
       ${p.notes ? `<div class="note">⚠️ ${esc(p.notes)}</div>` : ""}
       ${p.water && p.water.length ? `<div class="kicker">Water & cave features</div><div class="badges">${p.water.map(w => `<span class="badge">💧 ${esc(w)}</span>`).join("")}</div>` : ""}
@@ -517,7 +567,7 @@
         <br><span class="small">${esc(fmt1(nh.miles))} mi · free-flow drive, no traffic (OSRM)${nh.gmaps_check ? " · " + esc(nh.gmaps_check) : ""}</span><br>🚑 ${er}${nh.source_url ? ` · <a href="${esc(nh.source_url)}" target="_blank" rel="noopener">ER source ↗</a>` : ""}</div></div>` : ""}
       <div class="stats">${stat(money(p.price), "price")}${stat(sqft(p.sqft), "sq ft")}${stat(`${p.beds != null ? esc(p.beds) : "—"} / ${p.baths != null ? esc(p.baths) : "—"}`, "bed / bath")}
         ${stat(esc(p.ptype || "—"), "type")}${stat(p.year_built ? esc(p.year_built) : "—", "built")}${stat(esc(p.seen || "—"), "date seen")}</div>
-      ${p.condition ? `<div class="note good">✅ <b>Condition:</b> ${esc(p.condition)}</div>` : ""}
+      ${dealNote(p)}${p.condition ? `<div class="note good">✅ <b>Condition:</b> ${esc(p.condition)}</div>` : ""}${nearbyBlock(p.nearby)}
       ${p.notes ? `<div class="note">⚠️ ${esc(p.notes)}</div>` : ""}
       <table class="kv">${row("Address", p.address ? esc(p.address) : null)}${row("Type", esc(p.ptype || "House"))}${row("Baths", p.bath_detail ? esc(p.bath_detail) : null)}${row("Lot", p.acres ? fmt1(p.acres) + " acres" : null)}${row("MLS #", p.mls ? esc(p.mls) : null)}</table>
       ${p.features && p.features.length ? `<div class="kicker">Features</div><div class="badges">${p.features.map(w => `<span class="badge">${esc(w)}</span>`).join("")}</div>` : ""}
@@ -926,13 +976,13 @@
       mk.bindTooltip(`✈ ${esc(a.name)} (${esc(a.code)}) · ${a.nonstops ? a.nonstops + " nonstop destinations" : "no scheduled airline service"}`);
       reg("airport", a.id, mk).addTo(L_apt);
     });
-    const saleIcon = (cls, sym, x) => L.divIcon({ className: "", html: `<div class="mk ${cls}" style="width:26px;height:26px">${sym}</div>${x.price ? `<b class="plab ${cls}">${priceK(x.price)}</b>` : ""}`, iconSize: [26, 26], iconAnchor: [13, 13] });
-    BZ.forEach(x => { const mk = L.marker([x.lat, x.lon], { icon: saleIcon("biz", "🏪", x), zIndexOffset: 1200, title: x.title });
+    const saleIcon = (cls, sym, x) => L.divIcon({ className: "", html: `<div class="mk ${cls}" style="width:22px;height:22px">${sym}</div>${x.price ? `<b class="plab ${cls.split(" ")[0]}">${priceK(x.price)}</b>` : ""}`, iconSize: [22, 22], iconAnchor: [11, 11] });
+    BZ.forEach(x => { const mk = L.marker([x.lat, x.lon], { icon: saleIcon("biz", "$", x), zIndexOffset: 1200, title: x.title });
       mk.bindTooltip(`🏪 ${esc(x.title)}${x.price ? " · " + money(x.price) : ""} · ${esc(x.kind)}${x.town ? " · " + esc(x.town) : ""}`); reg("business", x.id, mk).addTo(L_biz); });
-    BD.forEach(x => { const mk = L.marker([x.lat, x.lon], { icon: saleIcon("bldg", "🔔", x), zIndexOffset: 1200, title: x.title });
+    BD.forEach(x => { const mk = L.marker([x.lat, x.lon], { icon: saleIcon("bldg sv", G.starDot("#2e7d32"), x), zIndexOffset: 1200, title: x.title });
       mk.bindTooltip(`🔔 ${esc(x.title)}${x.price ? " · " + money(x.price) : ""}${x.was ? " · was: " + esc(x.was) : ""}${x.town ? " · " + esc(x.town) : ""}`); reg("building", x.id, mk).addTo(L_bldg); });
     AT.forEach(x => { const t = MORE_ATT[x.type]; if (!t) return;
-      const mk = L.marker([x.lat, x.lon], { icon: icon("att at-" + x.type, t[0], 24), zIndexOffset: 100, title: x.name });
+      const mk = L.marker([x.lat, x.lon], { icon: x.type === "camp" ? sicon("att at-camp", G.tent(), 22, 22) : icon("att at-" + x.type, t[0], 24), zIndexOffset: 100, title: x.name });
       mk.bindTooltip(`${t[0]} ${esc(x.name)} (${esc(t[3])})`); reg("attraction", x.id, mk).addTo(L_at[x.type]); });
     const ins = (after, rows) => { const i = LAYERS.findIndex(d => d.key === after); LAYERS.splice(i < 0 ? LAYERS.length : i + 1, 0, ...rows); };
     ins("nh", [{ key: "biz", label: "🏪 Businesses for sale (under $1M)", layer: L_biz, on: true, n: BZ.length, disabled: !BZ.length },
@@ -953,12 +1003,12 @@
   function kyxMorePinKey(PIN_KEY) {
     const mk = (cls, html, size) => `<span class="mk ${cls}" style="width:${size}px;height:${size}px">${html}</span>`;
     const krow = (sym, label, note) => `<div class="krow"><span class="ksym">${sym}</span><span>${label}${note ? `<span class="small"> ${note}</span>` : ""}</span></div>`;
-    PIN_KEY.biz = () => `<div class="ksec"><b>🏪 Businesses for sale</b> <span class="small">(under $1M asking; Crexi &amp; Zillow, seen ${esc((K.businesses || [])[0] ? K.businesses[0].seen : "")})</span>${krow(mk("biz", "🏪", 20), "Business for sale", "· tag beside the pin = asking price")}</div>`;
-    PIN_KEY.bldg = () => `<div class="ksec"><b>🔔 Interesting buildings for sale</b> <span class="small">(under $600k: old churches, banks, schools, stores…)</span>${krow(mk("bldg", "🔔", 20), "Building for sale", "· tag = asking price")}</div>`;
+    PIN_KEY.biz = () => `<div class="ksec"><b>🏪 Businesses for sale</b> <span class="small">(under $1M asking; Crexi &amp; Zillow, seen ${esc((K.businesses || [])[0] ? K.businesses[0].seen : "")})</span>${krow(mk("biz", "$", 20), "Business for sale", "(green $) · tag beside the pin = asking price")}</div>`;
+    PIN_KEY.bldg = () => `<div class="ksec"><b>🔔 Interesting buildings for sale</b> <span class="small">(under $600k: old churches, banks, schools, stores…)</span>${krow(ksv(G.starDot("#2e7d32")), "Unusual building for sale", "(green circle, yellow star) · tag = asking price")}</div>`;
     PIN_KEY.apt = () => `<div class="ksec"><b>✈ Airports</b>${krow(mk("apt", "✈", 20), "Kentucky airport with airline service", "· code beside the pin")}${krow(mk("apt oos", "✈", 20), "Nearby out-of-state airport (BNA, TYS, HTS, EVV, TRI)")}${krow(mk("apt ga", "✈", 20), "No scheduled flights right now")}</div>`;
-    Object.values(MORE_ATT || {}).forEach(([e, label, key]) => { const t = Object.keys(MORE_ATT).find(k => MORE_ATT[k][2] === key); PIN_KEY[key] = () => krow(mk("att at-" + t, e, 20), esc(label)); });
-    PIN_KEY.feat = () => `<div class="ksec"><b>★ Kentucky standouts</b> <span class="small">(a short hand-picked list: big parks, gorges, caves, battlefields, landmark homes, plus the famous museums, Newport Aquarium and Ark Encounter)</span>${krow(mk("act stout", "⛰", 20), "Standout site", "· gold ring, shown at every zoom")}</div>`;
-    PIN_KEY._lod = () => `<div class="ksec small"><b>Zoomed out?</b> Until you zoom in to about one county, everyday pins (homes, land, jobs, schools, colleges, activities, campgrounds, amusement &amp; water parks, minor history) show as faint dots so the county colors stay readable. Airports, businesses &amp; buildings for sale (small icons), the ★ standouts, Level I/II trauma centers and big regional hospitals (200+ licensed beds) always stay as icons; other hospitals are small red dots until zoom 9, and other museums are faint dots until county zoom.</div>`;
+    Object.values(MORE_ATT || {}).forEach(([e, label, key]) => { const t = Object.keys(MORE_ATT).find(k => MORE_ATT[k][2] === key); PIN_KEY[key] = () => krow(t === "camp" ? ksv(G.tent()) : mk("att at-" + t, e, 20), esc(label)); });
+    PIN_KEY.feat = () => `<div class="ksec"><b>★ Kentucky standouts</b> <span class="small">(a short hand-picked list: big parks, gorges, caves, battlefields, landmark homes, plus the famous museums, Newport Aquarium and Ark Encounter)</span>${krow(`<span class="mk sv stout">${G.mountain()}</span>`, "Standout site", "· gold glow; shown from zoom 9")}</div>`;
+    PIN_KEY._lod = () => `<div class="ksec small"><b>Zoomed out?</b> Statewide (zoom 8 and out) the map shows only Level I/II trauma centers, airports, businesses and unusual buildings for sale, and ⭐ bargain homes over the county colors. Zoom 9 adds the ★ standouts and all hospitals; zoom 10 (about one county) brings back everything else.</div>`;
   }
   function kyxMoreLate() {
     const A = K.airports || [], BZ = K.businesses || [], BD = K.buildings || [], AT = K.attractions || [];
@@ -983,7 +1033,7 @@
         <div class="sub">${esc(x.address || [x.town, x.county && x.county + " County"].filter(Boolean).join(", "))}</div>${gal}
         <div class="badges">${x.biz_only ? '<span class="badge">Business only · no real estate</span>' : kind === "business" ? '<span class="badge">Real estate included</span>' : ""}${x.auction ? '<span class="badge gold">Auction</span>' : ""}</div>
         ${x.note ? `<div class="note">⚠️ ${esc(x.note)}</div>` : ""}
-        <div class="stats">${stat(money(x.price), "asking price")}${stat(sqft(x.sqft), "sq ft")}${stat(x.acres ? fmt1(x.acres) : "—", "acres")}${stat(ppsf, "per sq ft")}${stat(x.year_built ? esc(x.year_built) : "—", "built")}${stat(esc(x.seen || "—"), "date seen")}</div>
+        <div class="stats">${stat(money(x.price), "asking price")}${stat(sqft(x.sqft), "sq ft")}${stat(x.acres ? fmt1(x.acres) : "—", "acres")}${stat(ppsf, "per sq ft")}${stat(x.year_built ? esc(x.year_built) : "—", "built")}${stat(esc(x.seen || "—"), "date seen")}</div>${nearbyBlock(x.nearby)}
         <table class="kv">${row(kind === "business" ? "Business" : "What it was", esc(kind === "business" ? x.kind : (x.was || x.kind)))}${row("Address", x.address ? esc(x.address) : null)}
         ${row("County", x.county ? link("county", x.county, x.county + " County") : null)}
         ${row("Nearest hospital", x.near_hosp ? `${link("hospital", x.near_hosp.id, x.near_hosp.name)} · ${x.near_hosp.miles} mi straight-line` : null)}
@@ -1025,9 +1075,10 @@
   // (zoom 11 for schools and minor history). Hospitals, airports, museums, the aquarium and the featured standouts are never dotted.
   // Full icons are only added for the visible area (viewport culling). Each layer's group keeps working for filters (addLayer/removeLayer patched).
   function kyxLOD() {
-    const FULL = { trauma: 9, hosp: 9, a_museum: 10, a_aqua: 10, props: 10, homes: 10, nh: 10, travel: 10, col: 10, act: 10, a_park: 10, a_water: 10, a_camp: 10, sch: 11, h_hist: 11, h_coal: 11, h_ghost: 11, h_mine: 11 };
+    const FULL = { feat: 9, trauma: 9, hosp: 9, a_museum: 10, a_aqua: 10, props: 10, homes: 10, nh: 10, travel: 10, col: 10, act: 10, a_park: 10, a_water: 10, a_camp: 10, sch: 11, h_hist: 11, h_coal: 11, h_ghost: 11, h_mine: 11 };
     const bigHosp = h => /^Level (I|II)(\s|$)/.test(h.trauma || "") || (h.kind === "general" && (h.lic_beds || 0) >= 200);
-    const KEEP = { trauma: bigHosp, hosp: bigHosp };  // always icons even when zoomed out
+    const top12 = h => /^Level (I|II)(\s|$)/.test(h.trauma || ""), barg = p => !!p.bargain;
+    const KEEP = { trauma: top12, props: barg, homes: barg, nh: barg };  // always icons even when zoomed out; everything else is hidden below its FULL zoom
     const DOTSTY = { trauma: [0.75, 0.6, "#c62828"], hosp: [0.75, 0.6, "#c62828"] };  // [fillOpacity, extra radius, color]: hospitals a bit stronger than ordinary dots
     const itemOf = l => { const k = REV.get(l); if (!k) return null; const i = k.indexOf(":"); return (IDX[k.slice(0, i)] || {})[k.slice(i + 1)] || null; };
     const FB = { props: "#e8a317", homes: "#00897b", nh: "#1565c0", travel: "#1a7d3a", biz: "#e65100", bldg: "#8e244d", a_park: "#c2185b", a_water: "#0288d1", a_camp: "#5b7f1f" };
@@ -1075,6 +1126,7 @@
       _dots() {
         const key = this.d.key, fb = FB[key] || "#607d8b", lg = L.layerGroup(), keep = KEEP[key], sty = DOTSTY[key];
         this.g.eachLayer(l => { if (keep) { const it = itemOf(l); if (it && keep(it)) { this._map.addLayer(l); this.shown.add(l); return; } }
+          return;  // hidden below FULL zoom (Bill: hidden preferred over faint dots)
           const cm = L.circleMarker(l.getLatLng(), { renderer: dotR, radius: 2.2, stroke: false, fillColor: sty ? sty[2] : colorOf(l, fb), fillOpacity: sty ? sty[0] : 0.42 });
           const tt = l.getTooltip && l.getTooltip(); if (tt) cm.bindTooltip(tt.getContent());
           cm.on("click", e => { if (e.originalEvent) e.originalEvent._kyxHandled = true; open(l); }); lg.addLayer(cm); });
@@ -1089,7 +1141,7 @@
     // always-icon layers sit above the dots when zoomed out: trauma > hospitals > airports > standouts > museums/aquarium
     const lift = [];
     Object.entries(MARK).forEach(([k, m]) => { if (!m.setZIndexOffset) return; const it = k.split(":"), x = (IDX[it[0]] || {})[k.slice(it[0].length + 1)] || {};
-      const zh = it[0] === "hospital" ? (x.trauma ? 9000 : 8000) : it[0] === "airport" ? 7000 : x.featured ? 6000 : it[0] === "business" || it[0] === "building" ? 5500 : it[0] === "attraction" && (x.type === "museum" || x.type === "aquarium") ? 5000 : 0;
+      const zh = it[0] === "hospital" ? (x.trauma ? 9000 : 8000) : it[0] === "airport" ? 7000 : x.featured ? 6000 : it[0] === "property" && x.bargain ? 6500 : it[0] === "business" || it[0] === "building" ? 5500 : it[0] === "attraction" && (x.type === "museum" || x.type === "aquarium") ? 5000 : 0;
       if (zh) lift.push([m, m.options.zIndexOffset || 0, zh]); });
     let lifted = null;
     const zl = () => { const low = map.getZoom() < 10; if (low === lifted) return; lifted = low; lift.forEach(([m, z0, zh]) => m.setZIndexOffset(low ? zh : z0)); };
