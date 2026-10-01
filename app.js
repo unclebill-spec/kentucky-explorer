@@ -146,7 +146,7 @@
   drawCounties(); drawSweet();
 
   // ------------------------------------------------------------------ point layers
-  const L_props = L.layerGroup(), L_homes = L.layerGroup(), L_hosp = L.layerGroup(), L_trauma = L.layerGroup(), L_sch = L.layerGroup(), L_col = L.layerGroup(), L_act = L.layerGroup();
+  const L_props = L.layerGroup(), L_homes = L.layerGroup(), L_nh = L.layerGroup(), L_hosp = L.layerGroup(), L_trauma = L.layerGroup(), L_sch = L.layerGroup(), L_col = L.layerGroup(), L_act = L.layerGroup();
   const L_hist = {
     mine: L.markerClusterGroup({ maxClusterRadius: 45, showCoverageOnHover: false, iconCreateFunction: cl => L.divIcon({ className: "", html: `<div class="mk h-mine" style="width:30px;height:30px">${cl.getChildCount()}</div>`, iconSize: [30, 30] }) }),
     coal_camp: L.layerGroup(), ghost_town: L.layerGroup(), historic: L.layerGroup()
@@ -157,7 +157,17 @@
 
   function reg(type, id, mk) { MARK[type + ":" + id] = mk; mk.on("click", e => { if (e.originalEvent) e.originalEvent._kyxHandled = true; openItem(type, id, { fly: false }); }); return mk; }
   const isHome = p => p.cat === "1-acre-home";
-  const HOMES = (K.properties || []).filter(isHome), LANDS = (K.properties || []).filter(p => !isHome(p));
+  const isNH = p => p.cat === "near-hospital-home";  // near-hospital homes (blue pins)
+  const HOMES = (K.properties || []).filter(isHome), NHOMES = (K.properties || []).filter(isNH), LANDS = (K.properties || []).filter(p => !isHome(p) && !isNH(p));
+  const nhMk = {};
+  let nf = { maxp: 0, maxm: 0, typ: "" }; try { nf = Object.assign(nf, JSON.parse(localStorage.getItem("kyx_nhfilter") || "{}")); } catch (e) { }
+  const sqft = v => v ? Math.round(v).toLocaleString() : "—";
+  NHOMES.forEach(p => {
+    if (p.lat == null || p.lon == null) return;
+    const mk = L.marker([p.lat, p.lon], { icon: icon("nh", "<i>🏠</i>", 26), zIndexOffset: 1600, title: p.title });
+    mk.bindTooltip(`🏥 ${esc(p.title)}${p.price ? " · " + money(p.price) : ""} · ${sqft(p.sqft)} sq ft · ${esc(p.beds)} bd/${esc(p.baths)} ba${p.nh ? ` · ~${esc(p.nh.minutes_free_flow)} min to ${esc(p.nh.name)}` : ""}`);
+    nhMk[p.id] = mk; reg("property", p.id, mk).addTo(L_nh);
+  });
   const homeMk = {};
   let hf = { maxp: 0, mina: 0 }; try { hf = Object.assign(hf, JSON.parse(localStorage.getItem("kyx_homefilter") || "{}")); } catch (e) { }
   HOMES.forEach(p => {
@@ -242,6 +252,7 @@
   const LAYERS = [
     { key: "props", label: "★ Notable Properties (5+ acres)", layer: L_props, on: true, n: LANDS.length },
     { key: "homes", label: "🏠 Homes (1+ acre, 3bd/2ba, under $425k)", layer: L_homes, on: true, n: HOMES.length, filter: true },
+    { key: "nh", label: "🏥 Near-hospital homes (1,600+ sq ft, 3bd/2ba, under $325k)", layer: L_nh, on: true, n: NHOMES.length, nfilter: true },
     { key: "trauma", label: "Trauma centers", layer: L_trauma, on: true, n: (K.hospitals || []).filter(h => h.trauma).length },
     { key: "hosp", label: "Other hospitals", layer: L_hosp, on: true, n: (K.hospitals || []).filter(h => !h.trauma).length },
     { key: "travel", label: "💼 Travel nurse assignments (by weekly pay)", layer: L_travel, on: false, n: TJ_ALL.length || null, disabled: !TJ.hospitals.length, note: TJ.hospitals.length ? "" : " (no data)" },
@@ -267,9 +278,28 @@
     cb.onchange = () => { setLayer(d, cb.checked); saved[d.key] = cb.checked; localStorage.setItem("kyx_layers", JSON.stringify(saved)); };
     d.cb = cb; ll.appendChild(lab);
     if (d.filter) { d.cnt = lab.querySelector(".cnt"); ll.appendChild(homeFilterEl()); }
+    if (d.nfilter) { d.cnt = lab.querySelector(".cnt"); ll.appendChild(nhFilterEl()); }
     if (on) d.layer.addTo(map);
   });
-  applyHomeFilter();
+  applyHomeFilter(); applyNHFilter();
+  // filter for the Near-hospital homes layer (max price, max drive minutes, house vs townhome/condo); remembered in localStorage
+  function nhFilterEl() {
+    const w = document.createElement("div"); w.className = "hfilter sub"; w.id = "nhFilter";
+    const opt = (vals, cur, f) => vals.map(v => `<option value="${v}" ${String(cur) === String(v) ? "selected" : ""}>${f(v)}</option>`).join("");
+    w.innerHTML = `<label class="hf">Max price <select id="nfPrice">${opt([0, 200000, 250000, 275000, 300000], nf.maxp, v => v ? "$" + v / 1000 + "k" : "Any (<$325k)")}</select></label>
+      <label class="hf">Drive ≤ <select id="nfMin">${opt([0, 5, 7], nf.maxm, v => v ? v + " min" : "10 min")}</select></label>
+      <label class="hf">Type <select id="nfType">${opt(["", "House", "Townhome"], nf.typ, v => v === "Townhome" ? "Townhome/condo" : v || "Any")}</select></label>`;
+    w.querySelectorAll("select").forEach(s => s.onchange = () => { nf = { maxp: +$("#nfPrice").value, maxm: +$("#nfMin").value, typ: $("#nfType").value }; localStorage.setItem("kyx_nhfilter", JSON.stringify(nf)); applyNHFilter(); });
+    return w;
+  }
+  function nhPass(p) { return (!nf.maxp || (p.price != null && p.price <= nf.maxp)) && (!nf.maxm || (p.nh && p.nh.minutes_free_flow <= nf.maxm)) && (!nf.typ || (nf.typ === "House" ? p.ptype === "House" : p.ptype !== "House")); }
+  function applyNHFilter() {
+    let n = 0;
+    NHOMES.forEach(p => { const mk = nhMk[p.id]; if (!mk) return; const ok = nhPass(p) || (current && current.id === p.id); if (ok) { n++; if (!L_nh.hasLayer(mk)) L_nh.addLayer(mk); } else if (L_nh.hasLayer(mk)) L_nh.removeLayer(mk); });
+    const d = LAYERS.find(x => x.key === "nh"); if (d && d.cnt) d.cnt.textContent = n === NHOMES.length ? String(n) : `${n} of ${NHOMES.length}`;
+    if (keyReady) renderKey();
+  }
+  function nfText() { return [nf.maxp && "≤ " + money(nf.maxp), nf.maxm && "≤ " + nf.maxm + " min drive", nf.typ && (nf.typ === "House" ? "houses only" : "townhomes/condos only")].filter(Boolean).join(", "); }
   // simple filter for the Homes layer (max price, min acres); remembered in localStorage
   function homeFilterEl() {
     const w = document.createElement("div"); w.className = "hfilter sub"; w.id = "homeFilter";
@@ -288,7 +318,7 @@
   }
   function setLayer(d, on) { if (on) { d.layer.addTo(map); if (d.key === "cty" || d.key === "sweet") d.layer.eachLayer(l => l.bringToBack && l.bringToBack()); } else map.removeLayer(d.layer); if (d.cb) d.cb.checked = on; renderKey(); }
   function ensureLayerFor(type, item) {
-    const k = { property: isHome(item) ? "homes" : "props", school: "sch", college: "col", activity: "act", travel: "travel" }[type]
+    const k = { property: isNH(item) ? "nh" : isHome(item) ? "homes" : "props", school: "sch", college: "col", activity: "act", travel: "travel" }[type]
       || (type === "hospital" ? (item.trauma ? "trauma" : "hosp") : null)
       || (type === "history" ? { mine: "h_mine", coal_camp: "h_coal", ghost_town: "h_ghost", historic: "h_hist" }[item.type] : null);
     const d = LAYERS.find(x => x.key === k); if (d && !map.hasLayer(d.layer)) setLayer(d, true);
@@ -311,8 +341,11 @@
     props: () => `<div class="ksec"><b>★ Notable properties</b> <span class="small">(5+ acres)</span>${krow(mk("star", "★", 22), "Standout property", "(cave, stream/creek, waterfall or backcountry)")}
       ${krow(mk("prop", "<i>⌂</i>", 20), "Other land listing")}${krow(mk("prop approx", "<i>⌂</i>", 20), "Dashed outline = approximate pin", "(town center)")}</div>`,
     homes: () => `<div class="ksec"><b>🏠 Homes</b> <span class="small">(1+ acre, 3+ bd, 2+ full ba, ≤ $425k, active)</span>
-      ${krow(mk("home", "<i>🏠</i>", 20), "Home listing")}${krow(mk("home feat", "<i>🏠</i>", 20), "Gold ring = creek/stream, cave, waterfall or backcountry")}
+      ${krow(mk("home", "<i>🏠</i>", 20), "Home listing", "(teal)")}${krow(mk("home feat", "<i>🏠</i>", 20), "Gold ring = creek/stream, cave, waterfall or backcountry")}
       ${hf.maxp || hf.mina ? `<div class="small">Filter on: ${hf.maxp ? "≤ " + money(hf.maxp) : ""}${hf.maxp && hf.mina ? ", " : ""}${hf.mina ? hf.mina + "+ acres" : ""} · <button type="button" class="linkbtn" data-openlayers="1">change</button></div>` : ""}</div>`,
+    nh: () => `<div class="ksec"><b>🏥 Near-hospital homes</b> <span class="small">(1,600+ sq ft, 3+ bd, 2+ full ba, under $325k, active, good condition, ≤ 10 min free-flow to a hospital with a 24/7 ER of 10+ beds)</span>
+      ${krow(mk("nh", "<i>🏠</i>", 20), "Near-hospital home", "(blue; houses, townhomes and condos)")}
+      ${nfText() ? `<div class="small">Filter on: ${esc(nfText())} · <button type="button" class="linkbtn" data-openlayers="1">change</button></div>` : ""}</div>`,
     trauma: () => `<div class="ksec"><b>Trauma centers</b> <span class="small">(KYHA Jan 2026 + border centers)</span>
       ${krow(mk("trauma", "I", 22), "Level I", "(highest: UK, UofL, Cincinnati, Vanderbilt, Knoxville)")}${krow(mk("trauma", "II", 22), "Level II", "(Pikeville, Evansville, Huntington)")}
       ${krow(mk("trauma", "III", 22), "Level III")}${krow(mk("trauma", "IV", 22), "Level IV", "(stabilize & transfer)")}${krow(mk("trauma", "IP", 22), "Pediatric Level I", "(Norton Children's)")}</div>`,
@@ -346,7 +379,7 @@
     if (on("cty")) h += countyKey(scaleFor(curMetric), "Counties colored by");
     if (on("sweet")) h += countyKey(scaleFor(sweetKey), "Sweet-spot layer");
     if (!on("cty") && !on("sweet")) h += `<div class="ksec small">County coloring is off. Turn on “Counties” in Layers to color by the Appeal score.</div>`;
-    const pinKeys = ["props", "homes", "travel", "trauma", "hosp", "sch", "col", "act"], histKeys = ["h_hist", "h_coal", "h_ghost", "h_mine"];
+    const pinKeys = ["props", "homes", "nh", "travel", "trauma", "hosp", "sch", "col", "act"], histKeys = ["h_hist", "h_coal", "h_ghost", "h_mine"];
     const active = pinKeys.filter(on), off = pinKeys.filter(k => !on(k));
     h += active.map(k => PIN_KEY[k]()).join("");
     const hOn = histKeys.filter(on), hOff = histKeys.filter(k => !on(k));
@@ -443,6 +476,7 @@
       ${p.drives.map(d => `<tr><td>${esc(d.hospital)}${d.role ? `<br><span class="small"><b>${esc(d.role)}</b></span>` : ""}${d.traffic_aware ? "" : (d.source && /free-flow/.test(d.source) ? "" : '<br><span class="small">free-flow, no traffic data</span>')}${d.source ? `<br><span class="small">${esc(d.source)}</span>` : ""}</td>
         <td class="n">${fmt1(d.miles)}</td>${d.min_7am == null && d.min_7pm == null && !d.range_7am && d.minutes_free_flow != null ? `<td class="n" colspan="2">~${Math.round(d.minutes_free_flow)} min<br><span class="small">no traffic</span></td></tr>` : `<td class="n">${d.range_7am ? esc(d.range_7am) + " min" : (d.min_7am != null ? Math.round(d.min_7am) + " min" : "—")}</td><td class="n">${d.range_7pm ? esc(d.range_7pm) + " min" : (d.min_7pm != null ? Math.round(d.min_7pm) + " min" : "—")}</td></tr>`}`).join("")}</table>` : "";
     const ns = p.near_schools || {};
+    if (isNH(p)) return nhCard(p, gal, drives, ns);
     const home = isHome(p);
     return `<div class="kicker">${home ? "🏠 Home · 1+ acre, 3bd/2ba, under $425k" + (p.standout && p.standout.length ? " · ★ standout" : "") : p.standout && p.standout.length ? "★ Standout property" : "Property"}</div><h2>${esc(p.title)}</h2>
       <div class="sub">${esc([p.town, p.county && p.county + " County"].filter(Boolean).join(", "))}</div>
@@ -467,12 +501,34 @@
       <table class="kv">${row("County", p.county ? link("county", p.county, p.county + " County") : null)}${row("Listing", ext(p.url, "Open original listing ↗"))}${row("Date seen", esc(p.seen))}${row("Listing updated", p.updated ? esc(p.updated) : null)}${row("Status", p.status ? esc(p.status) : null)}</table>
       ${p.desc ? `<div class="kicker">Description</div><div class="desc">${esc(p.desc)}</div>` : ""}`;
   };
+  function nhCard(p, gal, drives, ns) {
+    const nh = p.nh || {};
+    const er = nh.er_beds ? `${esc(nh.er_beds)} ER beds/bays${nh.er_beds_label ? ` <span class="small">(${esc(nh.er_beds_label)})</span>` : ""}` : nh.estimate ? "Likely 10+ ER beds <b>(estimate</b>: 100+ licensed beds, 24/7 ER; no published count)" : esc(nh.er_beds_label || "—");
+    return `<div class="kicker">🏥 Near-hospital home · ${esc(p.ptype || "House")} · 1,600+ sq ft, 3bd/2ba, under $325k</div><h2>${esc(p.title)}</h2>
+      <div class="sub">${esc(p.address || [p.town, p.county && p.county + " County"].filter(Boolean).join(", "))}</div>
+      ${gal || thumb("property", p)}
+      ${nh.name ? `<div class="nhbox"><div class="nhmin"><b>~${esc(Math.round(nh.minutes_free_flow))}</b><span>min</span></div><div><b>${nh.hospital_id ? link("hospital", nh.hospital_id, nh.name) : esc(nh.name)}</b>${nh.city ? ` <span class="small">(${esc(nh.city)})</span>` : ""}
+        <br><span class="small">${esc(fmt1(nh.miles))} mi · free-flow drive, no traffic (OSRM)${nh.gmaps_check ? " · " + esc(nh.gmaps_check) : ""}</span><br>🚑 ${er}${nh.source_url ? ` · <a href="${esc(nh.source_url)}" target="_blank" rel="noopener">ER source ↗</a>` : ""}</div></div>` : ""}
+      <div class="stats">${stat(money(p.price), "price")}${stat(sqft(p.sqft), "sq ft")}${stat(`${p.beds != null ? esc(p.beds) : "—"} / ${p.baths != null ? esc(p.baths) : "—"}`, "bed / bath")}
+        ${stat(esc(p.ptype || "—"), "type")}${stat(p.year_built ? esc(p.year_built) : "—", "built")}${stat(esc(p.seen || "—"), "date seen")}</div>
+      ${p.condition ? `<div class="note good">✅ <b>Condition:</b> ${esc(p.condition)}</div>` : ""}
+      ${p.notes ? `<div class="note">⚠️ ${esc(p.notes)}</div>` : ""}
+      <table class="kv">${row("Address", p.address ? esc(p.address) : null)}${row("Type", esc(p.ptype || "House"))}${row("Baths", p.bath_detail ? esc(p.bath_detail) : null)}${row("Lot", p.acres ? fmt1(p.acres) + " acres" : null)}${row("MLS #", p.mls ? esc(p.mls) : null)}</table>
+      ${p.features && p.features.length ? `<div class="kicker">Features</div><div class="badges">${p.features.map(w => `<span class="badge">${esc(w)}</span>`).join("")}</div>` : ""}
+      ${drives}
+      <div class="kicker">Schools</div>${schoolBlock(p.county)}
+      <table class="kv">${row("Nearest elementary", ns.ES ? `${link("school", ns.ES.id, ns.ES.name)} ${rbadge(ns.ES.rating)} · ${ns.ES.miles} mi` : null)}
+        ${row("Nearest high school", ns.HS ? `${link("school", ns.HS.id, ns.HS.name)} ${rbadge(ns.HS.rating)} · ${ns.HS.miles} mi` : null)}</table>
+      <table class="kv">${row("County", p.county ? link("county", p.county, p.county + " County") : null)}${row("Listing", ext(p.url, "Open original listing ↗"))}${row("Source", p.source ? esc(p.source) : null)}${row("Date seen", esc(p.seen))}${row("Status", p.status ? esc(p.status) : null)}</table>
+      ${p.desc ? `<div class="kicker">Description</div><div class="desc">${esc(p.desc)}</div>` : ""}`;
+  }
   R.hospital = h => `${thumb("hospital", h)}<div class="kicker">${h.trauma ? "Trauma center" : h.kind === "general" ? "Hospital" : "Specialty hospital"}</div><h2>${esc(h.name)}</h2>
     <div class="sub">${esc([h.addr, h.city, h.state].filter(Boolean).join(", "))}</div>
     ${h.trauma ? `<div class="badges"><span class="badge gold">🚑 Trauma ${esc(h.trauma)}</span></div>` : ""}
     <table class="kv">${row("Trauma designation", h.trauma ? `${esc(h.trauma)}${h.trauma_name ? " — listed as “" + esc(h.trauma_name) + "”" : ""}<br><span class="small">${esc(h.trauma_src)}</span>` : "Not on the Kentucky Trauma System list")}
     ${row("Emergency dept.", h.emergency === "yes" ? "Yes (per OpenStreetMap)" : h.emergency === "no" ? "No (per OpenStreetMap)" : null)}
     ${row("Type", h.kind === "general" ? "General / acute care" : "Specialty (psychiatric, rehab, long-term, etc.)")}
+    ${row("ER beds", h.er ? (h.er.beds ? `${esc(h.er.beds)} <span class="small">(${esc(h.er.label || "")})</span>` : h.er.ok ? 'Likely 10+ <span class="small">(estimate: 100+ licensed beds, 24/7 ER)</span>' : 'Unknown <span class="small">(no published count; not used for near-hospital homes)</span>') + (h.er.src ? ` · <a href="${esc(h.er.src)}" target="_blank" rel="noopener">source</a>` : "") : null)}
     ${row("Licensed beds", h.lic_beds ? `${esc(h.lic_beds)}${h.lic_type ? " · " + esc(h.lic_type) : ""}<br><span class="small">KY hospital directory, Sep 2026${h.lic_name ? ` · licensed as “${esc(h.lic_name)}”` : ""}</span>` : h.beds ? `${esc(h.beds)} <span class="small">(OpenStreetMap)</span>` : null)}
     ${row("CMS star rating", h.cms_rating ? `${"★".repeat(Math.round(h.cms_rating))}${"☆".repeat(5 - Math.round(h.cms_rating))} ${esc(h.cms_rating)}/5 <span class="small">(CMS overall rating)</span>` : null)}
     ${row("County", h.county ? link("county", h.county, h.county + " County") : esc(h.state || "out of state"))}
@@ -537,7 +593,7 @@
       ${row("Nearest trauma center", c.near_trauma ? `${link("hospital", c.near_trauma.id, c.near_trauma.name)} · ${esc(c.near_trauma.trauma)} · ~${c.near_trauma.miles} mi from county center` : null)}</table>
       <div class="kicker">Schools</div>${schoolBlock(c.name)}
       ${ds.length ? `<table class="tbl"><tr><th>District</th><th class="n">vs KY</th><th class="n">vs US</th><th>ES/MS/HS</th></tr>${ds.map(d => `<tr><td>${esc(d.name)}</td><td class="n">${esc(sign(d.pp_vs_ky, 0))}</td><td class="n">${esc(sign(d.gl_vs_us, 1))}</td><td>${rbadge(d.es)} ${rbadge(d.ms)} ${rbadge(d.hs)}</td></tr>`).join("")}</table>` : ""}
-      ${props.length ? `<div class="kicker">Properties here</div><table class="kv">${props.map(p => row(isHome(p) ? "🏠" : p.standout && p.standout.length ? "★" : "⌂", link("property", p.id, p.title) + (p.price ? " · " + money(p.price) : ""))).join("")}</table>` : ""}`;
+      ${props.length ? `<div class="kicker">Properties here</div><table class="kv">${props.map(p => row(isNH(p) ? "🏥" : isHome(p) ? "🏠" : p.standout && p.standout.length ? "★" : "⌂", link("property", p.id, p.title) + (p.price ? " · " + money(p.price) : ""))).join("")}</table>` : ""}`;
   };
   function nearbyProps(pt) {
     const near = (K.properties || []).filter(p => p.lat != null).map(p => [p, hav(pt.lat, pt.lon, p.lat, p.lon)]).filter(x => x[1] < 25).sort((a, b) => a[1] - b[1]).slice(0, 5);
@@ -549,7 +605,7 @@
   // ------------------------------------------------------------------ county grouping pages (#county=<slug>&cat=<cat>)
   // Each county-card count tile opens a compact, sorted list of that county's items; each row opens the item's own card and flies to its pin.
   const GCATS = [
-    { k: "listings", n: "props", label: "listings", one: "listing", title: "Listings", icon: "🏡", layers: ["props", "homes"] },
+    { k: "listings", n: "props", label: "listings", one: "listing", title: "Listings", icon: "🏡", layers: ["props", "homes", "nh"] },
     { k: "hospitals", n: "hosp", label: "hospitals", title: "Hospitals", icon: "🏥", layers: ["trauma", "hosp"] },
     { k: "travel", n: "travel", label: "travel jobs", one: "travel job", title: "Travel nurse jobs", icon: "💼", layers: ["travel"] },
     { k: "schools", n: "schools", label: "schools", title: "Schools", icon: "🏫", layers: ["sch"] },
@@ -606,8 +662,13 @@
       `<b>${p.price != null ? money(p.price) : "Price n/a"}</b>${p.beds != null ? ` · ${esc(p.beds)} bd${p.baths != null ? " / " + esc(p.baths) + " ba" : ""}` : ""}${p.acres != null ? ` · ${esc((+p.acres).toLocaleString(undefined, { maximumFractionDigits: 2 }))} ac` : ""}`,
       `${p.standout && p.standout.length ? `<span class="gstar">★ ${esc(p.standout.join(", "))}</span> · ` : ""}${esc(p.title)}`,
       dot([p.town && esc(p.town), nearestDrive(p)]));
-    const land = xs.filter(p => !isHome(p)).sort(byPrice), homes = xs.filter(isHome).sort(byPrice);
-    return { sub: "Sorted by price, lowest first", secs: [["⌂ 5+ acre land", land.map(r), "No 5+ acre land listings here right now."], ["🏠 1-acre homes", homes.map(r), "No 1-acre home listings here right now."]] };
+    const rn = p => gRow("property", p.id, from, gImg(p.rt || (p.th && p.th.u), "🏥"),
+      `<b>${p.price != null ? money(p.price) : "Price n/a"}</b> · ${esc(p.beds)} bd / ${esc(p.baths)} ba · ${sqft(p.sqft)} sq ft`,
+      `${esc(p.ptype || "House")} · ${esc(p.title)}`,
+      dot([p.town && esc(p.town), p.nh && `🏥 ${Math.round(p.nh.minutes_free_flow)} min to ${esc(shortHosp(p.nh.name))}${p.nh.er_beds ? ` (${esc(p.nh.er_beds)} ER beds)` : p.nh.estimate ? " (10+ ER beds, est.)" : ""}`]));
+    const land = xs.filter(p => !isHome(p) && !isNH(p)).sort(byPrice), homes = xs.filter(isHome).sort(byPrice), nhs = xs.filter(isNH).sort(byPrice);
+    return { sub: "Sorted by price, lowest first", secs: [["⌂ 5+ acre land", land.map(r), "No 5+ acre land listings here right now."], ["🏠 1-acre homes", homes.map(r), "No 1-acre home listings here right now."],
+      ["🏥 Near-hospital homes", nhs.map(rn), "No near-hospital homes here right now."]] };
   };
   GB.hospitals = (c, xs, from) => {
     const tj = h => TJ.hospitals.find(t => t.hospital_id === h.id);
@@ -732,7 +793,8 @@
     if (location.hash !== h) history[opts.replace ? "replaceState" : "pushState"](null, "", h);
     document.title = TITLE[type](it) + " — Kentucky Explorer";
     ensureLayerFor(type, it);
-    if (type === "property" && isHome(it)) applyHomeFilter();  // a home hidden by the Homes filter still shows its pin while open
+    if (type === "property" && isHome(it)) applyHomeFilter();
+    if (type === "property" && isNH(it)) applyNHFilter();  // a home hidden by the Homes filter still shows its pin while open
     if (opts.fly !== false) zoomTo(type, it, false);
     highlight(type, it);
     return true;
@@ -819,13 +881,13 @@
 
   // ------------------------------------------------------------------ search
   const all = [];
-  Object.entries(IDX).forEach(([type, o]) => Object.values(o).forEach(it => all.push({ type, id: type === "county" ? it.name : it.id, name: type === "county" ? it.name + " County" : (it.title || it.name), sub: type === "property" ? [it.town, it.county].filter(Boolean).join(", ") : type === "history" ? (HIST[it.type] || [, ""])[1] : (it.kind || it.district || it.city || "") })));
+  Object.entries(IDX).forEach(([type, o]) => Object.values(o).forEach(it => all.push({ type, id: type === "county" ? it.name : it.id, name: type === "county" ? it.name + " County" : (it.title || it.name), sub: type === "property" ? [isNH(it) ? "🏥 Near-hospital home" + (it.ptype && it.ptype !== "House" ? " (" + it.ptype.toLowerCase() + ")" : "") : isHome(it) ? "🏠 1-acre home" : null, it.town, it.county].filter(Boolean).join(", ") : type === "history" ? (HIST[it.type] || [, ""])[1] : (it.kind || it.district || it.city || ""), extra: type === "property" ? [it.address, isNH(it) ? "near hospital home " + (it.nh ? it.nh.name : "") : ""].filter(Boolean).join(" ").toLowerCase() : "" })));
   const LABEL = { travel: "Travel RN jobs", property: "Property / home", hospital: "Hospital", school: "School", college: "College", activity: "Activity", history: "History", county: "County" };
   const si = $("#search"), res = $("#results"); let hits = [], sel = 0;
   si.addEventListener("input", () => {
     const q = si.value.trim().toLowerCase(); if (q.length < 2) { res.hidden = true; return; }
     const pri = { county: 0, property: 1, travel: 2, hospital: 2, history: 3, activity: 4, college: 5, school: 6 };
-    hits = all.filter(x => x.name.toLowerCase().includes(q) || (x.sub || "").toLowerCase().includes(q)).sort((a, b) => (a.name.toLowerCase().startsWith(q) ? 0 : 1) - (b.name.toLowerCase().startsWith(q) ? 0 : 1) || pri[a.type] - pri[b.type]).slice(0, 30);
+    hits = all.filter(x => x.name.toLowerCase().includes(q) || (x.sub || "").toLowerCase().includes(q) || (x.extra || "").includes(q)).sort((a, b) => (a.name.toLowerCase().startsWith(q) ? 0 : 1) - (b.name.toLowerCase().startsWith(q) ? 0 : 1) || pri[a.type] - pri[b.type]).slice(0, 30);
     sel = 0; res.innerHTML = hits.map((h, i) => `<div data-i="${i}" class="${i === 0 ? "sel" : ""}">${esc(h.name)}<br><small>${LABEL[h.type]}${h.sub ? " · " + esc(h.sub) : ""}</small></div>`).join("") || "<div><small>No matches</small></div>";
     res.hidden = false;
   });

@@ -87,7 +87,14 @@ a.inl{cursor:pointer;text-decoration:underline}
 .mk.trauma{background:#8b0000;border-color:#ffd54f;font-size:11px}
 .mk.prop{background:var(--accent);border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
 .mk.prop i{transform:rotate(45deg);font-style:normal}
-.mk.home{background:#1565c0;border-radius:7px;font-size:13px}
+.mk.home{background:#00897b;border-radius:7px;font-size:13px}
+.mk.nh{background:#1565c0;border-radius:7px;font-size:13px;position:relative}
+.mk.nh i{font-style:normal;line-height:1}
+.mk.nh::after{content:"+";position:absolute;top:-6px;right:-6px;width:12px;height:12px;border-radius:50%;background:#d32f2f;color:#fff;font-size:11px;line-height:11px;text-align:center;border:1px solid #fff;font-weight:700}
+.nhbox{display:flex;gap:10px;align-items:center;background:#e8f0fe;border-left:4px solid #1565c0;border-radius:8px;padding:8px 10px;margin:8px 0;font-size:13px}
+.nhbox .nhmin{display:flex;flex-direction:column;align-items:center;min-width:48px;color:#1565c0}
+.nhbox .nhmin b{font-size:22px;line-height:1}.nhbox .nhmin span{font-size:11px}
+.note.good{background:#e8f5e9;border-left-color:#2e7d32}
 .mk.home i{font-style:normal;line-height:1}
 .mk.home.feat{border-color:#ffc107;box-shadow:0 0 0 2px #e8a31799,0 1px 4px #0006}
 .mk.home.approx{border-style:dashed}
