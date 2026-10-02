@@ -491,3 +491,25 @@ html.cardfull .fchip{visibility:hidden}
 .arvs .cmpt th,.arvs .cmpt td{padding:4px 5px;min-width:0}
 .arsrc{color:var(--muted);font-size:11px;line-height:1.45;margin-top:12px}
 .arT th{min-width:96px;max-width:110px;font-size:12px;line-height:1.3}
+/* permanent RN jobs (perm.js): blue hats, job rows, Top 10 bubbles */
+.pjchips{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 2px}
+.pjt{font-size:12px;line-height:1.2;padding:3px 7px;border-radius:10px;background:#eef2f7;color:#1f2d3d;white-space:nowrap}
+.pjt.pay{background:#e3f1e6;color:#1b5e20;font-weight:700}
+.pjt.nopay{background:#f3f3f3;color:#6b6b6b;font-style:italic}
+.pjt.bon{background:#fff4d6;color:#7a4b00;font-weight:600;white-space:normal}
+.pjtag{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border-radius:8px;background:#1565c0;color:#fff}
+.pjtag.tr{background:#c62828}
+.gth.pjh{background:#e8f0fb}
+.gth.pjh svg{width:40px;height:25px}
+.pjmore{margin:8px 0;border-top:1px solid var(--line)}
+.pjmore>summary{cursor:pointer;font-weight:600;font-size:14px;padding:10px 0;color:var(--accent)}
+.pjfn{margin:4px 0 6px}
+.pjcm{font-size:13px;margin:2px 0 6px}
+.pjlink{margin:8px 0;font-size:14px}
+#layerList .pjfilter{display:block}
+#layerList .pjfilter .pjform{display:block;padding:4px 6px 8px 0}
+#layerList .pjfilter .pfsr{font-size:13px;min-height:30px}
+.topbub.tb-per{background:#0d47a1}
+.topbub.tb-psd{background:#283593}
+.topbub.tb-picu{background:#01579b}
+.topbub.tb-bon{background:#ad6800}
