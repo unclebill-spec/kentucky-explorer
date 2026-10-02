@@ -5,6 +5,7 @@ Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which 
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
 ## 2026-10-02
+- 19:40 ET: Shared app.js: Top-10 pill carousel no longer clones pills when they all fit (MA showed 'Deals' twice); home price labels and Max price menus read configurable caps (ST.caps, Kentucky unchanged: $500k / $425k / $325k); secscan 'sk-' key pattern no longer matches mid-word (false positive on job URLs).
 - 18:30 ET: State switcher: add the Massachusetts Explorer (KY | MA | TN); shared app code now supports town-based states (County/Town wording) and a list of other states
 - 08:21 ET: Fix: restore Crittenden St Owensboro to live Zillow price $250k (stale nh_built had overwritten the refresh)
 - 02:08 ET: Faster load and smoother zoom, same look: one county canvas until the first zoom-in or idle time (borders + faint dots on it), the dot canvas no longer redraws twice per zoom/pan, fade updates at most once per frame. Map credit: Leaflet link and flag removed, the linked OpenStreetMap credit is a tiny line at the bottom left above the scale (clear of the pills and side buttons)
