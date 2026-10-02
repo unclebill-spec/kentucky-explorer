@@ -128,7 +128,7 @@ What this means for other work:
 - **Map:** one BLUE nurse's hat per hospital (layer `perm`, full icons from zoom 10, in the 💼 Jobs solo button) showing the top listed hourly pay ("$54") or, if none lists pay, the job count. Travel hats are now RED (weekly pay in $1,000s). Tapping a hat opens `#perm=<id>`: the hospital's jobs (title, unit, FT/PT/PRN, shift, pay or "pay not listed", sign-on bonus, Apply link), highest listed pay first, with jobs hidden by the filters behind "N more hidden". Hospital and travel cards link to it.
 - **County cards:** a "permanent RN jobs" tile → `#county=<slug>&cat=perm` (pay listed / pay not listed sections).
 - **Filters:** `norm()` in perm.js: `x` exclude specialties, `i` only these, `e` FT/PT/PRN/na, `s` day/night/eve/wkd/rot/na, `p` pay listed only, `m` min hourly pay (top of range), `c` charge roles, `g` manager/leadership roles, `b` sign-on bonus only. The default map uses Layers → Permanent RN jobs → change (localStorage `kyx_pjf`); a profile's own `pjobs` (profile form section 🩺) overrides it while that profile is on. Default and P1 Bill: leave out OR/periop, cath lab/IR, women's services (L&D/OB/mom-baby), NICU, peds (also any posting flagged pediatric); PACU and CVICU (ICU specialty) stay in. That default passed 1263 of 1537 on the first run, the same as the collector's `include_default`.
-- **Top 10s:** 4 new bubbles: Sign-on Bonuses (row 2), Perm ER, Perm Step-down + Med-surg, Perm ICU (general) (row 3); hashes `#top-bonus`, `#top-perm-er`, `#top-perm-sdms`, `#top-perm-icu`. Ranked live under the active filters by the top of the listed hourly pay range (bonus list: stated amount; "up to" counts at the max). Charge and manager roles are left out unless the "Include charge & manager roles" box is ticked (`kyx_pjtop_cm`). Jobs without pay (or with a bonus but no amount) are in "See more". Travel jobs that state a bonus would join the bonus list tagged Travel with a red hat (none do today; `bo` field from build.py's `bonus_amt`).
+- **Top 10s:** 4 pills (bottom row): Bonuses, Perm ER, Perm SD/MS, Perm ICU; hashes `#top-bonus`, `#top-perm-er`, `#top-perm-sdms`, `#top-perm-icu`. Ranked live under the active filters by the top of the listed hourly pay range (bonus list: stated amount; "up to" counts at the max). Charge and manager roles are left out unless the "Include charge & manager roles" box is ticked (`kyx_pjtop_cm`). Jobs without pay (or with a bonus but no amount) are in "See more". Travel jobs that state a bonus would join the bonus list tagged Travel with a red hat (none do today; `bo` field from build.py's `bonus_amt`).
 - **Compare areas:** the Permanent RN jobs row now counts live from this layer for the KY metro counties (TN shows "KY only").
 
 ## Known issues / next steps
@@ -136,3 +136,21 @@ What this means for other work:
 - **Near me** distances are straight-line, not drive times.
 - **Badges** are per phone and browser (localStorage); clearing site data resets the baseline.
 - **Next big step, after everything else is finished: the Tennessee port.** Build a Tennessee map from this codebase. Start from the TN rows already in `data/areas.json`, the TN trauma list (`data/tn_trauma_jul2026.xlsx`), the TN OEWS areas and the NOAA stations in `climate/stations.json`.
+
+## Bottom Top 10 pills, landscape wheel, full screen (Oct 1, 2026 ~9:40 PM ET)
+- **Top 10 pills** (`#topPills`, app.js "Top 10 lists: a row of pills"): replaced the on-map bubbles south of Kentucky. One row fixed to the bottom
+  edge (safe-area aware), labels Deals, Odd Bldgs, Biz, ER Travel, Other Travel, Bonuses, Perm ER, Perm SD/MS, Perm ICU (never truncated).
+  It is a looping sideways carousel; hidden while a card is open (`html.cardon`, set by a MutationObserver on `#card[hidden]`).
+  With the row present (`html.haspills`) Top 10s / Near me / Areas, the focus chip, toast and Leaflet bottom controls are lifted 50 px.
+- **carousel(vp, getItems, axis)** (app.js, after the solo stack): items absolutely placed by transform around a wrapping offset
+  (infinite loop), drag/swipe with momentum + snap, centred item scaled 1.1 (`.cc`), mouse wheel too. A tap (< 7 px) activates the item
+  on pointerup (Chrome can drop the native click after a fling) and the native click that follows is swallowed for 450 ms.
+  Clones (`[data-clone]`) are added when the row is too short to loop without a visible jump. Pointer/touch events stop at the viewport,
+  so a swipe never pans the map.
+- **Landscape phone wheel**: `matchMedia("(orientation: landscape) and (max-height: 500px)")` -> `#layerStack.wheel` holds the solo buttons
+  plus Areas, Near me and Top 10s as one vertical looping wheel; back to the normal stack in portrait (`renderStack` re-adds them).
+- **Full screen** (⛶, Leaflet control right of the zoom buttons, `a.fsbtn`): Fullscreen API on `document.documentElement` with webkit
+  fallbacks; icon toggles; `invalidateSize()` on change. No API (iOS Safari): toast hint to Add to Home Screen (or "already full screen"
+  when running standalone).
+- Tests: `perf/test_wheel.py BASE TAG` (412x915 + 915x412: labels, swipe without map pan, snap, loop, tap opens list, row hides with the
+  card, wheel drag/loop/tap, full screen enter/leave, iOS hint). `test_all.py` / `test_perm.py` now check the pills instead of bubbles.
