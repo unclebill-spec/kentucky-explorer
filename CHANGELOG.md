@@ -4,6 +4,9 @@ Live site: https://unclebill-spec.github.io/kentucky-explorer/. Times are US Eas
 Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which used generic "Publish <date>" messages) and from the
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
+## 2026-10-02
+- 00:29 ET: AGENTS.md: zoom-reveal test notes (pin-free-point test helpers now avoid groups)
+
 ## 2026-10-01
 - 23:54 ET: Zoom reveal: county colors fade smoothly as you zoom in (full statewide, about 0.1 at town zoom; county lines stay); statewide only trauma I/II, airports, businesses, odd buildings, bargains and cities are icons and everything else is a faint dot that turns into its icon a few kinds per zoom step (7.5 standouts to 11 minor history); close pins of one kind group into a bigger copy of their icon with a count (tap to zoom in, a Back step; all split from zoom 13)
 - 22:47 ET: KY | TN state switcher on: the new Tennessee Explorer is live (switcher inside the Search panel next to Layers, plus 'Switch to the Tennessee map' in the Top 10s menu)
