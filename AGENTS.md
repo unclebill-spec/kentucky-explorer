@@ -11,6 +11,16 @@ A static Leaflet map of Kentucky for Bill, a travel RN looking for a homestead. 
 - **Controls:** profiles P1–P4, solo layer buttons, double-tap zoom toggle.
 - See `CHANGELOG.md` for what shipped when.
 
+## Shared code with the Tennessee Explorer (since Oct 1, 2026)
+- `app.js`, `profiles.js`, `extras.js`, `perm.js`, `areas.js` and `style.css` are the **same files** in `/workspace/tennessee/explorer/`. If you change one here, copy it there, and test and publish both sites.
+- Per-state settings come from `K.meta.state`, which is the `STATE` dict in Tennessee's `build.py`. Kentucky uses the defaults at the top of app.js.
+- `other.live: false` (the Kentucky default) hides the KY | TN switcher until the Tennessee site is up.
+- Top pills: "Map key" (top left) and "Search" (top right) start collapsed (`showPnl` / `setPanel` in app.js).
+  - An open panel is one history step, so the phone's Back button closes it.
+  - Tapping outside it, or pressing Esc, also closes it.
+  - `nav()` turns an open panel's history step into the new page.
+  - Test: `perf/test_pnl.py`.
+
 ## Source vs. published files
 - **Source:** `/workspace/kentucky/explorer/`. Edit only here.
   - `app.js` (main app), `style.css`, `index.html`.

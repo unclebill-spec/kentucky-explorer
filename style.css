@@ -541,3 +541,33 @@ a.fsbtn.on{background:#123642;color:#fff}
 .lstack.wheel>.gpsbtn,.lstack.wheel>.topbtn{position:absolute;height:32px;min-height:0;padding:0 11px;font-size:13px;box-shadow:0 1px 5px #0004}
 .lstack.wheel>.topbtn{box-shadow:0 0 0 2px #ffd600}
 .lstack.wheel>.cc{box-shadow:0 2px 10px #0006,0 0 0 2px #ffd600}
+/* state switcher (KY | TN) in the top bar */
+.stsw2{display:flex;flex:0 0 auto;align-self:center;height:34px;border-radius:17px;background:#fff;box-shadow:0 1px 6px #0004;overflow:hidden;font:800 13px/34px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin-right:6px}
+.stsw2>*{padding:0 9px;color:#123642;text-decoration:none}
+.stsw2 .on{background:#123642;color:#fff}
+.stsw2 a:active{background:#e6f2f2}
+/* ---- top pills: "Map key" (left) + "Search" (right), both collapsed by default (app.js showPnl / setPanel) ---- */
+#topbar{top:calc(8px + env(safe-area-inset-top));left:calc(8px + env(safe-area-inset-left));right:calc(8px + env(safe-area-inset-right));z-index:1003}
+#topbar.collapsed{left:auto;justify-content:flex-end}
+#topbar.collapsed>:not(#srchPill){display:none!important}
+.tpill2{flex:0 0 auto;height:36px;padding:0 14px;border-radius:18px;border:0;background:#123642;color:#fff;font:800 14px/36px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  box-shadow:0 2px 8px #0004;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#topbar:not(.collapsed) .tpill2{width:36px;padding:0;background:#fff;color:#123642;font-size:16px;box-shadow:0 1px 6px #0004}
+.tpill2:focus-visible,#keyToggle:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+#mapKey,#mapKey.collapsed{top:calc(8px + env(safe-area-inset-top));left:calc(8px + env(safe-area-inset-left));z-index:1002}
+#mapKey{max-height:calc(100vh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+#mapKey.collapsed{width:auto;border-radius:18px;background:transparent;box-shadow:0 2px 8px #0004}
+#mapKey.collapsed .keyhead{height:36px;padding:0 14px;border-radius:18px;font:800 14px/36px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;gap:6px}
+#mapKey.collapsed .keymini,#mapKey.collapsed .keymetric{display:none}
+#mapKey.collapsed .chev{transform:none}
+#mapKey:not(.collapsed) .chev{transform:rotate(180deg)}
+html.srchopen #mapKey{visibility:hidden}  /* the open search bar uses the whole top row */
+#layersPanel{top:calc(52px + env(safe-area-inset-top));z-index:1003;max-height:calc(100vh - 64px - env(safe-area-inset-top));max-height:calc(100dvh - 64px - env(safe-area-inset-top))}
+.profbar{top:calc(52px + env(safe-area-inset-top));left:calc(8px + env(safe-area-inset-left))}
+.lstack{top:calc(52px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right))}
+.lstack.wheel{top:calc(50px + env(safe-area-inset-top))}
+@media (min-width:800px){.profbar{left:calc(8px + env(safe-area-inset-left));top:calc(52px + env(safe-area-inset-top))}.lstack{top:calc(52px + env(safe-area-inset-top))}}
+/* wide / landscape: the profile pills share the top row with the two pills (more map) */
+@media (min-width:600px){.profbar{top:calc(10px + env(safe-area-inset-top));left:calc(122px + env(safe-area-inset-left))}}
+@media (max-width:799px) and (orientation:portrait){#mapKey{max-height:62vh}}
+html.pnlopen:not(.srchopen) #mapKey{z-index:1004}
