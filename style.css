@@ -425,7 +425,13 @@ html.cardfull .profbar{visibility:hidden}
 @media (max-height:640px){.lsb{height:28px}.lstack{gap:3px}}
 @media (min-width:800px){.lstack{top:calc(68px + env(safe-area-inset-top))}#card:not([hidden]) ~ .lstack{right:436px}}
 html.cardfull .lstack{visibility:hidden}
-.kcl{border-radius:50%;background:#0f6b6fdd;color:#fff;font:800 12px/1 system-ui,sans-serif;text-align:center;box-shadow:0 0 0 3px #fff9,0 2px 6px #0006;cursor:pointer}
+/* grouped pins (clusters): a bigger copy of the kind's icon + a count badge in the kind's color (app.js clusterize) */
+.kcg{position:relative;cursor:pointer}
+.kcgi{position:absolute;left:0;top:0;transform-origin:0 0;display:flex;align-items:center;justify-content:center}
+.kcn{position:absolute;top:-6px;right:-8px;min-width:17px;height:17px;padding:0 3px;box-sizing:border-box;border-radius:9px;color:#fff;font:800 10px/14px system-ui,sans-serif;text-align:center;border:1.5px solid #fff;box-shadow:0 1px 3px #0008;pointer-events:none}
+/* the group icon keeps its size when zoomed out (the single pins shrink with .z-low / .z-vlow), so a group always reads bigger */
+.kcgi .mk{transform:none!important}.z-low .kcgi .mk{transform:scale(.85)!important}.z-vlow .kcgi .mk{transform:scale(.7)!important}
+.kcgi .mk.prop{transform:rotate(-45deg)!important}
 
 /* ---- bottom sheet (phones): peek bar ---- */
 @media (max-width:799px){
