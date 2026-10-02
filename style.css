@@ -577,3 +577,6 @@ html.srchopen #mapKey{visibility:hidden}  /* the open search bar uses the whole 
 @media (min-width:600px){.profbar{top:calc(10px + env(safe-area-inset-top));left:calc(122px + env(safe-area-inset-left))}}
 @media (max-width:799px) and (orientation:portrait){#mapKey{max-height:62vh}}
 html.pnlopen:not(.srchopen) #mapKey{z-index:1004}
+/* map credit (app.js: no Leaflet prefix, bottom-left above the scale): tiny, see-through, still a link (OSM license) */
+.leaflet-container .leaflet-control-attribution{font-size:8px;line-height:1.25;padding:0 3px;margin:0 0 2px 5px;background:rgba(255,255,255,.35);color:#333;border-radius:3px;box-shadow:none;max-width:calc(100vw - 150px)}
+.leaflet-container .leaflet-control-attribution a{color:#1a4f8a}

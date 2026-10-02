@@ -5,6 +5,7 @@ Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which 
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
 ## 2026-10-02
+- 02:08 ET: Faster load and smoother zoom, same look: one county canvas until the first zoom-in or idle time (borders + faint dots on it), the dot canvas no longer redraws twice per zoom/pan, fade updates at most once per frame. Map credit: Leaflet link and flag removed, the linked OpenStreetMap credit is a tiny line at the bottom left above the scale (clear of the pills and side buttons)
 - 00:29 ET: AGENTS.md: zoom-reveal test notes (pin-free-point test helpers now avoid groups)
 
 ## 2026-10-01
