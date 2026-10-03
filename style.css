@@ -605,3 +605,6 @@ html.pnlopen:not(.srchopen) #mapKey{z-index:1004}
 .bstar{display:inline-block;line-height:0;vertical-align:-.22em}.bstar svg{width:1.15em;height:1.15em}
 .lsb .lsi .bstar svg{width:18px;height:18px}
 .gstar{color:#6a1b9a}
+
+/* kyxUI4 (Oct 3, 2026): the pill row width is set by JS (3 whole content-sized pills); never wider than the screen */
+.tpills{max-width:100vw}
