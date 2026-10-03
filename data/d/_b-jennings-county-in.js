@@ -1,0 +1,1 @@
+KYXD("_b-jennings-county-in",{"school":{"bin-s180519000921":{"addr":"7910 S Cr 90 W","phone":"(812) 346-4179","grades":"KG–06","level":"Elementary","nces":"180519000921","levels":{},"bst":"IN","bmi":14.2,"bco":"Jennings County, IN","src":"NCES Common Core of Data 2024-2025 (school directory; no state grade on this map)"}}});

@@ -596,3 +596,7 @@ html.pnlopen:not(.srchopen) #mapKey{z-index:1004}
   scrollbar-width:none;padding:3px 3px 4px 14px;margin:-3px -3px 0 0}
 .lstack:not(.wheel)::-webkit-scrollbar{display:none}
 .lstack:not(.wheel)>*{flex-shrink:0}
+
+/* border items (Oct 3, 2026) */
+.btag{margin:4px 0 6px;padding:5px 9px;border-radius:8px;background:#fff3e0;border-left:4px solid #ef6c00;color:#4e2a00;font-size:13px}
+.btag .bst{display:inline-block;margin-left:2px;padding:0 6px;border-radius:7px;background:#ef6c00;color:#fff;font-weight:800;font-size:11px;line-height:17px}

@@ -1,0 +1,1 @@
+KYXD("_b-wyoming-county-wv",{"school":{"bwv-s540165001203":{"addr":"374 Lizard Creek Road","phone":"(304) 664-2100","grades":"PK–08","level":"Elementary","nces":"540165001203","levels":{},"bst":"WV","bmi":9.2,"bco":"Wyoming County, WV","src":"NCES Common Core of Data 2024-2025 (school directory; no state grade on this map)"}}});
