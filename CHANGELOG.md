@@ -5,6 +5,7 @@ Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which 
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
 ## 2026-10-03
+- 18:30 ET: State switcher: Montana and Wyoming added
 - 17:07 ET: Pin the bottom Top 10 pill row snug against the bottom-left edge of the map (5 px + safe area, same place on every window size, after cards open/close, resizes and full screen); zoom, scale and OpenStreetMap credit move up with it and stay uncovered; on short windows (e.g. 1366x600 above the Windows taskbar) the right-hand filter column now fits above Areas instead of being cut off
 - 16:30 ET: Fix the bottom Top 10 pill row on desktop: after a window resize or full-screen change while a card was open the pills were measured while hidden and collapsed into two tiny overlapping pills at the left; the row now re-measures when it is shown again, pills size to their full titles and the row widens to hold exactly 3 whole pills (one pill per mouse-wheel notch, swipe and snap on phones unchanged)
 - 15:51 ET: Bargains are purple with a star everywhere: the right-side Bargain filter button (column and landscape wheel), the Map key heading, the deal note on cards and the Top 10 'Bargain' mark now use the same purple star (#8e24aa) as the bargain pins and Deals pill instead of the yellow emoji
