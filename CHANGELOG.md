@@ -4,6 +4,9 @@ Live site: https://unclebill-spec.github.io/kentucky-explorer/. Times are US Eas
 Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which used generic "Publish <date>" messages) and from the
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
+## 2026-10-03
+- 07:53 ET: Shared app.js: generic per-state 'mega-block opens city page' setting (ST.cityPage, used by Massachusetts' Boston and Tennessee's Nashville and Memphis). Kentucky has none, so nothing changes here.
+
 ## 2026-10-02
 - 19:40 ET: Shared app.js: Top-10 pill carousel no longer clones pills when they all fit (MA showed 'Deals' twice); home price labels and Max price menus read configurable caps (ST.caps, Kentucky unchanged: $500k / $425k / $325k); secscan 'sk-' key pattern no longer matches mid-word (false positive on job URLs).
 - 18:30 ET: State switcher: add the Massachusetts Explorer (KY | MA | TN); shared app code now supports town-based states (County/Town wording) and a list of other states
