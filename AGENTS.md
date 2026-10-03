@@ -17,6 +17,7 @@ A static Leaflet map of Kentucky for Bill, a travel RN looking for a homestead. 
 - The KY | TN switcher (next to Layers inside the Search panel, and in the Top 10s menu) links the two sites. `other.live: false` would hide it.
 - Optional cabin category + per-state caps (Oct 3, 2026): `ST.cabin` = `{ "acres": 25, "label": "Cabin", "cat": "cabin-home" }` turns on a 4th home layer (key `cab`, log-cabin SVG `G.cabin`, Layers/Map key rows, solo button "Cabin", county/listings section, card kicker, profiles checkbox `home.cab` (shown unless 0), bargain stars). `ST.caps` = `{ p5, p1, nh, cab }` drives the price text in labels. Default `ST.cabin: null` = off, so KY/TN/MA are unchanged (checked with maine/perf/cab_check.py). Only Maine sets it. Listing builders must give each listing ONE `cat` (no duplicates across layers).
 - Mega-block -> city page (Oct 3, 2026): `ST.cityPage` = `{ "<block name>": "city.html#<city>" }` (STATE in build.py; KY has none). Tapping that block on the map (with no pin under the finger) opens the city sub-map instead of the block card; pins on top still open first, a block in county-focus view keeps its card, and `#county=<name>` deep links / search still open the card. Leaving saves the map view in sessionStorage (`<ls>cityret`); a Back (back_forward) load with no hash restores it (and the bfcache keeps it anyway). The city page's "‹ map" link calls history.back() when it came from the main map, and has a link to the block's card. Test: `perf/test_blocktap.py BASE TAG Block=city[,Block=city] OtherBlock` (412 touch + 1280; `NOBF=1` blocks the bfcache to test the sessionStorage path).
+- State switcher (Oct 3, 2026, 12:52 ET, Vermont worker): app.js line ~21 default `ST.others` for KY now lists TN, MA, ME and **VT** (vermont-explorer). TN/MA/ME build.py `others` also include VT. Copies: TN, MA, ME, VT explorers + ma_shared site_tennessee/site_kentucky. Republished KY ec436ba, TN 089bc9f, MA d4f8908, ME cf855d6. Vermont re-syncs these shared files from here before each publish (`/workspace/vermont/scripts/sync_shared.sh`; its sw.js stays per-state for the `vtx-` cache prefix).
 - Top pills: "Map key" (top left) and "Search" (top right) start collapsed (`showPnl` / `setPanel` in app.js).
   - An open panel is one history step, so the phone's Back button closes it.
   - Tapping outside it, or pressing Esc, also closes it.
@@ -185,3 +186,24 @@ Bill: "the more you zoom in, the more you see; zooming out filters things back o
 
 ## Share links for Bill (routine reports)
 - Per-pin share links use `#<kind>=<id>`, e.g. homes: `https://unclebill-spec.github.io/kentucky-explorer/#property=nh-corbin-965-gordon-hill-pike`. Kinds: property, hospital, school, college, activity, history, county, travel, perm, airport, business, building, attraction, city. `#home=` and `#p=` do NOT work.
+
+## Ski areas + notable peaks (Oct 3, 2026 ~2 PM ET) — shared app files changed
+**Shared app files changed:** app.js, style.css, new mtn_build.py, plus a 3-line hook in each state's build.py (around `write_split`).
+sw.js is unchanged: `data/d/_mtn.js?v=` and `img/` are already covered by the existing cache rules.
+Everything is generic. With no `explorer/mtn.json` there are no pins, no Layers rows, no solo buttons and no key rows.
+- **Data:** `explorer/mtn.json` (per state) plus photos in `explorer/img/mtn/s-<id>.jpg` and `p-<id>.jpg`.
+  - Regenerate with `/workspace/mtn/scripts/`: `build_ski.py` (83 areas, prices from notes/details.py + NewEnglandSkiHistory 2025-26 + skiresort.com), then `build_peaks.py`, `fetch_photos.py`, and `make_state.py KY TN MA ME VT`.
+  - Each price carries its season and source, and unknown values show '—'.
+- **Build:** `import mtn_build; mtn_build.add(data)` before `write_split(data, stamp)`, then `mtn_build.write_detail(OUT)` after it.
+  - This writes slim pins `K.ski` and `K.peaks`, plus `K.mtnd`, into core.js.
+  - Card details go in `data/d/_mtn.js`, about 11–70 KB per state. They lazy-load on first card open and are prefetched 6 s after load for offline use.
+  - Hook a new state's build.py with `/workspace/mtn/scripts/hook_build.py <statedir>` (idempotent).
+- **App** (block re-appliable with `/workspace/mtn/patch/patch_app.py app.js block.js`; idempotent):
+  - Functions `kyxMtn`, `kyxMtnPinKey`, `kyxMtnLate`, the `R.ski` and `R.peak` cards, and icons `G.skier` and `G.peak`.
+  - Zoom tiers: `FULL.ski=8`, `FULL.peak=9.5`, and `FULLE.peak` (tier-1 peaks from 8). Dots show below those zooms.
+  - Per-kind grouping is automatic.
+  - Two new SOLOS buttons, Ski and Peaks, appear only when the state has data, and they go in the landscape wheel too.
+  - Also: Map key rows, search, the Back stack, and share links `#ski=<id>` / `#peak=<id>` (shareUrlBest -> index.html#…).
+- **Tests:** `/workspace/mtn/test_mtn.py BASE TAG SKI_ID PEAK_ID [SEARCHWORD]` runs at 412×915 and 915×412. Screenshots go to `/workspace/mtn/shots/`.
+  - `perf/test_solo.py` now expects 10+ buttons.
+  - Load on the local profile is unchanged (~1.05 s median, base vs patched).

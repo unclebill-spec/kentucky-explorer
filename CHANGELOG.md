@@ -5,6 +5,7 @@ Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which 
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
 ## 2026-10-03
+- 13:59 ET: Add ski areas and notable mountain peaks layers: ski/peak icons, cards with trails, lifts, snowfall, season, ticket and pass prices (season + source labeled), discounts, special days; peaks with elevation, prominence, activities, estimated summit weather; Ski and Peaks solo buttons, Map key, zoom tiers, share links #ski= / #peak=
 - 12:48 ET: State switcher: add Vermont (KY / MA / ME / TN / VT)
 - 11:59 ET: Shared app sync: optional per-state cabin category (ST.cabin, off here) and per-state caps; no change to Kentucky labels, filters or listings
 - 10:52 ET: State switcher: add Maine (new Maine Explorer); Compare areas shows n/a for a missing school result

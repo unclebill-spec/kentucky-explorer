@@ -581,3 +581,6 @@ html.pnlopen:not(.srchopen) #mapKey{z-index:1004}
 .leaflet-container .leaflet-control-attribution{font-size:8px;line-height:1.25;padding:0 3px;margin:0 0 2px 5px;background:rgba(255,255,255,.35);color:#333;border-radius:3px;box-shadow:none;max-width:calc(100vw - 150px)}
 .leaflet-container .leaflet-control-attribution a{color:#1a4f8a}
 .lic{display:inline-block;line-height:0;vertical-align:-3px}.lic svg{display:inline-block}
+/* ski areas & peaks cards (Oct 3, 2026) */
+.mtnl{margin:4px 0 6px;padding-left:18px;font-size:13px}.mtnl li{margin:2px 0}
+.mtnsrc{font-size:12px;margin:8px 0}.mtnsrc summary{cursor:pointer;color:var(--muted)}.mtnsrc div{overflow-wrap:anywhere}
