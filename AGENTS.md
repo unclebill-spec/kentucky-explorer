@@ -239,3 +239,6 @@ They never touch in-state stats: border items have `county=None`, so county `n` 
 - **Tests:** `/workspace/border/test_border.py BASE TAG` (one card per type per neighbor state, phone portrait + landscape; Maine's "Top 10s include border items" check fails by design: no border homes/jobs there).
 - **Cost:** KY core.js 889 → 1125 KB raw (gzip 178 → 216 KB), local phone-profile load ≈1.04 → 1.05 s.
 - **Gaps:** homes and RN jobs only come from neighbors that have our own maps (KY↔TN, MA↔VT; MA→ME has none in range); schools in non-map states have no grades (NCES directory only); no Canadian schools/homes.
+
+### Purple bargain star everywhere (Oct 3, 2026 ~4:00 PM ET) — shared app files changed
+The right-side "Bargain" filter button (vertical column and landscape wheel), the Map key "Bargain homes" heading, the deal note on cards and the "Bargain" mark in Top 10 rows now use the same purple star SVG as the bargain pins and the Deals pill (`G.starDot("#8e24aa")` wrapped in `<span class="bstar">`; CSS `.bstar` in style.css) instead of the yellow ⭐ emoji. Plain-text labels (menu label / page title "⭐ Deals of the Week") still use the emoji because they are escaped text.
