@@ -584,3 +584,15 @@ html.pnlopen:not(.srchopen) #mapKey{z-index:1004}
 /* ski areas & peaks cards (Oct 3, 2026) */
 .mtnl{margin:4px 0 6px;padding-left:18px;font-size:13px}.mtnl li{margin:2px 0}
 .mtnsrc{font-size:12px;margin:8px 0}.mtnsrc summary{cursor:pointer;color:var(--muted)}.mtnsrc div{overflow-wrap:anywhere}
+
+/* kyxUI3 (Oct 3, 2026): purple bargains, 3-pill carousel, wheel-scrollable right column */
+.topbub.tb-deals{background:#8e24aa}
+.note.deal{background:#f3e5f5;border-left-color:#8e24aa;color:#3b0a4a}
+.tpills{-webkit-mask-image:none;mask-image:none;left:50%;right:auto;width:min(100vw,660px);transform:translateX(-50%)}
+.tpills .tpill.w3{padding:0 8px 0 4px;gap:5px;justify-content:flex-start;overflow:hidden}
+.tpills .tpill.w3 .tbt{overflow:hidden;text-overflow:ellipsis;min-width:0}
+@media (max-width:440px){.tpills .tpill.w3{font-size:12.5px}.tpills .tpill.w3 .tbi{flex-basis:26px;width:26px;height:26px}}
+.lstack:not(.wheel){max-height:calc(100vh - 290px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
+  scrollbar-width:none;padding:3px 3px 4px 14px;margin:-3px -3px 0 0}
+.lstack:not(.wheel)::-webkit-scrollbar{display:none}
+.lstack:not(.wheel)>*{flex-shrink:0}

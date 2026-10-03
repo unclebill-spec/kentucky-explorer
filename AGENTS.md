@@ -207,3 +207,23 @@ Everything is generic. With no `explorer/mtn.json` there are no pins, no Layers 
 - **Tests:** `/workspace/mtn/test_mtn.py BASE TAG SKI_ID PEAK_ID [SEARCHWORD]` runs at 412×915 and 915×412. Screenshots go to `/workspace/mtn/shots/`.
   - `perf/test_solo.py` now expects 10+ buttons.
   - Load on the local profile is unchanged (~1.05 s median, base vs patched).
+
+## UI round: purple bargains, 3-pill carousel, wheel-scrollable buttons (Oct 3, 2026 ~2:45 PM ET) — shared app files changed
+**Shared app files changed:** app.js and style.css. The block is marked `kyxUI3`; re-apply with `/workspace/border/ui/patch_ui.py app.js style.css`, which is idempotent.
+- **Bargains are purple** (`#8e24aa`) instead of blue:
+  - star pins (`IC_BARG`), bargain groups (`i:barg`), the Map key row, the Deals pill icon and background (`.topbub.tb-deals`), and the deal note on cards.
+- **Bottom Top 10 pills:**
+  - `carousel()` X axis sizes every pill to `(V − 2·6 − 2·8)/3`, so exactly 3 whole pills show.
+  - The row is `min(100vw, 660px)` wide and centered, with no edge mask.
+  - Snapping:
+    - A small swipe moves 1 pill.
+    - A longer drag moves the number of pills dragged.
+    - A fast fling or a drag over 2.2 pills moves a page of 3.
+    - One mouse-wheel notch moves 1 pill.
+  - Starts with Deals on the left. `pillC.next(n)` is exposed.
+  - The vertical landscape wheel is unchanged, except that wheel events never reach the map.
+- **Right-side column** (portrait and desktop):
+  - `fitStack()` caps its height just above Areas / Near me / Top 10s (recomputed on resize).
+  - It scrolls with the mouse wheel and a finger, with a hidden scrollbar; buttons don't shrink.
+  - Wheel events over it are prevented and stopped, so the map never zooms under the buttons.
+- **Test:** `/workspace/border/ui/test_ui.py BASE TAG` checks 412×915, 915×412, 1280×720, 1280×560 and 1280×520. Screenshots go to `/workspace/border/ui/shots/`.
