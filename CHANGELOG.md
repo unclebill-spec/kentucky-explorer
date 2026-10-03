@@ -5,6 +5,7 @@ Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which 
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
 ## 2026-10-03
+- 10:52 ET: State switcher: add Maine (new Maine Explorer); Compare areas shows n/a for a missing school result
 - 07:53 ET: Shared app.js: generic per-state 'mega-block opens city page' setting (ST.cityPage, used by Massachusetts' Boston and Tennessee's Nashville and Memphis). Kentucky has none, so nothing changes here.
 
 ## 2026-10-02
