@@ -552,6 +552,10 @@ a.fsbtn.on{background:#123642;color:#fff}
 .stsw2>*{padding:0 9px;color:#123642;text-decoration:none}
 .stsw2 .on{background:#123642;color:#fff}
 .stsw2 a:active{background:#e6f2f2}
+/* Oct 4 2026 (NH map = 10 states): the state switcher shrinks and scrolls sideways on narrow phones so the Layers / close buttons stay on screen */
+.stsw2{flex:0 1 auto;min-width:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch}.stsw2::-webkit-scrollbar{display:none}.stsw2>*{flex:0 0 auto}
+@media (max-width:480px){.stsw2>*{padding:0 7px}}
+
 /* ---- top pills: "Map key" (left) + "Search" (right), both collapsed by default (app.js showPnl / setPanel) ---- */
 #topbar{top:calc(8px + env(safe-area-inset-top));left:calc(8px + env(safe-area-inset-left));right:calc(8px + env(safe-area-inset-right));z-index:1003}
 #topbar.collapsed{left:auto;justify-content:flex-end}
