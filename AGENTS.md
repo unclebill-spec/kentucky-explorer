@@ -267,3 +267,9 @@ Test: `/workspace/border/ui/test_pills2.py BASE TAG` (1366×600, 1280×700, 1920
 - /workspace/border: static.py (ID allowed {"BC"}, STN OR/WA/NV/CA) and make_border.py (DIRS + CFG for ID, $600k caps for ID only; MT/WY stay $550k). MT/WY border.json now get ID homes/jobs from the Idaho map. Backups /tmp/static.py.bak-id, /tmp/make_border.py.bak-id.
 - /workspace/mtn: master.py etc. gained ID (see /workspace/mtn/PROGRESS.md); MT/WY mtn.json byte-identical.
 - New map: https://unclebill-spec.github.io/idaho-explorer/ (source /workspace/idaho; same sync_shared.sh flow; ID-only price caps $600k via common.CAP).
+
+### Utah added (Oct 4, 2026 ~5:45 AM ET, UT Explorer worker) — shared app.js + shared border/mtn scripts
+- app.js line ~21: Kentucky's default state-switcher list (`ST.others`) now also has Utah (9 maps: ID, KY, MA, ME, MT, TN, UT, VT, WY). Nothing else in app.js/style.css changed. Backup /tmp/sw_pre_ut_kentucky.bak.
+- TN/MA/ME/VT/MT/WY/ID explorer/build.py `STATE["others"]` got Utah too (backups /tmp/sw_pre_ut_<state>.bak).
+- /workspace/mtn: master.py 14 UT ski areas (+ "UT" on Beaver Mountain's maps), build_peaks.py L["UT"], make_state.py UT; ID/MT/WY mtn.json byte-identical. See /workspace/mtn/PROGRESS.md.
+- /workspace/border: make_border.py DIRS + CFG UT ($600k), static.py STN AZ/NM. ID/WY border.json now get UT homes/jobs from the Utah map (and UT gets theirs). Backup /workspace/border_backup_pre_ut_*.tgz.

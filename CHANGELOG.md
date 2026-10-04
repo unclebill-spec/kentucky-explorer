@@ -4,6 +4,9 @@ Live site: https://unclebill-spec.github.io/kentucky-explorer/. Times are US Eas
 Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which used generic "Publish <date>" messages) and from the
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
+## 2026-10-04
+- 06:12 ET: State switcher: add Utah (9 maps)
+
 ## 2026-10-03
 - 20:53 ET: State switcher: add Idaho (8 maps)
 - 18:30 ET: State switcher: Montana and Wyoming added
