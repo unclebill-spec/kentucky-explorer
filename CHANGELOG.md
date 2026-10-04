@@ -5,6 +5,7 @@ Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which 
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
 ## 2026-10-04
+- 10:19 ET: 50+ acre lots under $250k (land or home): small black star pins + groups, '50+ ac' button, Map key row, card with acres, $/acre, dwelling and Nearby
 - 08:19 ET: State switcher: shrinks and scrolls sideways on narrow phones (10 maps)
 - 07:31 ET: State switcher: add New Hampshire (10 maps)
 - 06:12 ET: State switcher: add Utah (9 maps)

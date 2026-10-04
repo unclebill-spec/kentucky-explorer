@@ -73,7 +73,8 @@ cd /workspace/kentucky/publish && ./publish.sh -m "What changed"    # ~2 min; co
 ## Listings refresh routine (twice daily, e.g. the run that started 5:49 PM on Oct 1)
 1. Re-checks every listing in `listings.json` (Zillow via `scripts/zdetail.py`, Coldwell Banker via `scripts/cb_scrape.py`, others by hand).
 2. Updates status and price, and drops sold or off-market listings.
-3. Runs `build.py`, then `publish.sh` with no message. publish.sh now also refreshes the permanent RN jobs (adds ~9–15 min; see below).
+3. **50+ acre lots (big land, since Oct 4 2026):** run `/usr/bin/python3 /workspace/bigland/bigland.py KY --refresh` (Zillow statewide search for 50+ ac under $250k, land or home; re-checks listing pages older than 10 h, drops pending/sold; keeps the previous `../bigland.json` if Zillow blocks). Writes `/workspace/kentucky/bigland.json` + `listing-photos/ky-big-*`. Do not hand-edit bigland.json; build.py merges it.
+4. Runs `build.py`, then `publish.sh` with no message. publish.sh now also refreshes the permanent RN jobs (adds ~9–15 min; see below).
 
 What this means for other work:
 - The source must always build and work, because the routine can publish at any time. Develop risky changes in a copy (e.g. `/workspace/kentucky/work/`), then copy them in.
@@ -281,3 +282,11 @@ Test: `/workspace/border/ui/test_pills2.py BASE TAG` (1366×600, 1280×700, 1920
 - /workspace/border: make_border.py DIRS + CFG NH ($600k); static.py NH allowed {"QC"}, Québec Wikidata box from 44.9° for NH, and a clip() fix (an empty US-state list used to test every state, so ME kept NH static items once NH got a map). MA/VT/ME border.json now take NH homes/jobs from the NH map. Backups /workspace/border_backup_pre_nh_0703.tgz, /workspace/border/bak_nh_0730/.
 - New map: https://unclebill-spec.github.io/new-hampshire-explorer/ (source /workspace/new-hampshire; same sync_shared.sh flow; NH caps $600k via common.CAP; blocks are the 259 NH towns, Vermont method).
 - style.css (~line 555, Oct 4 2026 ~8:00 AM ET, NH worker): with 10 states the switcher (`.stsw2`, 367 px) pushed #layersBtn and the close button off a 412 px phone once the top bar opened (live test_perm failed on NH and UT). `.stsw2` now shrinks (`flex:0 1 auto; min-width:0`) and scrolls sideways (scrollbar hidden), items keep their size, padding 7px under 480 px. Desktop unchanged. Backup /tmp/style_pre_nhfix.css.
+
+### 50+ acre lots under $250k added (Oct 4, 2026 ~10:17 AM ET, big-land worker) — shared app.js / profiles.js / style.css + every build.py
+- Bill, Oct 4 9:24 AM: "can you do 50+ acre lots that are cheap, home or no home under 250k across all the maps? it can get a small black star, add buttons for it as well".
+- Category `big-land` (layer key `big`): 50+ acres, price < $250,000, raw land or with a home (any size / beds / baths), same cap on every map. Data: `/workspace/bigland/bigland.py <ST>` -> `<state>/bigland.json` (log + notes in /workspace/bigland/PROGRESS.md).
+- app.js: `G.bigStar` (small black star), `isBig`, `BIGS`, layer `big` (KEEP = always an icon, grouped into black-star clusters), Map key row, right-stack button "50+ ac" (only when the map has some), `bigCard` (acres, $/acre, dwelling yes / maybe / no, Nearby), county lists, search label. Never the purple bargain star: a listing that is both shows only as big-land (bargains.py skips the category). profiles.js: profiles show big-land unless they untick it (`home.big === 0`). style.css: `.bkstar`. Patch: /workspace/bigland/patch_app.py; pre-patch copies /workspace/bigland/*.pre.
+- every explorer/build.py (marker BIGLAND, /workspace/bigland/patch_build.py; backups /workspace/bigland/bak/): load_listings merges `../bigland.json`, any listing with 50+ ac under $250k becomes big-land, core field `dwell`.
+- /workspace/border/scripts/make_border.py home_cat: 50+ ac under $250k -> big-land on every receiving map.
+- Refresh routine: step 3 above (KY). The other states refresh by rerunning bigland.py <ST> then their publish.

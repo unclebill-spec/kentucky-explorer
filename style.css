@@ -634,3 +634,6 @@ html.haspills:not(.cardon) #toast{bottom:calc(76px + env(safe-area-inset-bottom)
   .topbtn{min-height:38px;padding-top:8px;padding-bottom:8px}.gpsbtn{height:32px}
   .lstack:not(.wheel){gap:2px}.lstack:not(.wheel) .lsb{height:26px}  /* 13 buttons (Maine: + Cabin) fit at 1366x600 */
 }
+
+/* Oct 4 2026: 50+ acre lots under $250k (black star) */
+.mk.big{background:none;border:0;box-shadow:none;filter:drop-shadow(0 1px 1.5px #0007)}.bkstar{display:inline-flex;vertical-align:-3px}.bkstar svg{display:block}
