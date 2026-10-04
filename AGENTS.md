@@ -273,3 +273,10 @@ Test: `/workspace/border/ui/test_pills2.py BASE TAG` (1366×600, 1280×700, 1920
 - TN/MA/ME/VT/MT/WY/ID explorer/build.py `STATE["others"]` got Utah too (backups /tmp/sw_pre_ut_<state>.bak).
 - /workspace/mtn: master.py 14 UT ski areas (+ "UT" on Beaver Mountain's maps), build_peaks.py L["UT"], make_state.py UT; ID/MT/WY mtn.json byte-identical. See /workspace/mtn/PROGRESS.md.
 - /workspace/border: make_border.py DIRS + CFG UT ($600k), static.py STN AZ/NM. ID/WY border.json now get UT homes/jobs from the Utah map (and UT gets theirs). Backup /workspace/border_backup_pre_ut_*.tgz.
+
+### New Hampshire added (Oct 4, 2026 ~7:32 AM ET, NH Explorer worker) — shared app.js + shared border/mtn scripts
+- app.js line ~21: Kentucky's default state-switcher list (`ST.others`) now also has New Hampshire (10 maps: ID, KY, MA, ME, MT, NH, TN, UT, VT, WY). Nothing else in app.js/style.css changed.
+- TN/MA/ME/VT/MT/WY/ID/UT explorer/build.py `STATE["others"]` got New Hampshire too.
+- /workspace/mtn: master.py "NH" on 19 existing areas + Waterville Valley, Gunstock, Ragged, McIntyre, Tenney; build_peaks.py L["NH"]; make_state.py NH. Other states' mtn.json byte-identical. Backup /workspace/mtn_backup_pre_nh_0658.tgz.
+- /workspace/border: make_border.py DIRS + CFG NH ($600k); static.py NH allowed {"QC"}, Québec Wikidata box from 44.9° for NH, and a clip() fix (an empty US-state list used to test every state, so ME kept NH static items once NH got a map). MA/VT/ME border.json now take NH homes/jobs from the NH map. Backups /workspace/border_backup_pre_nh_0703.tgz, /workspace/border/bak_nh_0730/.
+- New map: https://unclebill-spec.github.io/new-hampshire-explorer/ (source /workspace/new-hampshire; same sync_shared.sh flow; NH caps $600k via common.CAP; blocks are the 259 NH towns, Vermont method).
