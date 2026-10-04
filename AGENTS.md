@@ -260,3 +260,10 @@ Test: `/workspace/border/ui/test_pills2.py BASE TAG` (1366×600, 1280×700, 1920
 - /workspace/border: static.py (STN names, Canada set, BC/AB/SK handling for MT) and make_border.py (DIRS + CFG $550k caps for MT/WY). Other states' outputs unchanged. Backups /tmp/static.py.bak, /tmp/make_border.py.bak.
 - /workspace/mtn: master.py, build_ski.py, build_peaks.py, fetch_wp_peaks.py, wd_peaks.py, make_state.py gained MT/WY (see /workspace/mtn/PROGRESS.md). Existing ski/peak entries verified unchanged.
 - New maps: https://unclebill-spec.github.io/montana-explorer/ and https://unclebill-spec.github.io/wyoming-explorer/ (sources /workspace/montana, /workspace/wyoming; same sync_shared.sh flow).
+
+### Idaho added (Oct 3, 2026 ~8:20 PM ET, ID Explorer worker) — shared app.js + shared border/mtn scripts
+- app.js line ~21: Kentucky's default state-switcher list (`ST.others`) now also has Idaho (8 maps: ID, KY, MA, ME, MT, TN, VT, WY; the switcher sorts by abbreviation). Nothing else in app.js/style.css changed. Backup /tmp/ky_app.js.bak-id.
+- TN/MA/ME/VT/MT/WY explorer/build.py STATE["others"] gained ID (backups /tmp/<state>_build.py.bak-id).
+- /workspace/border: static.py (ID allowed {"BC"}, STN OR/WA/NV/CA) and make_border.py (DIRS + CFG for ID, $600k caps for ID only; MT/WY stay $550k). MT/WY border.json now get ID homes/jobs from the Idaho map. Backups /tmp/static.py.bak-id, /tmp/make_border.py.bak-id.
+- /workspace/mtn: master.py etc. gained ID (see /workspace/mtn/PROGRESS.md); MT/WY mtn.json byte-identical.
+- New map: https://unclebill-spec.github.io/idaho-explorer/ (source /workspace/idaho; same sync_shared.sh flow; ID-only price caps $600k via common.CAP).
