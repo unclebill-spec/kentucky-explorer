@@ -5,6 +5,7 @@ Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which 
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
 ## 2026-10-04
+- 20:37 ET: Fix: hospital-drive line on 71 near-hospital home cards no longer says '(estimate) (estimate)'; permanent RN jobs: Ephraim McDowell's 40 jobs kept after its career site returned 0 this evening (new per-employer guard)
 - 16:04 ET: Border: caves and waterfalls on the property from neighboring states (bat / waterfall pins)
 - 14:43 ET: Caves and waterfalls on the property: flying-bat and waterfall pins + groups, 'Cave' and 'Falls' buttons, Map key, card with the listing's own words, acres, price and Nearby
 - 11:11 ET: Border: 50+ acre lots under $250k from neighboring states (black star)
