@@ -305,3 +305,7 @@ Test: `/workspace/border/ui/test_pills2.py BASE TAG` (1366×600, 1280×700, 1920
 
 ## Anna profile (shared code, Oct 5, 2026)
 - `anna.js` + `anna_build.py` + app.js `ANNA_*` hooks + style.css `.pfa/.tb-eng/.tb-ah` are shared by all 10 explorers (keep md5 identical). The Anna button only appears on a map whose build found `<state root>/anna.json` (live on Tennessee only so far); without it the hooks do nothing. Full notes: /workspace/tennessee/explorer/AGENTS.md "Anna profile" and /workspace/anna/PROGRESS.md.
+- Oct 5 2026 ~10 PM (North Carolina Explorer worker): app.js line 21 KY switcher list + North Carolina. anna.js: `TX(k)` reads optional per-state wording from
+  anna.json `"txt"` (src, avail_src, es_metric, es_near, pay_h2, pay_sub, bonus_foot); without it the Tennessee text is used unchanged. `payR` appends " est." and the
+  job card Pay row says ESTIMATE + basis when a job has `est` (NC: no pay-transparency law, most pay is a BLS-based estimate). anna_build.py: eng rows carry `est`/`pb`
+  (from pay_est / pay_basis), slim meta gets `txt` only when present, sources text from `sources_txt`. TN anna.json has none of these keys, so TN output is unchanged.
