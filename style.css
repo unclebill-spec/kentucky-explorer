@@ -641,3 +641,15 @@ html.haspills:not(.cardon) #toast{bottom:calc(76px + env(safe-area-inset-bottom)
 /* Oct 4 2026: caves (flying bat) and waterfalls on the property */
 .mk.cvf{background:none;border:0;box-shadow:none;filter:drop-shadow(0 1px 1.5px #0007)}.cfic{display:inline-flex;align-items:center;gap:2px;vertical-align:-3px}.cfic svg{display:block}.note.cfq{font-style:normal}
 @media (max-height:800px) and (min-height:641px){.lsb{height:30px}.lstack{gap:3px}}  /* 2 more buttons (Cave, Falls): the stack still fits on a 768 px laptop */
+
+/* Anna profile (Oct 5, 2026): 5th top button, engineering-job pins, Anna homes, spouse jobs, Anna score block */
+.pfb.pfa{border-color:#ff9800;color:#7a3e00}
+.pfb.pfa.on{background:#263238;border-color:#263238;color:#ffb74d}
+.plab.eng{color:#7a3e00;border-left:3px solid #ff9800}
+.z-low .plab.eng{display:none}
+.topbub.tb-eng{background:#263238}
+.topbub.tb-spj{background:#00796b}
+.topbub.tb-ah{background:#3949ab}
+.appeal.anna{background:#fff6e8}
+.annaline{margin:6px 0 2px}
+#layerList [hidden],#layersPanel [hidden],#metricSel [hidden]{display:none!important}

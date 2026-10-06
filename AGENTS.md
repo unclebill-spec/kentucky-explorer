@@ -302,3 +302,6 @@ Test: `/workspace/border/ui/test_pills2.py BASE TAG` (1366×600, 1280×700, 1920
 - /workspace/border/scripts/make_border.py: home_cat -> cave / falls for cf listings up to the receiving map's highest cap (backup /workspace/cavefalls/make_border.py.pre).
 - Refresh routine: step 4 above (KY). Other states: rerun cavefalls.py <ST> then their publish.
 - Oct 4 2026 ~3:55 PM: dedupe() in cavefalls.py (Bill: TN had the same land listed 2-3 times). TN 52 -> 43, ID 6 -> 5; others unchanged.
+
+## Anna profile (shared code, Oct 5, 2026)
+- `anna.js` + `anna_build.py` + app.js `ANNA_*` hooks + style.css `.pfa/.tb-eng/.tb-ah` are shared by all 10 explorers (keep md5 identical). The Anna button only appears on a map whose build found `<state root>/anna.json` (live on Tennessee only so far); without it the hooks do nothing. Full notes: /workspace/tennessee/explorer/AGENTS.md "Anna profile" and /workspace/anna/PROGRESS.md.
