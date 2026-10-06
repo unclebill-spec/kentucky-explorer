@@ -4,6 +4,9 @@ Live site: https://unclebill-spec.github.io/kentucky-explorer/. Times are US Eas
 Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which used generic "Publish <date>" messages) and from the
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
+## 2026-10-05
+- 21:06 ET: Permanent RN jobs: cardiac cath lab postings are now hidden like the other cath lab jobs. 6 jobs (5 'RN Cardiac Cath Lab' at Saint Joseph Lexington / East and Owensboro Health, plus a Norton educator post titled 'ED, Cath Lab, IR') were filed under step-down because the word 'cardiac' matched before 'cath'; any job whose title or unit names the cath lab is now Cath lab / IR. Cath recovery, cath-lab step-down and holding jobs stay in.
+
 ## 2026-10-04
 - 20:37 ET: Fix: hospital-drive line on 71 near-hospital home cards no longer says '(estimate) (estimate)'; permanent RN jobs: Ephraim McDowell's 40 jobs kept after its career site returned 0 this evening (new per-employer guard)
 - 16:04 ET: Border: caves and waterfalls on the property from neighboring states (bat / waterfall pins)
