@@ -5,6 +5,7 @@ Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which 
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
 ## 2026-10-07
+- 17:33 ET: Target store cards: the location row now reads 'County: Boone County' (shared app code, same on every map).
 - 17:14 ET: Target stores layer: every Target in Kentucky (15, Target's own store directory) plus 14 within ~15 mi over the line (OH 9, IN 4, TN 1; tagged, not counted in county stats). Small red bullseye pins (grouped, faint dots when zoomed out), right-side 'Target' button, store cards with address, phone, regular hours and services, share links #target=<store number>, and the nearest Target (OSRM free-flow drive time) in every property card's Nearby section.
 
 ## 2026-10-05
