@@ -324,3 +324,9 @@ Test: `/workspace/border/ui/test_pills2.py BASE TAG` (1366×600, 1280×700, 1920
 - Top 10 list pins are full icons at any zoom while the list (or a card opened over it) is open.
 - Patch: `/workspace/filterfocus/patch_app.py app.js` (idempotent, marker `kyxFoc`), CSS `.kdim{opacity:.8}` at the end of style.css. Pre-patch copies `/workspace/filterfocus/bak/`. Log `/workspace/filterfocus/PROGRESS.md`.
 - Test: `/usr/bin/python3 /workspace/filterfocus/smoke.py BASE TAG` (headless 412x915: no filter = no scaled icons; Target on = Target icons scaled and above every other icon, statewide and at town zoom; off restores; no JS errors). `KYXApp.foc()` = {on, top, solo}. Full phone+desktop test deferred (Bill, Oct 7).
+
+## Hospitals button: kyxHosp (Oct 8, 2026 ~12:30 AM ET, filter-focus worker) — shared app.js
+- Bill: a right-side "Hospitals" filter button (also in the landscape wheel) showing ALL hospitals (incl. border hospitals within ~15 mi) with their existing icons (nursing cross / specialty cross / trauma level icons); button icon = the existing `G.nurse()`. SOLOS entry `hosp`, keys `hosp` + `trauma`, `has` = any K.hospitals. No hash state (solo buttons are never in the URL).
+- Uses kyxFoc: hospitals enlarged + on top, always-on pins shrink. Inside it every trauma center sits above every other hospital: focused trauma pins and trauma groups get `FOC_TR` = +15000 z on top of `FOC_UP` (groups are per icon kind, so trauma never groups under a non-trauma hospital).
+- Hidden in Anna mode (`soloVis`, like Jobs / Near). Toast drops "+ trauma centers" when trauma is the filter. Job / cath lab rules untouched.
+- Patch `/workspace/filterfocus/patch_hosp.py app.js` (idempotent, marker `kyxHosp`; needs kyxFoc). Test `/usr/bin/python3 /workspace/filterfocus/smoke_hosp.py BASE TAG [anna]`.
