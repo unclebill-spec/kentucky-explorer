@@ -653,3 +653,6 @@ html.haspills:not(.cardon) #toast{bottom:calc(76px + env(safe-area-inset-bottom)
 .appeal.anna{background:#fff6e8}
 .annaline{margin:6px 0 2px}
 #layerList [hidden],#layersPanel [hidden],#metricSel [hidden]{display:none!important}
+
+/* kyxFoc (Oct 7 2026): while a filter is active, pins that are not part of it are drawn smaller (app.js) and a bit faint */
+.kdim{opacity:.8}.kfz,.kdim{position:relative}
