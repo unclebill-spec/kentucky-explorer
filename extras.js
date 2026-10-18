@@ -1,1 +1,135 @@
-!function(){let t=null;const e=e=>t.esc(e),a={5:"Blue (best)",4:"Green",3:"Yellow",2:"Orange",1:"Red"},s={property:"🏠 Homes & land",travel:"💼 Travel nurse jobs",building:"🔔 Buildings for sale",business:"💲 Businesses for sale"},o=e=>{const a=e.indexOf(":"),s=e.slice(0,a),o=e.slice(a+1);return{t:s,id:o,it:t.IDX[s]&&t.IDX[s][o]}},i=t=>null==t?"":(+t).toLocaleString(void 0,{maximumFractionDigits:2})+" ac";function n(a,s,o,n){return o?"property"===a?t.gRow(a,s,"",t.gImg(o.rt||o.th&&o.th.u,"🏠"),`<b>${t.money(o.price)}</b>${null!=o.beds?` · ${e(o.beds)} bd / ${e(o.baths)} ba`:""}${o.acres?" · "+i(o.acres):""}`,e(o.title),t.dot([o.town&&e(o.town),n]),!0):"travel"===a?t.gRow(a,s,"",t.gImg(o.th&&o.th.u,"💼"),`<b class="gpay">top ${t.money(o.top)}/wk</b> · ${e(o.n)} job${o.n>1?"s":""}`,e(o.name),t.dot([o.city&&e(o.city),n]),!0):"business"===a||"building"===a?t.gRow(a,s,"",t.gImg(o.th&&o.th.u,"business"===a?"💲":"🔔"),`<b>${o.price?t.money(o.price):"Price n/a"}</b>${o.kind?" · "+e(o.kind):""}`,e(o.title||o.name),t.dot([o.town&&e(o.town),n]),!0):t.gRow(a,s,"",t.gImg(o.th&&o.th.u,"📍"),e(o.name||o.title||s),o.city?e(o.city):"",n||"",!0):""}const r=(e,a,s,o,i)=>t.showPage({type:"xpage",id:e,hash:a},s,a,Object.assign({title:o,tall:!0},i||{})),l=(e,a)=>{navigator.share?navigator.share({title:a,text:a,url:e}).catch((()=>{})):t.copy(e)},c=()=>location.href.split("#")[0];function d(e,a,i,u){const m={};e.forEach((t=>{const e=o(t);e.it&&(m[e.t]=m[e.t]||[]).push(e)}));const p=Object.values(m).reduce(((t,e)=>t+e.length),0),b=Object.keys(s).filter((t=>m[t])).map((t=>`<div class="xh">${s[t]} (${m[t].length})</div><div class="glist">${m[t].map((t=>n(t.t,t.id,t.it))).join("")}</div>`)).join("");r(a?"favs-shared":"favs",a?"#favs="+i:"#favs",`<div class="kicker">♥ ${a?"Shared favorites":"Favorites"}</div><h2>${p} saved place${1===p?"":"s"}</h2>\n      <div class="sub">${a?"Someone shared this list with you.":"Tap ♡ at the top of a home, job, building or business card to save it here. Saved on this phone only."}</div>\n      <div class="xact">${a?'<button type="button" class="btn" data-x="addall">♥ Add all to my favorites</button>':p?'<button type="button" class="btn" data-x="share">Share this list</button><button type="button" class="btn ghost" data-x="clear">Clear all</button>':""}</div>\n      ${b||'<div class="gempty">Nothing saved yet.</div>'}`,a?"Shared favorites":"Favorites",u),h({share:()=>{return l(c()+"#favs="+(e=JSON.stringify(t.favGet()),btoa(unescape(encodeURIComponent(e))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")),"My "+((window.KYX_ST||{}).app||"Kentucky Explorer")+" favorites");var e},clear:()=>{confirm("Remove all favorites?")&&(t.favSet([]),d([],!1,"",{replace:!0}))},addall:()=>{const a=t.favGet();e.forEach((t=>{!a.includes(t)&&o(t).it&&a.push(t)})),t.favSet(a),t.toast(`Added. You have ${a.length} favorites.`),t.updFav()}})}function h(e){t.body.querySelectorAll("[data-x]").forEach((t=>t.onclick=()=>e[t.dataset.x]&&e[t.dataset.x](t)))}function u(s,o){const d="#compare"+((s=s.filter((e=>t.IDX.property[e])).slice(0,3)).length?"="+s.map(encodeURIComponent).join(","):"");if(s.length<2)return void r("compare",d,`<div class="kicker">⚖ Compare homes</div><h2>Pick ${s.length?"one or two more homes":"2 or 3 homes"}</h2>\n        <div class="sub">Open a home's card and tap <b>⚖ Compare</b> at the bottom. Then come back here.</div>\n        ${s.length?`<div class="glist">${s.map((e=>n("property",e,t.IDX.property[e]))).join("")}</div>`:""}`,"Compare homes",o);const m=s.map((e=>t.IDX.property[e])),p=s.map((t=>(window.KYXPF_D&&window.KYXPF_D.props||{})[t]||{})),b=[["Price",t=>t.price,e=>t.money(e),"min"],["Acres",t=>t.acres,t=>i(t),"max"],["$ per acre",t=>(t=>t.price&&t.acres?t.price/t.acres:null)(t),e=>t.money(Math.round(e)),"min"],["Beds / baths",t=>null!=t.beds?+t.beds+(+t.baths||0)/10:null,(t,a)=>`${e(a.beds)} bd / ${e(a.baths)} ba`,"max"],["Sq ft",t=>t.sqft,t=>Math.round(t).toLocaleString(),"max"],["Year built",(t,e)=>e.yb||t.year_built,t=>e(t),"max"],["Drive to hospital",(t,e)=>((t,e)=>null!=e.hm?e.hm:t.nh&&null!=t.nh.minutes_free_flow?t.nh.minutes_free_flow:null)(t,e),t=>`${t} min`,"min"],["Drive to Level I/II trauma",(t,e)=>e.tm,t=>`${t} min`,"min"],["School rating (nearby, KDE)",(t,e)=>e.sr,t=>e(a[t]||t),"max"],["Days listed",(t,e)=>e.dom,t=>`${t}`,"min"]];r("compare",d,`<div class="kicker">⚖ Compare homes</div><h2>${m.length} homes side by side</h2>\n      <div class="sub">Green = best in the row. Drive times are free-flow (no traffic). School rating = the lowest-rated school nearby (KDE colors).</div>\n      <div class="cmpwrap"><table class="cmpt"><tr><th></th>${m.map(((a,o)=>`<td>${a.rt||a.th&&a.th.u?`<img src="${e(a.rt||a.th.u)}" alt="" loading="lazy">`:""}<div>${t.link("property",s[o],a.title)}</div><div class="small">${e(a.town||"")}</div><button type="button" class="linkbtn" data-rm="${e(s[o])}">remove</button></td>`)).join("")}</tr>\n      ${b.map((t=>{const e=m.map(((e,a)=>t[1](e,p[a]))),a=e.filter((t=>null!=t&&""!==t&&!isNaN(+t))).map(Number),s=a.length>1?"min"===t[3]?Math.min(...a):Math.max(...a):null;return`<tr><th>${t[0]}</th>${e.map(((e,o)=>`<td${null!=s&&+e===s&&a.filter((t=>t===s)).length<a.length?' class="best"':""}>${null==e||""===e?"—":t[2](e,m[o])}</td>`)).join("")}</tr>`})).join("")}</table></div>\n      <div class="xact"><button type="button" class="btn" data-x="share">Share this comparison</button><button type="button" class="btn ghost" data-x="clear">Clear</button></div>`,"Compare homes",o),h({share:()=>l(c()+d,"Compare homes: "+((window.KYX_ST||{}).app||"Kentucky Explorer")),clear:()=>{t.cmpSet([]),u([],{replace:!0})}}),t.body.querySelectorAll("[data-rm]").forEach((e=>e.onclick=()=>{const a=s.filter((t=>t!==e.dataset.rm));t.cmpSet(a),u(a,{replace:!0})}))}let m=null,p=null;const b=(t,e,a,s)=>{const o=Math.PI/180,i=Math.sin((a-t)*o/2),n=Math.sin((s-e)*o/2);return 7917.6*Math.asin(Math.sqrt(i*i+Math.cos(t*o)*Math.cos(a*o)*n*n))};function v(a){r("near","#near",'<div class="kicker">📍 Near me</div><h2>Finding you…</h2><div class="sub">Allow location access when your phone asks. Your location stays on this phone.</div>',"Near me",a),navigator.geolocation?navigator.geolocation.getCurrentPosition((e=>function(e){const a=t.current();if(!a||"near"!==a.id)return;m=[e.latitude,e.longitude],p&&t.map.removeLayer(p),p=L.layerGroup([L.circle(m,{radius:Math.min(e.accuracy||50,3e3),color:"#1e88e5",weight:1,fillOpacity:.12,interactive:!1}),L.marker(m,{icon:L.divIcon({className:"",html:'<div class="medot"></div>',iconSize:[22,22],iconAnchor:[11,11]}),interactive:!1,zIndexOffset:9999})]).addTo(t.map);const s=t.PHONE?Math.round(.3*innerHeight):0,o=t.map.project(m,11);o.y+=s,t.PHONE||(o.x+=210),t.map.flyTo(t.map.unproject(o,11),11,{duration:.8});const i=t.K,r=(t,e,a=3)=>(t||[]).filter((t=>null!=t.lat&&(!e||e(t)))).map((t=>[t,b(m[0],m[1],t.lat,t.lon)])).sort(((t,e)=>t[1]-e[1])).slice(0,a),l=(e,a,s)=>s.length?`<div class="xh">${e}</div><div class="glist">${s.map((([e,s])=>n(a,e.id,t.IDX[a][e.id]||e,(t=>t<10?t.toFixed(1)+" mi":Math.round(t)+" mi")(s)+" away (straight line)"))).join("")}</div>`:"",c=r(i.hospitals,null,1)[0];t.body.querySelector("h2").textContent="Closest to you",t.body.querySelector(".sub").innerHTML=`Straight-line distances from your location (±${Math.round(e.accuracy||0)} m).${c&&c[1]>60?` You're well outside ${(window.KYX_ST||{}).name||"Kentucky"}; these are the nearest anyway.`:""}`,t.body.insertAdjacentHTML("beforeend",l("🏥 Trauma centers","hospital",r(i.hospitals,(t=>/Level (I|II)(\s|$)/.test(t.trauma||""))))+l("🏥 Hospitals","hospital",r(i.hospitals))+l("💼 Travel nurse jobs","travel",r(i.travel&&i.travel.hospitals))+l("🏠 Homes & land","property",r(i.properties))+l("💲 Businesses for sale","business",r(i.businesses))+l("🔔 Buildings for sale","building",r(i.buildings))+l("🎡 Attractions","attraction",r(i.attractions))+l("🎓 Schools","school",r(i.schools)))}(e.coords)),(t=>y(1===t.code?"Location access is turned off for this site. Turn it on in your browser settings to use Near me.":"Couldn't get your location ("+e(t.message||"timeout")+").")),{enableHighAccuracy:!0,timeout:12e3,maximumAge:12e4}):y("This browser can't share its location.")}function y(e){const a=t.current();a&&"near"===a.id&&(t.body.querySelector("h2").textContent="Location unavailable",t.body.querySelector(".sub").innerHTML=e)}window.KYXE={init:e=>(t=e,window.KYXE),route:function(e,a){let s;if("#favs"===e)d(t.favGet(),!1,"",a);else if(s=e.match(/^#favs=([A-Za-z0-9_-]+)$/)){let t=[];try{t=JSON.parse((i=s[1],decodeURIComponent(escape(atob(i.replace(/-/g,"+").replace(/_/g,"/"))))))}catch(t){}d(Array.isArray(t)?t.filter((t=>"string"==typeof t)).slice(0,200):[],!0,s[1],a)}else"#compare"===e?u(t.cmpGet(),a):(s=e.match(/^#compare=(.+)$/))?u(s[1].split(",").map(decodeURIComponent),a):"#new"===e?function(e){const a=t.BADGE,s=Object.keys(a).filter((t=>!t.startsWith("job:"))),i=(e,i)=>{const r=(t=>s.filter((e=>e.startsWith(t+":"))).map(o).filter((t=>t.it)))(e);return r.length?`<div class="xh">${i} (${r.length})</div><div class="glist">${r.map((e=>{const s=a[e.t+":"+e.id];return n(e.t,e.id,e.it,"cut"===s.k?`was ${t.money(s.was)}`:s.jobs?`${s.jobs} new job${s.jobs>1?"s":""}`:"new")})).join("")}</div>`:""},l=i("property","🏠 Homes & land")+i("business","💲 Businesses")+i("building","🔔 Buildings")+i("travel","💼 Hospitals with new travel jobs");r("new","#new",`<div class="kicker">🆕 Since your last visit</div><h2>New listings &amp; price cuts</h2>\n      <div class="sub">Compared with what this phone saw on your previous visit (a visit = after 30+ minutes away). ${Object.keys(a).length?"":"Nothing new yet. Come back after the next listings refresh."}</div>${l}`,"New & price cuts",e)}(a):"#near"===e&&v(a);var i},me:()=>m}}();
+// State Explorer: phone extras, loaded on first use (Favorites, Compare, New & price cuts, Near me).
+// Pages: #favs, #favs=<shared list>, #compare, #compare=<id,id,id>, #new, #near. All render into the card (Back / X / expand work as usual).
+(function () {
+  let A = null;
+  const esc = s => A.esc(s);
+  const b64 = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  const unb64 = s => decodeURIComponent(escape(atob(s.replace(/-/g, "+").replace(/_/g, "/"))));
+  const PF = () => (window.KYXPF_D && window.KYXPF_D.props) || {};
+  const SR = { 5: "Blue (best)", 4: "Green", 3: "Yellow", 2: "Orange", 1: "Red" };
+  const TL = { property: "🏠 Homes & land", travel: "💼 Travel nurse jobs", building: "🔔 Buildings for sale", business: "💲 Businesses for sale" };
+  const item = k => { const i = k.indexOf(":"), t = k.slice(0, i), id = k.slice(i + 1); return { t, id, it: A.IDX[t] && A.IDX[t][id] }; };
+  const ac = v => v == null ? "" : (+v).toLocaleString(undefined, { maximumFractionDigits: 2 }) + " ac";
+  function row(t, id, it, l3x) {
+    if (!it) return "";
+    if (t === "property") return A.gRow(t, id, "", A.gImg(it.rt || (it.th && it.th.u), "🏠"), `<b>${A.money(it.price)}</b>${it.beds != null ? ` · ${esc(it.beds)} bd / ${esc(it.baths)} ba` : ""}${it.acres ? " · " + ac(it.acres) : ""}`, esc(it.title), A.dot([it.town && esc(it.town), l3x]), true);
+    if (t === "travel") return A.gRow(t, id, "", A.gImg(it.th && it.th.u, "💼"), `<b class="gpay">top ${A.money(it.top)}/wk</b> · ${esc(it.n)} job${it.n > 1 ? "s" : ""}`, esc(it.name), A.dot([it.city && esc(it.city), l3x]), true);
+    if (t === "business" || t === "building") return A.gRow(t, id, "", A.gImg(it.th && it.th.u, t === "business" ? "💲" : "🔔"), `<b>${it.price ? A.money(it.price) : "Price n/a"}</b>${it.kind ? " · " + esc(it.kind) : ""}`, esc(it.title || it.name), A.dot([it.town && esc(it.town), l3x]), true);
+    return A.gRow(t, id, "", A.gImg(it.th && it.th.u, "📍"), esc(it.name || it.title || id), it.city ? esc(it.city) : "", l3x || "", true);
+  }
+  const page = (id, hash, html, title, opts) => A.showPage({ type: "xpage", id, hash }, html, hash, Object.assign({ title, tall: true }, opts || {}));
+  const share = (url, title) => { if (navigator.share) navigator.share({ title, text: title, url }).catch(() => { }); else A.copy(url); };
+  const here = () => location.href.split("#")[0];
+
+  // ---------------------------------------------------------------- favorites
+  function favList(keys, shared, enc, opts) {
+    const groups = {}; keys.forEach(k => { const x = item(k); if (x.it) (groups[x.t] = groups[x.t] || []).push(x); });
+    const n = Object.values(groups).reduce((a, g) => a + g.length, 0);
+    const body = Object.keys(TL).filter(t => groups[t]).map(t => `<div class="xh">${TL[t]} (${groups[t].length})</div><div class="glist">${groups[t].map(x => row(x.t, x.id, x.it)).join("")}</div>`).join("");
+    const hash = shared ? "#favs=" + enc : "#favs";
+    page(shared ? "favs-shared" : "favs", hash, `<div class="kicker">♥ ${shared ? "Shared favorites" : "Favorites"}</div><h2>${n} saved place${n === 1 ? "" : "s"}</h2>
+      <div class="sub">${shared ? "Someone shared this list with you." : "Tap ♡ at the top of a home, job, building or business card to save it here. Saved on this phone only."}</div>
+      <div class="xact">${shared ? `<button type="button" class="btn" data-x="addall">♥ Add all to my favorites</button>` : n ? `<button type="button" class="btn" data-x="share">Share this list</button><button type="button" class="btn ghost" data-x="clear">Clear all</button>` : ""}</div>
+      ${body || '<div class="gempty">Nothing saved yet.</div>'}`, shared ? "Shared favorites" : "Favorites", opts);
+    wire({
+      share: () => share(here() + "#favs=" + b64(JSON.stringify(A.favGet())), "My " + ((window.KYX_ST || {}).app || "Kentucky Explorer") + " favorites"),
+      clear: () => { if (confirm("Remove all favorites?")) { A.favSet([]); favList([], false, "", { replace: true }); } },
+      addall: () => { const a = A.favGet(); keys.forEach(k => { if (!a.includes(k) && item(k).it) a.push(k); }); A.favSet(a); A.toast(`Added. You have ${a.length} favorites.`); A.updFav(); },
+    });
+  }
+  function wire(fns) { A.body.querySelectorAll("[data-x]").forEach(b => b.onclick = () => fns[b.dataset.x] && fns[b.dataset.x](b)); }
+
+  // ---------------------------------------------------------------- compare (2-3 homes)
+  function compare(ids, opts) {
+    ids = ids.filter(id => A.IDX.property[id]).slice(0, 3);
+    const hash = "#compare" + (ids.length ? "=" + ids.map(encodeURIComponent).join(",") : "");
+    if (ids.length < 2) {
+      page("compare", hash, `<div class="kicker">⚖ Compare homes</div><h2>Pick ${ids.length ? "one or two more homes" : "2 or 3 homes"}</h2>
+        <div class="sub">Open a home's card and tap <b>⚖ Compare</b> at the bottom. Then come back here.</div>
+        ${ids.length ? `<div class="glist">${ids.map(id => row("property", id, A.IDX.property[id])).join("")}</div>` : ""}`, "Compare homes", opts);
+      return;
+    }
+    const P = ids.map(id => A.IDX.property[id]), F = ids.map(id => PF()[id] || {});
+    const ppa = p => p.price && p.acres ? p.price / p.acres : null;
+    const nhMin = (p, f) => f.hm != null ? f.hm : p.nh && p.nh.minutes_free_flow != null ? p.nh.minutes_free_flow : null;
+    const rows = [
+      ["Price", (p) => p.price, v => A.money(v), "min"],
+      ["Acres", (p) => p.acres, v => ac(v), "max"],
+      ["$ per acre", (p) => ppa(p), v => A.money(Math.round(v)), "min"],
+      ["Beds / baths", (p) => p.beds != null ? +p.beds + (+p.baths || 0) / 10 : null, (v, p) => `${esc(p.beds)} bd / ${esc(p.baths)} ba`, "max"],
+      ["Sq ft", (p) => p.sqft, v => Math.round(v).toLocaleString(), "max"],
+      ["Year built", (p, f) => f.yb || p.year_built, v => esc(v), "max"],
+      ["Drive to hospital", (p, f) => nhMin(p, f), v => `${v} min`, "min"],
+      ["Drive to Level I/II trauma", (p, f) => f.tm, v => `${v} min`, "min"],
+      ["School rating (nearby, KDE)", (p, f) => f.sr, v => esc(SR[v] || v), "max"],
+      ["Days listed", (p, f) => f.dom, v => `${v}`, "min"],
+    ];
+    const cell = (r) => { const vals = P.map((p, i) => r[1](p, F[i])); const ok = vals.filter(v => v != null && v !== "" && !isNaN(+v)).map(Number);
+      const best = ok.length > 1 ? (r[3] === "min" ? Math.min(...ok) : Math.max(...ok)) : null;
+      return `<tr><th>${r[0]}</th>${vals.map((v, i) => `<td${best != null && +v === best && ok.filter(x => x === best).length < ok.length ? ' class="best"' : ""}>${v == null || v === "" ? "—" : r[2](v, P[i])}</td>`).join("")}</tr>`; };
+    page("compare", hash, `<div class="kicker">⚖ Compare homes</div><h2>${P.length} homes side by side</h2>
+      <div class="sub">Green = best in the row. Drive times are free-flow (no traffic). School rating = the lowest-rated school nearby (KDE colors).</div>
+      <div class="cmpwrap"><table class="cmpt"><tr><th></th>${P.map((p, i) => `<td>${p.rt || (p.th && p.th.u) ? `<img src="${esc(p.rt || p.th.u)}" alt="" loading="lazy">` : ""}<div>${A.link("property", ids[i], p.title)}</div><div class="small">${esc(p.town || "")}</div><button type="button" class="linkbtn" data-rm="${esc(ids[i])}">remove</button></td>`).join("")}</tr>
+      ${rows.map(cell).join("")}</table></div>
+      <div class="xact"><button type="button" class="btn" data-x="share">Share this comparison</button><button type="button" class="btn ghost" data-x="clear">Clear</button></div>`, "Compare homes", opts);
+    wire({ share: () => share(here() + hash, "Compare homes: " + ((window.KYX_ST || {}).app || "Kentucky Explorer")), clear: () => { A.cmpSet([]); compare([], { replace: true }); } });
+    A.body.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { const a = ids.filter(x => x !== b.dataset.rm); A.cmpSet(a); compare(a, { replace: true }); });
+  }
+
+  // ---------------------------------------------------------------- new & price cuts since the last visit
+  function whatsNew(opts) {
+    const B = A.BADGE, ks = Object.keys(B).filter(k => !k.startsWith("job:"));
+    const by = t => ks.filter(k => k.startsWith(t + ":")).map(item).filter(x => x.it);
+    const sec = (t, label) => { const xs = by(t); return xs.length ? `<div class="xh">${label} (${xs.length})</div><div class="glist">${xs.map(x => { const b = B[x.t + ":" + x.id];
+      return row(x.t, x.id, x.it, b.k === "cut" ? `was ${A.money(b.was)}` : b.jobs ? `${b.jobs} new job${b.jobs > 1 ? "s" : ""}` : "new"); }).join("")}</div>` : ""; };
+    const html = sec("property", "🏠 Homes & land") + sec("business", "💲 Businesses") + sec("building", "🔔 Buildings") + sec("travel", "💼 Hospitals with new travel jobs");
+    page("new", "#new", `<div class="kicker">🆕 Since your last visit</div><h2>New listings &amp; price cuts</h2>
+      <div class="sub">Compared with what this phone saw on your previous visit (a visit = after 30+ minutes away). ${Object.keys(B).length ? "" : "Nothing new yet. Come back after the next listings refresh."}</div>${html}`, "New & price cuts", opts);
+  }
+
+  // ---------------------------------------------------------------- near me
+  let me = null, meLayer = null;
+  const hav = (a, b, c, d) => { const r = Math.PI / 180, x = Math.sin((c - a) * r / 2), y = Math.sin((d - b) * r / 2); return 7917.6 * Math.asin(Math.sqrt(x * x + Math.cos(a * r) * Math.cos(c * r) * y * y)); };
+  function nearPage(opts) {
+    page("near", "#near", `<div class="kicker">📍 Near me</div><h2>Finding you…</h2><div class="sub">Allow location access when your phone asks. Your location stays on this phone.</div>`, "Near me", opts);
+    if (!navigator.geolocation) { failNear("This browser can't share its location."); return; }
+    navigator.geolocation.getCurrentPosition(pos => showNear(pos.coords), err => failNear(err.code === 1 ? "Location access is turned off for this site. Turn it on in your browser settings to use Near me." : "Couldn't get your location (" + esc(err.message || "timeout") + ")."),
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 120000 });
+  }
+  function failNear(msg) { const c = A.current(); if (!c || c.id !== "near") return; A.body.querySelector("h2").textContent = "Location unavailable"; A.body.querySelector(".sub").innerHTML = msg; }
+  function showNear(co) {
+    const c0 = A.current(); if (!c0 || c0.id !== "near") return;
+    me = [co.latitude, co.longitude];
+    if (meLayer) A.map.removeLayer(meLayer);
+    meLayer = L.layerGroup([L.circle(me, { radius: Math.min(co.accuracy || 50, 3000), color: "#1e88e5", weight: 1, fillOpacity: 0.12, interactive: false }),
+      L.marker(me, { icon: L.divIcon({ className: "", html: '<div class="medot"></div>', iconSize: [22, 22], iconAnchor: [11, 11] }), interactive: false, zIndexOffset: 9999 })]).addTo(A.map);
+    const ofs = A.PHONE ? Math.round(innerHeight * 0.3) : 0, z = 11, p = A.map.project(me, z); p.y += ofs; if (!A.PHONE) p.x += 210;
+    A.map.flyTo(A.map.unproject(p, z), z, { duration: 0.8 });
+    const K = A.K, near = (arr, f, n = 3) => (arr || []).filter(x => x.lat != null && (!f || f(x))).map(x => [x, hav(me[0], me[1], x.lat, x.lon)]).sort((a, b) => a[1] - b[1]).slice(0, n);
+    const mi = d => d < 10 ? d.toFixed(1) + " mi" : Math.round(d) + " mi";
+    const sec = (label, t, xs) => xs.length ? `<div class="xh">${label}</div><div class="glist">${xs.map(([x, d]) => row(t, x.id, A.IDX[t][x.id] || x, mi(d) + " away (straight line)")).join("")}</div>` : "";
+    const far = near(K.hospitals, null, 1)[0];
+    A.body.querySelector("h2").textContent = "Closest to you";
+    A.body.querySelector(".sub").innerHTML = `Straight-line distances from your location (±${Math.round(co.accuracy || 0)} m).${far && far[1] > 60 ? ` You're well outside ${(window.KYX_ST || {}).name || "Kentucky"}; these are the nearest anyway.` : ""}`;
+    A.body.insertAdjacentHTML("beforeend",
+      sec("🏥 Trauma centers", "hospital", near(K.hospitals, h => /Level (I|II)(\s|$)/.test(h.trauma || ""))) +
+      sec("🏥 Hospitals", "hospital", near(K.hospitals)) +
+      sec("💼 Travel nurse jobs", "travel", near(K.travel && K.travel.hospitals)) +
+      sec("🏠 Homes & land", "property", near(K.properties)) +
+      sec("💲 Businesses for sale", "business", near(K.businesses)) +
+      sec("🔔 Buildings for sale", "building", near(K.buildings)) +
+      sec("🎡 Attractions", "attraction", near(K.attractions)) +
+      sec("🎓 Schools", "school", near(K.schools)));
+  }
+
+  function route(hs, opts) {
+    let m;
+    if (hs === "#favs") favList(A.favGet(), false, "", opts);
+    else if ((m = hs.match(/^#favs=([A-Za-z0-9_-]+)$/))) { let ks = []; try { ks = JSON.parse(unb64(m[1])); } catch (e) { } favList(Array.isArray(ks) ? ks.filter(k => typeof k === "string").slice(0, 200) : [], true, m[1], opts); }
+    else if (hs === "#compare") compare(A.cmpGet(), opts);
+    else if ((m = hs.match(/^#compare=(.+)$/))) compare(m[1].split(",").map(decodeURIComponent), opts);
+    else if (hs === "#new") whatsNew(opts);
+    else if (hs === "#near") nearPage(opts);
+  }
+  window.KYXE = { init(api) { A = api; return window.KYXE; }, route, me: () => me };
+})();

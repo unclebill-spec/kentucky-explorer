@@ -1,1 +1,206 @@
-!function(){"use strict";let t=null,e=null,n=[],s=[],a=null,o=[],l={},i=!1;const r=["","FT","PT","PRN"],c=["day","night","eve","wkd","rot"],p={day:"Day",night:"Night",eve:"Evening",wkd:"Weekend",rot:"Rotating",na:"Not stated"},d=t=>(e.roles||[])[t]||"staff",u=t=>{const e={x:["or","cath","mom","nicu","peds"],i:[],e:[],s:[],p:0,m:0,c:1,g:1,b:0};if(!t||"object"!=typeof t)return e;const n={};return["x","i","e","s"].forEach((s=>n[s]=Array.isArray(t[s])?t[s].map(String):"x"!==s||"x"in t?[]:e.x)),n.p=t.p?1:0,n.m=+t.m>0?+t.m:0,n.c="c"in t?t.c?1:0:1,n.g="g"in t?t.g?1:0:1,n.b=t.b?1:0,n},h=(window.KYX_ST||{}).ls||"kyx_";let m={x:["or","cath","mom","nicu","peds"],i:[],e:[],s:[],p:0,m:0,c:1,g:1,b:0};try{const t=localStorage.getItem(h+"pjf");t&&(m=u(JSON.parse(t)))}catch(t){}let $="1"===localStorage.getItem(h+"pjtop_cm");const g=()=>{const e=t.PROF();return e&&e.pj?u(e.pj):m},f=()=>{const e=t.PROF();return!(!e||!e.pj)},y=t=>String(null==t?"":t).replace(/[&<>"']/g,(t=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[t]))),b=t=>"charge"===d(t[2]),v=t=>/manager|leadership/.test(d(t[2]));function j(t,e,n={}){const s=o[t[1]],a=t[8]||[];if(e.x.length&&(e.x.includes(s)||a.some((t=>e.x.includes(o[t])))))return!1;if(e.i.length&&!e.i.includes(s))return!1;if(e.e.length&&!e.e.includes(r[t[3]]||"na"))return!1;if(e.s.length&&!(t[4]?c.some(((n,s)=>t[4]&1<<s&&e.s.includes(n))):e.s.includes("na")))return!1;if((e.p||e.m)&&null==t[5])return!1;if(e.m&&t[5]<e.m)return!1;if(e.b&&!t[7])return!1;const l=null!=n.roles?n.roles:e.c,i=null!=n.roles?n.roles:e.g;return!(!l&&b(t)||!i&&v(t))}const k=t=>"$"+(Math.round(100*t)/100).toFixed(2).replace(/\.00$/,""),w=(t,e)=>a&&a[t][3]?a[t][3]:null!=e[5]?(null!=e[6]&&e[6]!==e[5]?k(e[6])+"–"+k(e[5]):k(e[5]))+"/hr":"",S=(t,e)=>a&&a[t][4]?a[t][4]:e[7]>1?"$"+e[7].toLocaleString()+" sign-on bonus":e[7]?"Sign-on bonus":"",x=(e,n=36,s=22)=>t.G.nurseCap(e,"#fff","#1565c0","#fff");function _(){const e=g();let a=0;n.forEach(((n,o)=>{const l=n.js.filter((t=>j(s[t],e)));n.n=l.length,n.top=l.reduce(((t,e)=>null!=s[e][5]&&(null==t||s[e][5]>t)?s[e][5]:t),null),a+=l.length;const i=n.e;if(!i)return;const r=(c=n.n,null!=(p=n.top)?"$"+Math.round(p):String(c));var c,p;if(n.n){if(i._txt!==r){i._txt=r,t.L_perm.hasLayer(i)&&t.L_perm.removeLayer(i),i.mk&&(i.mk.off(),i.mk=null);const e=t.L.divIcon({className:"",html:`<div class="mk sv tjc pjc" style="width:36px;height:22px">${x(r)}</div>`,iconSize:[36,22],iconAnchor:[18,-1]});i.ic=()=>e,i.z=2400+Math.min(99,n.n)}t.L_perm.hasLayer(i)||t.L_perm.addLayer(i)}else t.L_perm.hasLayer(i)&&t.L_perm.removeLayer(i)}));const o=t.LAYERS.find((t=>"perm"===t.key));if(o&&o.cb){const t=o.cb.parentNode.querySelector(".cnt");t&&(t.textContent=a===s.length?String(a):`${a} of ${s.length}`)}document.querySelectorAll("[data-pjn]").forEach((t=>{const e=Y(t.dataset.pjn).length;t.textContent=e;const n=t.closest(".gt");n&&!e&&n.classList.add("zero")}));const l=document.getElementById("pjSum");l&&(l.innerHTML=N()),t.sched(!0),t.keyReady()&&t.renderKey()}function L(t){return[t.i.length?"only "+t.i.map((t=>l[t]||t)).join(", "):"",t.x.length?"no "+t.x.map((t=>(l[t]||t).replace(/ \(.*\)$/,""))).join(", "):"",t.e.length&&t.e.join("/"),t.s.length&&t.s.map((t=>p[t])).join("/")+" shifts",t.p&&"pay listed only",t.m&&"≥ $"+t.m+"/hr",!t.c&&"no charge roles",!t.g&&"no manager roles",t.b&&"sign-on bonus only"].filter(Boolean).join(" · ")||"all permanent RN jobs"}const N=()=>{const t=g();return`${f()?"👤 Profile filters: ":""}${y(L(t))}`},R=(t,e)=>(t||[]).includes(e),T=(t,e,n,s)=>`<label class="pfc"><input type="checkbox" name="${t}" value="${y(e)}"${n?" checked":""}> ${s}</label>`;function P(t,n){return n=u(n),`<div class="pfh">Specialty <span class="small">(✓ only these · ✗ leave out; PACU and CVICU are their own rows)</span></div>\n      <div class="pfspec">${e.specs.map((([e,s])=>`<div class="pfsr"><span>${y(s)}</span><label title="Only these"><input type="checkbox" name="${t}.i" value="${e}"${R(n.i,e)?" checked":""}> ✓</label><label title="Leave out"><input type="checkbox" name="${t}.x" value="${e}"${R(n.x,e)?" checked":""}> ✗</label></div>`)).join("")}</div>\n      <div class="pfh">Employment type <span class="small">(none ticked = any)</span></div><div class="pfgrid">${["FT","PT","PRN","na"].map((e=>T(t+".e",e,R(n.e,e),{FT:"Full-time",PT:"Part-time",PRN:"PRN",na:"Not stated"}[e]))).join("")}</div>\n      <div class="pfh">Shift <span class="small">(none ticked = any)</span></div><div class="pfgrid">${[...c,"na"].map((e=>T(t+".s",e,R(n.s,e),p[e]))).join("")}</div>\n      <div class="pfh">Pay, roles, bonus</div><div class="pfgrid">${T(t+".p",1,n.p,"Pay listed only")}<label class="pfn">Min hourly pay $ (top of range)<input type="number" inputmode="decimal" name="${t}.m" value="${n.m||""}" placeholder="any" min="0" max="200" step="1"></label>\n        ${T(t+".c",1,n.c,"Include charge nurse roles")}${T(t+".g",1,n.g,"Include manager / supervisor roles")}${T(t+".b",1,n.b,"Sign-on bonus only")}</div>\n      <div class="small">Only about ${Math.round(100*(e.share||.19))}% of postings list pay, so “pay listed only” or a minimum pay hides most jobs.</div>`}function C(t,e){const n={x:[],i:[],e:[],s:[],p:0,m:0,c:0,g:0,b:0};return t.querySelectorAll(`[name^="${e}."]`).forEach((t=>{const s=t.name.slice(e.length+1);Array.isArray(n[s])?t.checked&&n[s].push(t.value):"checkbox"===t.type?n[s]=t.checked?1:0:n[s]=+t.value>0?+t.value:0})),n}const A=t=>(l[o[t[1]]]||"").replace(/ \(.*\)$/,""),E=t=>b(t)?" · charge":v(t)?" · manager":"new_grad/residency"===d(t[2])?" · new grad / residency":"";function I(e,o){const l=s[e],i=a[e],c=n[l[0]];return`<div class="tjrow pjrow"><div class="tjtop"><b>${y(i[0])}</b>${o?` · ${t.link("perm",c.id,X(c.name))}`:""}</div>\n      ${i[1]||i[7]?`<div class="small">${y(i[1]||i[7])}</div>`:""}${function(t,e){const n=w(t,e),s=S(t,e),o=a?a[t][2]:"";return`<div class="pjchips">${r[e[3]]?`<span class="pjt">${r[e[3]]}</span>`:""}${o?`<span class="pjt">${y(o)}</span>`:""}${n?`<span class="pjt pay">${y(n)}</span>`:'<span class="pjt nopay">pay not listed</span>'}${s?`<span class="pjt bon">💰 ${y(s)}</span>`:""}</div>`}(e,l)}\n      <div class="small">${y(A(l))}${E(l)}${i[6]?" · posted "+y(i[6]):""}${i[5]?` · <a href="${y(i[5])}" target="_blank" rel="noopener">Apply / view ↗</a>`:""}</div></div>`}const X=t=>String(t||"").replace(/\s*\(.*?\)\s*/g," ").replace(/\s+/g," ").trim(),M=(t,e)=>(s[e][5]??-1)-(s[t][5]??-1)||(s[e][7]||0)-(s[t][7]||0)||(a?a[t][0].localeCompare(a[e][0]):0),F=()=>`<div class="small tjnote">🩺 Permanent staff RN postings from each hospital system's public career site (seen ${y(e.date)}). Pay is shown only where the posting lists it (about ${Math.round(100*e.share)}% do); it is never estimated. A range is the posting's own range.${e.failed&&e.failed.length?` Not covered: ${y(e.failed.map(X).join(", "))} (career sites blocked or no online list).`:""}</div>`,K=()=>{const e=t.PROF();return`<div class="small pjfn">Filters: ${N()} · ${e&&e.pj?`<a href="#pedit=${y(e.slot)}">edit profile</a>`:'<button type="button" class="linkbtn" data-pjedit="1">change</button>'}</div>`},Y=t=>{const e=g();return s.map(((t,e)=>e)).filter((a=>n[s[a][0]].county===t&&j(s[a],e)))},D={er:t=>"er"===o[t[1]],sdms:t=>"sd"===o[t[1]]||"ms"===o[t[1]],icu:t=>"icu"===o[t[1]],bonus:t=>t[7]>0};function q(e){const n=g(),a=D[e.perm],o=s.map(((t,e)=>e)).filter((t=>a(s[t])&&j(s[t],n,{roles:$?1:0})));if("bonus"===e.perm){const e=[];(t.TJ_ALL||[]).forEach((t=>{t.bo&&e.push(t)}));const l=o.filter((t=>s[t][7]>1)).map((t=>({i:t,v:s[t][7],p:s[t][5]}))).concat(e.map((t=>({tj:t,v:t.bo,p:null})))).sort(((t,e)=>e.v-t.v||(e.p??-1)-(t.p??-1)));return{top:l.slice(0,10),more:l.slice(10),nolist:o.filter((t=>1===s[t][7])).sort(M),tr:e.length,roleN:s.filter(((t,e)=>a(t)&&j(t,n,{roles:1})&&(b(t)||v(t)))).length}}const l=o.filter((t=>null!=s[t][5])).sort(M);return{top:l.slice(0,10).map((t=>({i:t}))),more:l.slice(10).map((t=>({i:t}))),nolist:o.filter((t=>null==s[t][5])).sort(M),roleN:s.filter(((t,e)=>a(t)&&j(t,n,{roles:1})&&(b(t)||v(t)))).length}}function B(e,l,i){const c="top|"+e.k;if(l.tj){const e=l.tj,n=e.h;return`<div class="trow">${t.gRow("travel",n.id,c,`<span class="gth ph pjh" aria-hidden="true">${t.G.nurseCap("T","#fff","#c62828","#fff")}</span>`,`<b class="gpay">${i?"#"+i+" ":""}${e.bou?"Up to ":""}$${e.bo.toLocaleString()}</b> · <span class="pjtag tr">Travel</span> ${y(e.u||e.sp||"RN")}`,`<b>${y(X(n.name))}</b>${n.city?" · "+y(n.city):""}`,t.dot([e.sh&&y(e.sh),"$"+e.hi.toLocaleString()+"/wk",e.ag&&y(e.ag)]),!0)}${e.url?`<a class="tapply" href="${y(e.url)}" target="_blank" rel="noopener">Apply ↗</a>`:""}</div>`}const p=l.i,d=s[p],u=a[p],h=n[d[0]],m=w(p,d),$="bonus"===e.perm,g=$?`<b class="gpay">${i?"#"+i+" ":""}${y(S(p,d).replace(/ sign-on bonus$/,""))}</b> · ${y(A(d))}`:`<b class="gpay">${i?"#"+i+" ":""}${y(m||"pay not listed")}</b> · ${y(u[0])}`,f=`<b>${y(X(h.name))}</b>${h.city?" · "+y(h.city):""}${$?" · "+y(u[0]):u[1]?" · "+y(u[1]):""}`,b=t.dot([r[d[3]],u[2]&&y(u[2]),$?m?y(m):"pay not listed":S(p,d)&&"💰 "+y(S(p,d)),E(d).slice(3)]);return`<div class="trow">${t.gRow("perm",h.id,c,`<span class="gth ph pjh" aria-hidden="true">${x($?"$":"icu"===o[d[1]]?"ICU":"er"===o[d[1]]?"ER":"RN")}</span>`,g,f,b,!0)}${u[5]?`<a class="tapply" href="${y(u[5])}" target="_blank" rel="noopener" aria-label="Apply (opens ${y(t.host(u[5]))})">Apply ↗</a>`:""}</div>`}window.KYXPJ={init(a){if(i)return window.KYXPJ;t=a;const r=window.KYXPJM_D;if(!r)throw new Error("no pjm");return e=r.meta,s=r.j,o=e.specs.map((t=>t[0])),e.specs.forEach((([t,e])=>l[t]=e)),n=r.h.map((t=>({id:t[0],name:t[1],lat:t[2],lon:t[3],county:t[4],city:t[5],sys:t[6],hid:t[7],js:[]}))),s.forEach(((t,e)=>n[t[0]].js.push(e))),t.IDX.perm={},n.forEach((e=>{t.IDX.perm[e.id]=e,null!=e.lat&&(e.e=t.ent("perm",e,null,{tip:()=>`🩺 ${y(X(e.name))} · ${e.n} permanent RN job${1===e.n?"":"s"}${null!=e.top?` · top listed $${e.top.toFixed(2)}/hr`:" · pay not listed"}`}))})),i=!0,_(),window.KYXPJ},details:()=>(a=window.KYXPJD_D||null,!!a),hasD:()=>!!a,apply:_,active:g,norm:u,DEF:()=>({x:["or","cath","mom","nicu","peds"],i:[],e:[],s:[],p:0,m:0,c:1,g:1,b:0}),summary:L,formHtml:P,readForm:C,panel:function(e){e.innerHTML=`<div class="small pjsum"><span id="pjSum">${N()}</span> · <button type="button" class="linkbtn" id="pjEdit">change</button></div><form id="pjForm" class="pjform" hidden></form>`;const n=e.querySelector("#pjForm");e.querySelector("#pjEdit").onclick=()=>{n.hidden?(n.innerHTML=(f()?'<div class="pnote">👤 The active profile has its own permanent-job filters (edit them in the profile). These are the filters for the default map.</div>':"")+P("pjf",m)+'<div class="pfact"><button type="button" class="btn ghost" id="pjReset">Reset to Bill\'s defaults</button></div>',n.hidden=!1,n.onchange=()=>{m=u(C(n,"pjf")),localStorage.setItem(h+"pjf",JSON.stringify(m)),_(),t.refreshCard()},n.querySelector("#pjReset").onclick=()=>{m={x:["or","cath","mom","nicu","peds"],i:[],e:[],s:[],p:0,m:0,c:1,g:1,b:0},localStorage.removeItem(h+"pjf"),n.hidden=!0,_(),t.refreshCard()}):n.hidden=!0}},card:function(e){const n=g(),a=e.js.slice().sort(M),o=a.filter((t=>j(s[t],n))),l=a.filter((t=>!j(s[t],n))),i=e.hid&&t.IDX.hospital[e.hid],r=Object.values(t.IDX.travel).find((t=>t.hospital_id&&t.hospital_id===e.hid)),c=o.filter((t=>null!=s[t][5])).length;return`<div class="kicker">🩺 Permanent RN jobs</div><h2>${y(X(e.name))}</h2>\n      <div class="sub">${y([e.city,e.county&&e.county+(null!=window.KYX_ST.cus?window.KYX_ST.cus:" County"),e.sys].filter(Boolean).join(" · "))}</div>\n      <table class="kv">${i?`<tr><td>Hospital</td><td>${t.link("hospital",i.id,i.name)}</td></tr>`:""}${e.county&&t.IDX.county[e.county]?`<tr><td>${window.KYX_ST.cu||"County"}</td><td>${t.link("county",e.county,e.county+(null!=window.KYX_ST.cus?window.KYX_ST.cus:" County"))}</td></tr>`:""}${r?`<tr><td>Travel jobs</td><td>${t.link("travel",r.id,r.n+" travel RN job"+(r.n>1?"s":""))}</td></tr>`:""}</table>\n      ${F()}${K()}<div class="kicker">${o.length} job${1===o.length?"":"s"} · ${c} list pay · highest listed pay first</div>\n      ${o.map((t=>I(t))).join("")||'<div class="gempty">No jobs here pass your filters.</div>'}\n      ${l.length?`<details class="pjmore"><summary>${l.length} more hidden by your filters</summary>${l.map((t=>I(t))).join("")}</details>`:""}`},countyJobs:Y,group:function(e,o,l){const i=e=>{const o=s[e],i=a[e],c=n[o[0]],p=w(e,o);return`<div class="trow">${t.gRow("perm",c.id,l,`<span class="gth ph pjh" aria-hidden="true">${x(null!=o[5]?"$"+Math.round(o[5]):r[o[3]]||"RN")}</span>`,`<b>${y(i[0])}</b>`,`${p?`<b class="gpay">${y(p)}</b> · `:""}${y(X(c.name))}${i[1]?" · "+y(i[1]):""}`,t.dot([r[o[3]],i[2]&&y(i[2]),!p&&"pay not listed",S(e,o)&&"💰 "+y(S(e,o))]),!0)}${i[5]?`<a class="tapply" href="${y(i[5])}" target="_blank" rel="noopener">Apply ↗</a>`:""}</div>`},c=o.slice().sort(M),p=c.filter((t=>null!=s[t][5])),d=c.filter((t=>null==s[t][5])),u=s.filter((t=>n[t[0]].county===e.name)).length;return{sub:"Highest listed pay first",note:F()+K()+(u>o.length?`<div class="small">${u-o.length} more in this ${(window.KYX_ST.cu||"County").toLowerCase()} are hidden by the filters.</div>`:""),secs:[["💵 Pay listed",p.map(i),"None of these postings list pay."],["Pay not listed",d.map(i),"—"]]}},topHtml:function(n,s){const a=q(n),o="bonus"===n.perm,l=a.more.length?`<details class="pjmore"><summary>See more: ${a.more.length} more ${o?"with a stated amount":"with listed pay"}</summary>${a.more.map((t=>B(n,t))).join("")}</details>`:"",i=a.nolist.length?`<details class="pjmore"><summary>See more: ${a.nolist.length} ${o?"with a sign-on bonus, amount not listed":"that don't list pay"}</summary>${a.nolist.map((t=>B(n,{i:t}))).join("")}</details>`:"";return`<div class="gbar"><button type="button" class="gback" id="gBack" aria-label="Back to the map">‹ Map</button>\n        <button type="button" class="gshare" id="gShare" aria-label="Share this list">${navigator.share?"Share":"Copy link"}</button></div>\n      <div class="kicker">${y(n.title)} · <span class="tupd">Updated ${y(e.date)}</span></div><h2>${y(n.h2(a.top.length))}</h2>\n      <div class="sub">${y(n.sub)} · tap a row for the hospital's job list</div>\n      <div class="small tjnote">💵 ${o?`Ranked by the sign-on bonus amount the posting states (“up to” amounts count at their maximum). ${e.bonus} of ${e.n} permanent postings mention a sign-on bonus. ${a.tr?"":`No travel posting lists a sign-on or completion bonus right now (${(t.TJ_ALL||[]).length} checked); any that do show here tagged <span class="pjtag tr">Travel</span>.`}`:`Ranked by listed hourly pay, top of the range. Only about ${Math.round(100*e.share)}% of postings list pay, so jobs without pay are in “see more” below.`}</div>\n      ${K()}<label class="pfc pjcm"><input type="checkbox" id="pjCM"${$?" checked":""}> Include charge &amp; manager roles${a.roleN?` (${a.roleN})`:""}</label>${s}\n      <div class="glist tlist">${a.top.map(((t,e)=>B(n,t,e+1))).join("")||'<div class="gempty">Nothing qualifies with these filters.</div>'}${l}${i}</div>\n      <div class="actions"><button class="btn" id="shareBtn">${navigator.share?"Share…":"Share"}</button><button class="btn ghost" id="copyBtn">Copy link</button><button class="btn ghost" id="zoomBtn">Show all on map</button></div>\n      <div class="small" style="word-break:break-all">Link: <a href="#${n.hash}">#${n.hash}</a></div>`},topPts:t=>q(t).top.map((t=>t.tj?[t.tj.h.lat,t.tj.h.lon]:[n[s[t.i][0]].lat,n[s[t.i][0]].lon])).filter((t=>null!=t[0])),wireTop:function(e){const n=document.getElementById("pjCM");n&&(n.onchange=()=>{$=n.checked,localStorage.setItem(h+"pjtop_cm",$?"1":"0"),t.reTop(e.k)})},hook:function(t,e,s){if("hospital"!==t&&"travel"!==t)return;const a="hospital"===t?e.id:e.hospital_id;if(!a)return;const o=n.find((t=>t.hid===a));if(!o)return;const l=s.querySelector(".actions");l&&!s.querySelector(".pjlink")&&l.insertAdjacentHTML("beforebegin",`<div class="pjlink"><a class="inl" data-go="perm" data-id="${y(o.id)}">🩺 ${o.n} permanent RN job${1===o.n?"":"s"} here${o.n<o.js.length?` (${o.js.length} before filters)`:""} ›</a></div>`)},meta:()=>e,count:()=>s.length}}();
+/* Kentucky Explorer: permanent (staff) RN jobs at Kentucky hospitals. Loaded after the first paint with data/pjm.js (hospitals + one
+   small filter tuple per job); data/pjd.js (titles, units, pay text, bonus, links) loads only when a hat, a county list or a Top 10 opens.
+   Data: ../data/perm_jobs.json (scripts/perm_jobs_collect.py, public career sites) -> build.py write_perm().
+   Filters: one global set (Layers panel, localStorage kyx_pjf, default = Bill's exclusions) or the active profile's own set (P.pjobs). */
+(function () {
+  "use strict";
+  let A = null, M = null, H = [], J = [], D = null, SPK = [], SPL = {}, ready = false;
+  const EMP = ["", "FT", "PT", "PRN"], SH = ["day", "night", "eve", "wkd", "rot"], SHL = { day: "Day", night: "Night", eve: "Evening", wkd: "Weekend", rot: "Rotating", na: "Not stated" };
+  const ROLE = r => (M.roles || [])[r] || "staff";
+  const DEF = () => ({ x: ["or", "cath", "mom", "nicu", "peds"], i: [], e: [], s: [], p: 0, m: 0, c: 1, g: 1, b: 0 });
+  const norm = f => { const d = DEF(); if (!f || typeof f !== "object") return d; const o = {};
+    ["x", "i", "e", "s"].forEach(k => o[k] = Array.isArray(f[k]) ? f[k].map(String) : k === "x" && !("x" in f) ? d.x : []);
+    o.p = f.p ? 1 : 0; o.m = +f.m > 0 ? +f.m : 0; o.c = "c" in f ? (f.c ? 1 : 0) : 1; o.g = "g" in f ? (f.g ? 1 : 0) : 1; o.b = f.b ? 1 : 0; return o; };
+  const LSP = (window.KYX_ST || {}).ls || "kyx_";
+  let GF = DEF(); try { const s = localStorage.getItem(LSP + "pjf"); if (s) GF = norm(JSON.parse(s)); } catch (e) { }
+  let TOPCM = localStorage.getItem(LSP + "pjtop_cm") === "1";  // Top 10s: include charge / manager roles
+  const active = () => { const P = A.PROF(); return P && P.pj ? norm(P.pj) : GF; };
+  const fromProfile = () => { const P = A.PROF(); return !!(P && P.pj); };
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const isCharge = x => ROLE(x[2]) === "charge", isMgr = x => /manager|leadership/.test(ROLE(x[2]));
+  // x = [hospital, specialty, role, emp, shift bits, top hourly, low hourly, bonus (0 none, 1 amount not listed, else $), extra tags]
+  function pass(x, F, o = {}) {
+    const sp = SPK[x[1]], tg = x[8] || [];
+    if (F.x.length && (F.x.includes(sp) || tg.some(t => F.x.includes(SPK[t])))) return false;
+    if (F.i.length && !F.i.includes(sp)) return false;
+    if (F.e.length && !F.e.includes(EMP[x[3]] || "na")) return false;
+    if (F.s.length && !(x[4] ? SH.some((s, i) => (x[4] & (1 << i)) && F.s.includes(s)) : F.s.includes("na"))) return false;
+    if ((F.p || F.m) && x[5] == null) return false;
+    if (F.m && x[5] < F.m) return false;
+    if (F.b && !x[7]) return false;
+    const c = o.roles != null ? o.roles : F.c, g = o.roles != null ? o.roles : F.g;
+    if (!c && isCharge(x)) return false; if (!g && isMgr(x)) return false;
+    return true;
+  }
+  const hrs = v => "$" + (Math.round(v * 100) / 100).toFixed(2).replace(/\.00$/, "");
+  const payOf = (i, x) => D && D[i][3] ? D[i][3] : x[5] != null ? (x[6] != null && x[6] !== x[5] ? hrs(x[6]) + "–" + hrs(x[5]) : hrs(x[5])) + "/hr" : "";
+  const bonusOf = (i, x) => D && D[i][4] ? D[i][4] : x[7] > 1 ? "$" + x[7].toLocaleString() + " sign-on bonus" : x[7] ? "Sign-on bonus" : "";
+  const HAT = (txt, w = 36, h = 22) => A.G.nurseCap(txt, "#fff", "#1565c0", "#fff");
+  const RHAT = txt => A.G.nurseCap(txt, "#fff", "#c62828", "#fff");
+  const capTxt = (n, top) => top != null ? "$" + Math.round(top) : String(n);
+
+  // ---------------------------------------------------------------- map hats (one per hospital; count or top listed hourly pay)
+  const ENT = [];
+  function apply() {
+    const F = active(); let tot = 0;
+    H.forEach((h, hi) => {
+      const js = h.js.filter(i => pass(J[i], F)); h.n = js.length; h.top = js.reduce((m, i) => J[i][5] != null && (m == null || J[i][5] > m) ? J[i][5] : m, null); tot += js.length;
+      const e = h.e; if (!e) return;
+      const txt = capTxt(h.n, h.top);
+      if (!h.n) { if (A.L_perm.hasLayer(e)) A.L_perm.removeLayer(e); return; }
+      if (e._txt !== txt) { e._txt = txt; if (A.L_perm.hasLayer(e)) A.L_perm.removeLayer(e); if (e.mk) { e.mk.off(); e.mk = null; }
+        const ic = A.L.divIcon({ className: "", html: `<div class="mk sv tjc pjc" style="width:36px;height:22px">${HAT(txt)}</div>`, iconSize: [36, 22], iconAnchor: [18, -1] });  // just below the hospital point, clear of a red travel hat
+        e.ic = () => ic; e.z = 2400 + Math.min(99, h.n); }
+      if (!A.L_perm.hasLayer(e)) A.L_perm.addLayer(e);
+    });
+    const d = A.LAYERS.find(x => x.key === "perm"); if (d && d.cb) { const c = d.cb.parentNode.querySelector(".cnt"); if (c) c.textContent = tot === J.length ? String(tot) : `${tot} of ${J.length}`; }
+    document.querySelectorAll("[data-pjn]").forEach(b => { const n = countyJobs(b.dataset.pjn).length; b.textContent = n; const a = b.closest(".gt"); if (a && !n) a.classList.add("zero"); });
+    const s = document.getElementById("pjSum"); if (s) s.innerHTML = sumHtml();
+    A.sched(true); if (A.keyReady()) A.renderKey();
+  }
+  // ---------------------------------------------------------------- filter text + forms (Layers panel and the profile form share formHtml)
+  function summary(F) {
+    const sp = F.i.length ? "only " + F.i.map(k => SPL[k] || k).join(", ") : "";
+    const ex = F.x.length ? "no " + F.x.map(k => (SPL[k] || k).replace(/ \(.*\)$/, "")).join(", ") : "";
+    return [sp, ex, F.e.length && F.e.join("/"), F.s.length && F.s.map(s => SHL[s]).join("/") + " shifts", F.p && "pay listed only", F.m && "≥ $" + F.m + "/hr",
+      !F.c && "no charge roles", !F.g && "no manager roles", F.b && "sign-on bonus only"].filter(Boolean).join(" · ") || "all permanent RN jobs";
+  }
+  const sumHtml = () => { const F = active(); return `${fromProfile() ? "👤 Profile filters: " : ""}${esc(summary(F))}`; };
+  const has = (a, v) => (a || []).includes(v);
+  const cb = (name, val, on, label) => `<label class="pfc"><input type="checkbox" name="${name}" value="${esc(val)}"${on ? " checked" : ""}> ${label}</label>`;
+  function formHtml(pre, F) {
+    F = norm(F);
+    return `<div class="pfh">Specialty <span class="small">(✓ only these · ✗ leave out; PACU and CVICU are their own rows)</span></div>
+      <div class="pfspec">${M.specs.map(([k, t]) => `<div class="pfsr"><span>${esc(t)}</span><label title="Only these"><input type="checkbox" name="${pre}.i" value="${k}"${has(F.i, k) ? " checked" : ""}> ✓</label><label title="Leave out"><input type="checkbox" name="${pre}.x" value="${k}"${has(F.x, k) ? " checked" : ""}> ✗</label></div>`).join("")}</div>
+      <div class="pfh">Employment type <span class="small">(none ticked = any)</span></div><div class="pfgrid">${["FT", "PT", "PRN", "na"].map(v => cb(pre + ".e", v, has(F.e, v), { FT: "Full-time", PT: "Part-time", PRN: "PRN", na: "Not stated" }[v])).join("")}</div>
+      <div class="pfh">Shift <span class="small">(none ticked = any)</span></div><div class="pfgrid">${[...SH, "na"].map(v => cb(pre + ".s", v, has(F.s, v), SHL[v])).join("")}</div>
+      <div class="pfh">Pay, roles, bonus</div><div class="pfgrid">${cb(pre + ".p", 1, F.p, "Pay listed only")}<label class="pfn">Min hourly pay $ (top of range)<input type="number" inputmode="decimal" name="${pre}.m" value="${F.m || ""}" placeholder="any" min="0" max="200" step="1"></label>
+        ${cb(pre + ".c", 1, F.c, "Include charge nurse roles")}${cb(pre + ".g", 1, F.g, "Include manager / supervisor roles")}${cb(pre + ".b", 1, F.b, "Sign-on bonus only")}</div>
+      <div class="small">Only about ${Math.round((M.share || 0.19) * 100)}% of postings list pay, so “pay listed only” or a minimum pay hides most jobs.</div>`;
+  }
+  function readForm(root, pre) {
+    const f = { x: [], i: [], e: [], s: [], p: 0, m: 0, c: 0, g: 0, b: 0 };
+    root.querySelectorAll(`[name^="${pre}."]`).forEach(el => { const k = el.name.slice(pre.length + 1);
+      if (Array.isArray(f[k])) { if (el.checked) f[k].push(el.value); } else if (el.type === "checkbox") f[k] = el.checked ? 1 : 0; else f[k] = +el.value > 0 ? +el.value : 0; });
+    return f;
+  }
+  function panel(w) {  // Layers panel: summary line + "change" opens the form inline
+    w.innerHTML = `<div class="small pjsum"><span id="pjSum">${sumHtml()}</span> · <button type="button" class="linkbtn" id="pjEdit">change</button></div><form id="pjForm" class="pjform" hidden></form>`;
+    const f = w.querySelector("#pjForm");
+    w.querySelector("#pjEdit").onclick = () => {
+      if (!f.hidden) { f.hidden = true; return; }
+      f.innerHTML = (fromProfile() ? `<div class="pnote">👤 The active profile has its own permanent-job filters (edit them in the profile). These are the filters for the default map.</div>` : "") + formHtml("pjf", GF) +
+        `<div class="pfact"><button type="button" class="btn ghost" id="pjReset">Reset to Bill's defaults</button></div>`;
+      f.hidden = false;
+      f.onchange = () => { GF = norm(readForm(f, "pjf")); localStorage.setItem(LSP + "pjf", JSON.stringify(GF)); apply(); A.refreshCard(); };
+      f.querySelector("#pjReset").onclick = () => { GF = DEF(); localStorage.removeItem(LSP + "pjf"); f.hidden = true; apply(); A.refreshCard(); };
+    };
+  }
+  // ---------------------------------------------------------------- rows
+  const specL = x => (SPL[SPK[x[1]]] || "").replace(/ \(.*\)$/, "");
+  function chips(i, x) {
+    const pay = payOf(i, x), bon = bonusOf(i, x), sh = D ? D[i][2] : "";
+    return `<div class="pjchips">${EMP[x[3]] ? `<span class="pjt">${EMP[x[3]]}</span>` : ""}${sh ? `<span class="pjt">${esc(sh)}</span>` : ""}${pay ? `<span class="pjt pay">${esc(pay)}</span>` : '<span class="pjt nopay">pay not listed</span>'}${bon ? `<span class="pjt bon">💰 ${esc(bon)}</span>` : ""}</div>`;
+  }
+  const roleTag = x => isCharge(x) ? " · charge" : isMgr(x) ? " · manager" : ROLE(x[2]) === "new_grad/residency" ? " · new grad / residency" : "";
+  function jobRow(i, hosp) {
+    const x = J[i], d = D[i], h = H[x[0]];
+    return `<div class="tjrow pjrow"><div class="tjtop"><b>${esc(d[0])}</b>${hosp ? ` · ${A.link("perm", h.id, short(h.name))}` : ""}</div>
+      ${d[1] || d[7] ? `<div class="small">${esc(d[1] || d[7])}</div>` : ""}${chips(i, x)}
+      <div class="small">${esc(specL(x))}${roleTag(x)}${d[6] ? " · posted " + esc(d[6]) : ""}${d[5] ? ` · <a href="${esc(d[5])}" target="_blank" rel="noopener">Apply / view ↗</a>` : ""}</div></div>`;
+  }
+  const short = s => String(s || "").replace(/\s*\(.*?\)\s*/g, " ").replace(/\s+/g, " ").trim();
+  const sortJ = (a, b) => (J[b][5] ?? -1) - (J[a][5] ?? -1) || (J[b][7] || 0) - (J[a][7] || 0) || (D ? D[a][0].localeCompare(D[b][0]) : 0);
+  const NOTE = () => `<div class="small tjnote">🩺 Permanent staff RN postings from each hospital system's public career site (seen ${esc(M.date)}). Pay is shown only where the posting lists it (about ${Math.round(M.share * 100)}% do); it is never estimated. A range is the posting's own range.${M.failed && M.failed.length ? ` Not covered: ${esc(M.failed.map(short).join(", "))} (career sites blocked or no online list).` : ""}</div>`;
+  const filtNote = () => { const P = A.PROF(); return `<div class="small pjfn">Filters: ${sumHtml()} · ${P && P.pj ? `<a href="#pedit=${esc(P.slot)}">edit profile</a>` : '<button type="button" class="linkbtn" data-pjedit="1">change</button>'}</div>`; };
+  // the hospital card (hat tap)
+  function card(h) {
+    const F = active(), all = h.js.slice().sort(sortJ), on = all.filter(i => pass(J[i], F)), off = all.filter(i => !pass(J[i], F));
+    const hosp = h.hid && A.IDX.hospital[h.hid], tj = Object.values(A.IDX.travel).find(t => t.hospital_id && t.hospital_id === h.hid);
+    const npay = on.filter(i => J[i][5] != null).length;
+    return `<div class="kicker">🩺 Permanent RN jobs</div><h2>${esc(short(h.name))}</h2>
+      <div class="sub">${esc([h.city, h.county && h.county + (window.KYX_ST.cus != null ? window.KYX_ST.cus : " County"), h.sys].filter(Boolean).join(" · "))}</div>
+      <table class="kv">${hosp ? `<tr><td>Hospital</td><td>${A.link("hospital", hosp.id, hosp.name)}</td></tr>` : ""}${h.county && A.IDX.county[h.county] ? `<tr><td>${window.KYX_ST.cu || "County"}</td><td>${A.link("county", h.county, h.county + (window.KYX_ST.cus != null ? window.KYX_ST.cus : " County"))}</td></tr>` : ""}${tj ? `<tr><td>Travel jobs</td><td>${A.link("travel", tj.id, tj.n + " travel RN job" + (tj.n > 1 ? "s" : ""))}</td></tr>` : ""}</table>
+      ${NOTE()}${filtNote()}<div class="kicker">${on.length} job${on.length === 1 ? "" : "s"} · ${npay} list pay · highest listed pay first</div>
+      ${on.map(i => jobRow(i)).join("") || '<div class="gempty">No jobs here pass your filters.</div>'}
+      ${off.length ? `<details class="pjmore"><summary>${off.length} more hidden by your filters</summary>${off.map(i => jobRow(i)).join("")}</details>` : ""}`;
+  }
+  // county list
+  const countyJobs = name => { const F = active(); return J.map((x, i) => i).filter(i => H[J[i][0]].county === name && pass(J[i], F)); };
+  function group(c, xs, from) {
+    const row = i => { const x = J[i], d = D[i], h = H[x[0]], pay = payOf(i, x);
+      return `<div class="trow">${A.gRow("perm", h.id, from, `<span class="gth ph pjh" aria-hidden="true">${HAT(x[5] != null ? "$" + Math.round(x[5]) : EMP[x[3]] || "RN")}</span>`,
+        `<b>${esc(d[0])}</b>`, `${pay ? `<b class="gpay">${esc(pay)}</b> · ` : ""}${esc(short(h.name))}${d[1] ? " · " + esc(d[1]) : ""}`,
+        A.dot([EMP[x[3]], d[2] && esc(d[2]), !pay && "pay not listed", bonusOf(i, x) && "💰 " + esc(bonusOf(i, x))]), true)}${d[5] ? `<a class="tapply" href="${esc(d[5])}" target="_blank" rel="noopener">Apply ↗</a>` : ""}</div>`; };
+    const s = xs.slice().sort(sortJ), paid = s.filter(i => J[i][5] != null), np = s.filter(i => J[i][5] == null);
+    const all = J.filter(x => H[x[0]].county === c.name).length;
+    return { sub: "Highest listed pay first", note: NOTE() + filtNote() + (all > xs.length ? `<div class="small">${all - xs.length} more in this ${(window.KYX_ST.cu || "County").toLowerCase()} are hidden by the filters.</div>` : ""),
+      secs: [["💵 Pay listed", paid.map(row), "None of these postings list pay."], ["Pay not listed", np.map(row), "—"]] };
+  }
+  // ---------------------------------------------------------------- Top 10s (perm ER, step-down + med-surg, ICU general, sign-on bonuses)
+  const TSEL = { er: x => SPK[x[1]] === "er", sdms: x => SPK[x[1]] === "sd" || SPK[x[1]] === "ms", icu: x => SPK[x[1]] === "icu", bonus: x => x[7] > 0 };
+  function topLists(t) {
+    const F = active(), sel = TSEL[t.perm];
+    const xs = J.map((x, i) => i).filter(i => sel(J[i]) && pass(J[i], F, { roles: TOPCM ? 1 : 0 }));
+    if (t.perm === "bonus") {
+      const tr = [];  // travel jobs that state a sign-on / completion bonus (none in the current data)
+      (A.TJ_ALL || []).forEach(j => { if (j.bo) tr.push(j); });
+      const amt = xs.filter(i => J[i][7] > 1), rows = amt.map(i => ({ i, v: J[i][7], p: J[i][5] })).concat(tr.map(j => ({ tj: j, v: j.bo, p: null })))
+        .sort((a, b) => b.v - a.v || (b.p ?? -1) - (a.p ?? -1));
+      return { top: rows.slice(0, 10), more: rows.slice(10), nolist: xs.filter(i => J[i][7] === 1).sort(sortJ), tr: tr.length, roleN: J.filter((x, i) => sel(x) && pass(x, F, { roles: 1 }) && (isCharge(x) || isMgr(x))).length };
+    }
+    const paid = xs.filter(i => J[i][5] != null).sort(sortJ);
+    return { top: paid.slice(0, 10).map(i => ({ i })), more: paid.slice(10).map(i => ({ i })), nolist: xs.filter(i => J[i][5] == null).sort(sortJ),
+      roleN: J.filter((x, i) => sel(x) && pass(x, F, { roles: 1 }) && (isCharge(x) || isMgr(x))).length };
+  }
+  function topRow(t, r, rank) {
+    const from = "top|" + t.k;
+    if (r.tj) { const j = r.tj, h = j.h;
+      return `<div class="trow">${A.gRow("travel", h.id, from, `<span class="gth ph pjh" aria-hidden="true">${RHAT("T")}</span>`, `<b class="gpay">${rank ? "#" + rank + " " : ""}${j.bou ? "Up to " : ""}$${j.bo.toLocaleString()}</b> · <span class="pjtag tr">Travel</span> ${esc(j.u || j.sp || "RN")}`,
+        `<b>${esc(short(h.name))}</b>${h.city ? " · " + esc(h.city) : ""}`, A.dot([j.sh && esc(j.sh), "$" + j.hi.toLocaleString() + "/wk", j.ag && esc(j.ag)]), true)}${j.url ? `<a class="tapply" href="${esc(j.url)}" target="_blank" rel="noopener">Apply ↗</a>` : ""}</div>`; }
+    const i = r.i, x = J[i], d = D[i], h = H[x[0]], pay = payOf(i, x), bon = t.perm === "bonus";
+    const l1 = bon ? `<b class="gpay">${rank ? "#" + rank + " " : ""}${esc(bonusOf(i, x).replace(/ sign-on bonus$/, ""))}</b> · ${esc(specL(x))}` : `<b class="gpay">${rank ? "#" + rank + " " : ""}${esc(pay || "pay not listed")}</b> · ${esc(d[0])}`;
+    const l2 = `<b>${esc(short(h.name))}</b>${h.city ? " · " + esc(h.city) : ""}${bon ? " · " + esc(d[0]) : d[1] ? " · " + esc(d[1]) : ""}`;
+    const l3 = A.dot([EMP[x[3]], d[2] && esc(d[2]), bon ? (pay ? esc(pay) : "pay not listed") : bonusOf(i, x) && "💰 " + esc(bonusOf(i, x)), roleTag(x).slice(3)]);
+    return `<div class="trow">${A.gRow("perm", h.id, from, `<span class="gth ph pjh" aria-hidden="true">${HAT(bon ? "$" : SPK[x[1]] === "icu" ? "ICU" : SPK[x[1]] === "er" ? "ER" : "RN")}</span>`, l1, l2, l3, true)}${d[5] ? `<a class="tapply" href="${esc(d[5])}" target="_blank" rel="noopener" aria-label="Apply (opens ${esc(A.host(d[5]))})">Apply ↗</a>` : ""}</div>`;
+  }
+  function topHtml(t, nav) {
+    const L = topLists(t), bon = t.perm === "bonus";
+    const more = L.more.length ? `<details class="pjmore"><summary>See more: ${L.more.length} more ${bon ? "with a stated amount" : "with listed pay"}</summary>${L.more.map(r => topRow(t, r)).join("")}</details>` : "";
+    const nol = L.nolist.length ? `<details class="pjmore"><summary>See more: ${L.nolist.length} ${bon ? "with a sign-on bonus, amount not listed" : "that don't list pay"}</summary>${L.nolist.map(i => topRow(t, { i })).join("")}</details>` : "";
+    return `<div class="gbar"><button type="button" class="gback" id="gBack" aria-label="Back to the map">‹ Map</button>
+        <button type="button" class="gshare" id="gShare" aria-label="Share this list">${navigator.share ? "Share" : "Copy link"}</button></div>
+      <div class="kicker">${esc(t.title)} · <span class="tupd">Updated ${esc(M.date)}</span></div><h2>${esc(t.h2(L.top.length))}</h2>
+      <div class="sub">${esc(t.sub)} · tap a row for the hospital's job list</div>
+      <div class="small tjnote">💵 ${bon ? `Ranked by the sign-on bonus amount the posting states (“up to” amounts count at their maximum). ${M.bonus} of ${M.n} permanent postings mention a sign-on bonus. ${L.tr ? "" : `No travel posting lists a sign-on or completion bonus right now (${(A.TJ_ALL || []).length} checked); any that do show here tagged <span class="pjtag tr">Travel</span>.`}` : `Ranked by listed hourly pay, top of the range. Only about ${Math.round(M.share * 100)}% of postings list pay, so jobs without pay are in “see more” below.`}</div>
+      ${filtNote()}<label class="pfc pjcm"><input type="checkbox" id="pjCM"${TOPCM ? " checked" : ""}> Include charge &amp; manager roles${L.roleN ? ` (${L.roleN})` : ""}</label>${nav}
+      <div class="glist tlist">${L.top.map((r, k) => topRow(t, r, k + 1)).join("") || '<div class="gempty">Nothing qualifies with these filters.</div>'}${more}${nol}</div>
+      <div class="actions"><button class="btn" id="shareBtn">${navigator.share ? "Share…" : "Share"}</button><button class="btn ghost" id="copyBtn">Copy link</button><button class="btn ghost" id="zoomBtn">Show all on map</button></div>
+      <div class="small" style="word-break:break-all">Link: <a href="#${t.hash}">#${t.hash}</a></div>`;
+  }
+  const topPts = t => topLists(t).top.map(r => r.tj ? [r.tj.h.lat, r.tj.h.lon] : [H[J[r.i][0]].lat, H[J[r.i][0]].lon]).filter(p => p[0] != null);
+  function wireTop(t) { const c = document.getElementById("pjCM"); if (c) c.onchange = () => { TOPCM = c.checked; localStorage.setItem(LSP + "pjtop_cm", TOPCM ? "1" : "0"); A.reTop(t.k); }; }
+  // hospital / travel cards: a link to this hospital's permanent jobs
+  function hook(type, it, body) {
+    if (type !== "hospital" && type !== "travel") return;
+    const hid = type === "hospital" ? it.id : it.hospital_id; if (!hid) return;
+    const h = H.find(h => h.hid === hid); if (!h) return;
+    const ac = body.querySelector(".actions"); if (!ac || body.querySelector(".pjlink")) return;
+    ac.insertAdjacentHTML("beforebegin", `<div class="pjlink"><a class="inl" data-go="perm" data-id="${esc(h.id)}">🩺 ${h.n} permanent RN job${h.n === 1 ? "" : "s"} here${h.n < h.js.length ? ` (${h.js.length} before filters)` : ""} ›</a></div>`);
+  }
+
+  window.KYXPJ = {
+    init(a) {
+      if (ready) return window.KYXPJ; A = a; const d = window.KYXPJM_D; if (!d) throw new Error("no pjm");
+      M = d.meta; J = d.j; SPK = M.specs.map(s => s[0]); M.specs.forEach(([k, l]) => SPL[k] = l);
+      H = d.h.map(r => ({ id: r[0], name: r[1], lat: r[2], lon: r[3], county: r[4], city: r[5], sys: r[6], hid: r[7], js: [] }));
+      J.forEach((x, i) => H[x[0]].js.push(i));
+      A.IDX.perm = {}; H.forEach(h => { A.IDX.perm[h.id] = h;
+        if (h.lat != null) h.e = A.ent("perm", h, null, { tip: () => `🩺 ${esc(short(h.name))} · ${h.n} permanent RN job${h.n === 1 ? "" : "s"}${h.top != null ? ` · top listed $${h.top.toFixed(2)}/hr` : " · pay not listed"}` }); });
+      ready = true; apply(); return window.KYXPJ;
+    },
+    details() { D = window.KYXPJD_D || null; return !!D; },
+    hasD: () => !!D, apply, active, norm, DEF, summary, formHtml, readForm, panel, card, countyJobs, group, topHtml, topPts, wireTop, hook,
+    meta: () => M, count: () => J.length,
+  };
+})();

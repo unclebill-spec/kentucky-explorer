@@ -1,1 +1,2486 @@
-!function(){"use strict";const e=window.KYX||{},t=Object.assign({name:"Kentucky",ab:"KY",n:120,app:"Kentucky Explorer",ls:"kyx_",bp:[[36.49,-89.57],[39.15,-81.96]],bd:[[36.5,-89.55],[39.15,-81.95]],c0:[37.75,-85.7],sch:"KDE",schLab:"KDE 2025 rating",schSrc:"KDE School Report Card, 2024-25 accountability",rlab:null,traumaList:"Kentucky Trauma System list",licSrc:"KY hospital directory, Sep 2026",jobHosp:"Kentucky's CMS acute-care hospitals (incl. the 2 VA medical centers), Norton Children's, and the 5 border Level I/II centers",schoolScore:"county district reading+math vs. Kentucky and the U.S. (KDE 2024-25, SEDA 2025.1)",cityNote:"(Census July 2025 estimate; Louisville = all of Jefferson County, Lexington = all of Fayette)",topCity:"795k",apt:"✈ Airports (KY + nearby hubs)",aptOos:"Nearby out-of-state airport (BNA, TYS, HTS, EVV, TRI)",feat:"★ Kentucky standouts (Red River Gorge, Mammoth Cave, Cumberland Gap…)",areas:"Compare areas (KY vs TN)",areasAria:"Compare areas: Kentucky cities vs Tennessee",cu:"County",cus:" County",cup:"counties",cuP:"Counties",other:{name:"Tennessee",ab:"TN",url:"https://unclebill-spec.github.io/tennessee-explorer/",live:!0},others:null,caps:{p5:5e5,p1:425e3,nh:325e3},cabin:null},e.meta&&e.meta.state||{});t.others||(t.others="KY"===t.ab?[{name:"Tennessee",ab:"TN",url:"https://unclebill-spec.github.io/tennessee-explorer/"},{name:"Massachusetts",ab:"MA",url:"https://unclebill-spec.github.io/massachusetts-explorer/"},{name:"Maine",ab:"ME",url:"https://unclebill-spec.github.io/maine-explorer/"},{name:"Vermont",ab:"VT",url:"https://unclebill-spec.github.io/vermont-explorer/"},{name:"Montana",ab:"MT",url:"https://unclebill-spec.github.io/montana-explorer/"},{name:"Wyoming",ab:"WY",url:"https://unclebill-spec.github.io/wyoming-explorer/"},{name:"Idaho",ab:"ID",url:"https://unclebill-spec.github.io/idaho-explorer/"},{name:"Utah",ab:"UT",url:"https://unclebill-spec.github.io/utah-explorer/"},{name:"New Hampshire",ab:"NH",url:"https://unclebill-spec.github.io/new-hampshire-explorer/"},{name:"North Carolina",ab:"NC",url:"https://unclebill-spec.github.io/north-carolina-explorer/"}]:[t.other]),window.KYX_ST=t;const a=e=>"$"+Math.round(t.caps[e]/1e3)+"k",s=(e,a)=>{const s=a.filter((a=>a<t.caps[e]));for(let n=a[a.length-1]+5e4;n<t.caps[e];n+=5e4)s.push(n);return s};{const e=document.getElementById("layersBtn"),a=document.createElement("nav");a.className="stsw2",a.setAttribute("aria-label","Switch state map");const s=[{ab:t.ab,me:1}].concat(t.others.filter((e=>!1!==e.live))).sort(((e,t)=>e.ab<t.ab?-1:1));a.innerHTML=s.map((e=>e.me?`<span class="on" aria-current="page">${t.ab}</span>`:`<a href="${e.url}" title="Open the ${e.name} map" aria-label="Open the ${e.name} map">${e.ab}</a>`)).join(""),e&&!1!==t.other.live&&s.length>1&&e.before(a)}const n=(e,t=document)=>t.querySelector(e),o=e=>String(null==e?"":e).replace(/[&<>"']/g,(e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[e]))),i=e=>String(e).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80)||"x",l=e=>null==e?"—":"$"+Math.round(e).toLocaleString(),r=e=>null==e?"—":(Math.round(10*e)/10).toLocaleString(),c=(e,t=0)=>null==e?"—":(e>0?"+":"")+e.toFixed(t),d=e=>e?`<span class="r ${o(e)}">${o(t.rlab&&t.rlab[e]||e)}</span>`:"—",p=(e,t,a)=>{const s=n("#toast");t?s.innerHTML=t:s.textContent=e,s.hidden=!1,clearTimeout(s._h),s._h=setTimeout((()=>s.hidden=!0),a||2200)};let h=window.innerWidth<800,u=window.innerHeight;window.addEventListener("resize",(()=>{h=window.innerWidth<800,u=window.innerHeight}));const m=L.map("map",{zoomControl:!1,doubleClickZoom:!1,preferCanvas:!0,minZoom:6,maxZoom:18,zoomSnap:.25});function b(e){h?(m.options.zoomSnap=.05,m.fitBounds(t.bp,{padding:[2,2],animate:!!e}),m.options.zoomSnap=.25):m.fitBounds(t.bd,{paddingTopLeft:[325,50],paddingBottomRight:[8,8],animate:!!e})}const f=t.cityPage||{},g=(()=>{try{const e=performance.getEntriesByType&&performance.getEntriesByType("navigation")[0],a=JSON.parse(sessionStorage.getItem(t.ls+"cityret")||"null");return Object.keys(f).length&&e&&"back_forward"===e.type&&a&&!location.hash&&Date.now()-a.t<864e5?a:null}catch(e){return null}})();g?m.setView([g.lat,g.lon],g.z,{animate:!1}):location.hash?m.setView(t.c0,7):b(!1),L.control.zoom({position:"bottomleft"}).addTo(m),L.control.scale({position:"bottomleft",imperial:!0,metric:!1}).addTo(m),m.attributionControl.setPrefix(!1),m.attributionControl.setPosition("bottomleft");const y={Streets:L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'}),Topo:L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{maxZoom:17,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>, SRTM | © <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)'}),Satellite:L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Imagery © Esri, Maxar, Earthstar Geographics"})};let $=localStorage.getItem(t.ls+"base")||"Streets";y[$]||($="Streets"),y[$].addTo(m);const v=n("#baseList");Object.keys(y).forEach((e=>{const a=document.createElement("button");a.textContent=e,a.className=e===$?"on":"",a.onclick=()=>{m.removeLayer(y[$]),$=e,y[e].addTo(m),y[e].bringToBack(),localStorage.setItem(t.ls+"base",e),v.querySelectorAll("button").forEach((t=>t.className=t.textContent===e?"on":""))},v.appendChild(a)}));const k={property:{},hospital:{},school:{},college:{},activity:{},history:{},county:{},travel:{}},w={};(e.properties||[]).forEach((e=>k.property[e.id]=e)),(e.hospitals||[]).forEach((e=>k.hospital[e.id]=e)),(e.schools||[]).forEach((e=>k.school[e.id]=e)),(e.colleges||[]).forEach((e=>k.college[e.id]=e)),(e.activities||[]).forEach((e=>k.activity[e.id]=e)),(e.history||[]).forEach((e=>k.history[e.id]=e)),(e.counties||[]).forEach((e=>k.county[e.name]=e));var S=null,_=!1;const E=new Set(["trauma","hosp","travel","perm","nh"]),x=/^#(eng|spj)=|^#top-(eng-pay|eng-bonus|reloc|eng-best|ah-job|ah-school|ah-balance)$|^#property=[a-z]{2}-an-/;function M(e){return _?E.has(e.key):!!e.anna}const C=(e,t,a=26)=>L.divIcon({className:"",html:`<div class="mk ${e}" style="width:${a}px;height:${a}px">${t}</div>`,iconSize:[a,a],iconAnchor:[a/2,a/2]}),j=(e,t,a)=>`<svg width="${e}" height="${t}" viewBox="0 0 ${e} ${t}" aria-hidden="true">${a}</svg>`,T='<path d="M3.5 5.5h13v8h-13z" fill="#f6ead0" stroke="#7a5a2b" stroke-width="1.1"/><ellipse cx="3.5" cy="9.5" rx="1.7" ry="4" fill="#e8d3a6" stroke="#7a5a2b" stroke-width="1"/><ellipse cx="16.5" cy="9.5" rx="1.7" ry="4" fill="#e8d3a6" stroke="#7a5a2b" stroke-width="1"/><path d="M9 5.5v8M11 5.5v8" stroke="#c62828" stroke-width="1.7"/><path d="M10 13.2l-2.2 4.3 2.2-1.1 2.2 1.1z" fill="#c62828"/>',A=(e,t=0)=>`<g transform="translate(${t},0)"><path d="M11 1.5 21.5 6 11 10.5.5 6z" fill="${e}" stroke="#222" stroke-width="1.1" stroke-linejoin="round"/><path d="M5 8.2v4.3c0 1.6 2.7 2.9 6 2.9s6-1.3 6-2.9V8.2L11 10.8z" fill="${e}" stroke="#222" stroke-width="1.1"/><path d="M19.5 6.9v5.4" stroke="#222" stroke-width="1.1"/><circle cx="19.5" cy="13" r="1.4" fill="#ffd600" stroke="#222" stroke-width=".7"/></g>`,P={skier:(e=22)=>`<svg width="${e}" height="${e}" viewBox="0 0 22 22" aria-hidden="true"><rect x="1" y="1" width="20" height="20" rx="4.5" fill="#0277bd" stroke="#fff" stroke-width="1.5"/><circle cx="13.6" cy="4.9" r="1.85" fill="#fff"/><path d="M12.6 7.3 9.4 10.6l3.3 1.9-1.6 3.6M9.4 10.6 6.6 9.3M12.6 7.3l2.6 2.6 2.4-.4" fill="none" stroke="#fff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.6 15.4l13.6 3.9" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>`,peak:(e=22)=>`<svg width="${e}" height="${e}" viewBox="0 0 22 22" aria-hidden="true"><path d="M.9 20.2 8.6 4.6l3.9 6.4 2.7-3.9 5.9 13.1z" fill="#546e7a" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/><path d="M8.6 4.6l2.75 4.5-1.45-.75-1.2 1.25-1.15-1.15-1.7.7z" fill="#fff"/><path d="M15.2 7.1l1.75 3.85-.95-.5-.8.7-.75-.6-1 .35z" fill="#fff"/></svg>`,tgt:(e=18)=>`<svg width="${e}" height="${e}" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="#cc0000" stroke="#fff" stroke-width="1.3"/><circle cx="10" cy="10" r="5.6" fill="#fff"/><circle cx="10" cy="10" r="3" fill="#cc0000"/></svg>`,tower:()=>j(12,16,'<path d="M1.5 15.5V6.5h3V2.2L7 .8l2.5 1.4v13.3z" fill="#37474f" stroke="#fff" stroke-width="1"/><path d="M5.9 4.2h2.2M5.9 6.4h2.2M5.9 8.6h2.2M5.9 10.8h2.2M2.6 8.6h1M2.6 10.8h1" stroke="#ffe082" stroke-width="1"/>'),cabin:(e=24)=>`<svg width="${e}" height="${e}" viewBox="0 0 24 24" aria-hidden="true"><path d="M16.2 3.2h2.6v5.6h-2.6z" fill="#5d4037" stroke="#fff" stroke-width="1.2"/><path d="M12 1.8 23 11.6h-2.4V22.4H3.4V11.6H1z" fill="#8d5524" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 3.9 20.3 11.3H3.7z" fill="#4e342e"/><path d="M4.6 14h14.8M4.6 16.8h14.8M4.6 19.6h14.8" stroke="#e8c49a" stroke-width="1.1" stroke-linecap="round"/><rect x="10.2" y="15.6" width="3.6" height="6.8" fill="#3e2723" stroke="#e8c49a" stroke-width=".7"/></svg>`,house:e=>j(24,24,'<path d="M12 1.8 23 11.6h-3V22.4H4V11.6H1z" fill="#d32f2f" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/>'+(e?'<rect x="6.6" y="13.2" width="10.8" height="4" rx=".5" fill="#fff"/><rect x="10" y="9.8" width="4" height="10.8" rx=".5" fill="#fff"/>':'<rect x="10" y="15.4" width="4" height="7" fill="#fff" opacity=".9"/>')),bat:(e=24)=>`<svg width="${e}" height="${Math.round(.46*e)}" viewBox="-2 2 104 46" aria-hidden="true"><path d="M50 15L46.5 7.5 45 16C40 14 32 6 24 5C16 5 7 9 1 15Q8 15 11 22Q17 19 22 26Q29 23 34 32Q40 28 44 33Q47 40 50 42Q53 40 56 33Q60 28 66 32Q71 23 78 26Q83 19 89 22Q92 15 99 15C93 9 84 5 76 5C68 6 60 14 55 16L53.5 7.5Z" fill="#1d1d1f" stroke="#fff" stroke-width="4.5" stroke-linejoin="round"/></svg>`,fall:(e=20)=>`<svg width="${e}" height="${e}" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="6" fill="#fff" stroke="#0d47a1" stroke-width="1.6"/><path d="M6.5 8.6C7.2 12.5 6.8 15.6 5.6 18.6h12.8c-1.2-3-1.6-6.1-.9-10z" fill="#4fa3f0"/><path d="M9.3 9.5c.4 3 .2 5.6-.6 8.2M12 9.5v8.6M14.7 9.5c-.4 3-.2 5.6.6 8.2" stroke="#0d5bb5" stroke-width="1.1" fill="none" stroke-linecap="round"/><path d="M2.8 5.4c3-1.2 5-.9 6.3-.3 1.8-1 4.3-1.1 6.2-.1 1.6-.7 3.8-.6 5.9.4v3.3c-1.8.5-3.3.2-4.4-.2-2.6.8-5.2.8-7.6.1-1.9.6-4 .6-6.4.2z" fill="#6d4c41"/><path d="M3.6 19.4c2.2-1.5 4.2.9 6.4-.1 1.7-.8 2.6-.9 4 0 2.2 1 4.2-1.4 6.4.1" stroke="#1e88e5" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="6.3" cy="17" r=".9" fill="#bbdefb"/><circle cx="17.8" cy="16.8" r=".9" fill="#bbdefb"/></svg>`,bigStar:(e=18)=>`<svg width="${e}" height="${e}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l3.2 6.6 7.3 1-5.3 5.1 1.3 7.2L12 17.9l-6.5 3.5 1.3-7.2-5.3-5.1 7.3-1z" fill="#111" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/></svg>`,starDot:e=>j(24,24,`<circle cx="12" cy="12" r="10.6" fill="${e}" stroke="#fff" stroke-width="1.8"/><path d="M12 4.4l2.3 4.7 5.2.7-3.8 3.6.9 5.1L12 16l-4.6 2.5.9-5.1-3.8-3.6 5.2-.7z" fill="#ffd600"/>`),cap:e=>j(22,18,A(e)),diploma:()=>j(20,18,T),univ:()=>j(40,18,T+A("#7b1fa2",18)),tree:()=>j(22,22,'<path d="M11 1 3 12h4l-3 5h14l-3-5h4z" fill="#2e7d32" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/><rect x="9.6" y="17" width="2.8" height="4" fill="#5d4037"/>'),mountain:()=>j(22,22,'<path d="M1 20 8.5 5.5l4 6 3-4.5L21 20z" fill="#8d6e63" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/><path d="M8.5 5.5l2.4 3.6-1.5-.5-.9 1-1-1-1.4.4z" fill="#fff"/>'),lake:()=>j(22,22,'<circle cx="11" cy="11" r="9.8" fill="#1e88e5" stroke="#fff" stroke-width="1.6"/><path d="M4.8 9.3q1.55-1.5 3.1 0t3.1 0 3.1 0 3.1 0M4.8 13.7q1.55-1.5 3.1 0t3.1 0 3.1 0 3.1 0" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>'),cave:()=>j(22,22,'<path d="M1 20 9 5l3.5 5 2.5-3.5L21 20z" fill="#9e9e9e" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/><path d="M7.3 20v-3.4a3.7 3.7 0 0 1 7.4 0V20z" fill="#1b1b1b"/>'),park:()=>j(22,22,'<rect x="1" y="1" width="20" height="20" rx="4" fill="#5d4037" stroke="#fff" stroke-width="1.5"/><path d="M7 3.6 3.4 9.4h2.1l-1.7 2.7h6.4L8.5 9.4h2.1z" fill="#fff"/><rect x="6.4" y="12" width="1.3" height="2.6" fill="#fff"/><path d="M10.8 12.4h7.4M10.4 15.3h8.2M12.6 12.4l-1.7 5.7M16.4 12.4l1.7 5.7" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/>'),tent:()=>j(22,22,'<rect x="1" y="1" width="20" height="20" rx="4" fill="#558b2f" stroke="#fff" stroke-width="1.5"/><path d="M11 4.2 3.6 17.6h14.8z" fill="#fff"/><path d="M11 9.6 8.3 17.6h5.4z" fill="#558b2f"/>'),nurse:()=>j(20,20,'<rect x="1" y="1" width="18" height="18" rx="4.5" fill="#fff" stroke="#c62828" stroke-width="1.6"/><path d="M8 4.3h4v3.7h3.7v4H12v3.7H8V12H4.3V8H8z" fill="#d32f2f"/>'),nurseCap:(e,t,a="#fff",s="#1a1a1a")=>j(36,22,`<path d="M2.5 20 5.6 5.2Q18 .6 30.4 5.2L33.5 20z" fill="${a}" stroke="${t}" stroke-width="2.2" stroke-linejoin="round"/><text x="18" y="16.4" text-anchor="middle" font-size="${String(e).length>3?9.5:11}" font-weight="800" fill="${s}" font-family="system-ui,-apple-system,Segoe UI,sans-serif">${e}</text>`)},N=(e,t,a,s)=>L.divIcon({className:"",html:`<div class="mk sv ${e}" style="width:${a}px;height:${s}px">${t}</div>`,iconSize:[a,s],iconAnchor:[a/2,s/2]}),z=e=>`<span class="mk sv">${e}</span>`,I=e.meta&&e.meta.metrics||[],O=e.meta&&e.meta.sweet;var B=!1;const H=e.meta&&e.meta.appeal,R=e.meta&&e.meta.appeal_method||null,D=["#1a7d3a","#7cc46a","#f3d64a","#f08a3a","#c62f2c"],q=["Most appealing","Very good","Good","Fair","Least appealing"],F=["#0b3c78","#2f73b8","#6aaed6","#b0d2ea","#e4eff8"],K=["Highest","High","Middle","Low","Lowest"],Y="#c9c9c9",W={};function U(t){if(W[t])return W[t];const a=I.find((e=>e.key===t));if(!a)return null;const s=(e.counties||[]).filter((e=>null!=e.m[t]));if(!s.length)return null;const n=s.length,o=a.lower_better&&!a.neutral?(e,t)=>e-t:(e,t)=>t-e,i=s.map((e=>e.m[t])).sort(o),l={};t===H?s.forEach((e=>{l[e.name]=Math.max(0,q.indexOf(e.appeal&&e.appeal.band))})):s.forEach((e=>{l[e.name]=Math.min(4,Math.floor(5*i.indexOf(e.m[t])/n))}));const r=a.neutral?F:D,c=a.neutral?K:q,d=c.map(((e,a)=>{const n=s.filter((e=>l[e.name]===a)).map((e=>e.m[t]));return{label:e,color:r[a],n:n.length,lo:n.length?Math.min(...n):null,hi:n.length?Math.max(...n):null}})),p=(e.counties||[]).length-n,h=e=>null==e.m[t]?-1:l[e.name],u={m:a,classes:d,missing:p,cls:h,color:e=>{const t=h(e);return t<0?Y:r[t]},labelOf:e=>{const t=h(e);return t<0?"no data":c[t]}};return W[t]=u}function X(e,t){return null==t?"—":"pp"===e.fmt?c(t,1)+" pp":"gl"===e.fmt?c(t,2)+" grade lvls":"usd"===e.fmt?l(t):"int"===e.fmt?Math.round(t).toString():"score"===e.fmt?r(t):"min"===e.fmt?Math.round(t)+" min":"mi"===e.fmt?r(t)+" mi":"pct"===e.fmt?r(t)+"%":Math.abs(t)>=100?Math.round(t).toLocaleString():r(t)}const J=e.meta&&e.meta.default_metric||I[0]&&I[0].key||"";let V=localStorage.getItem(t.ls+"metric2")||J;I.find((e=>e.key===V))||(V=J);const Z=L.layerGroup(),G=L.layerGroup(),Q={},ee=e.meta&&e.meta.mkeys||[];(e.counties||[]).forEach((e=>{e.mv&&!e.m&&(e.m={},e.mv.forEach(((t,a)=>{null!=t&&(e.m[ee[a]]=t)})))})),(e.counties||[]).forEach((e=>{e.rz&&!e.rings&&(e.rings=e.rz.map((e=>{const t=[];let a=0,s=0;for(let n=0;n<e.length;n+=2)a+=e[n],s+=e[n+1],t.push([a/1e4,s/1e4]);return t})))}));const te=e=>e._ll||(e._ll=e.rings.map((e=>e.map((([e,t])=>[t,e])))));function ae(e,t){return{renderer:de,stroke:!1,fillColor:t?t.color(e):"#000",fillOpacity:t?.55:.02}}let se=null,ne=[],oe=null,ie=!1;const le=(e,t,a)=>{const s=m.createPane(e);return s.style.zIndex=t,!1===a&&(s.style.pointerEvents="none"),s},re=le("ctyFill",401);le("ctyLine",402,!1);const ce=L.Canvas.extend({_redraw(){this._full&&(this._full=!1,this._redrawBounds=null),L.Canvas.prototype._redraw.call(this)},_draw(){const e=this===oe;e||L.Canvas.prototype._draw.call(this),this._ovl&&function(e,t){if(e.save(),t){const a=t.getSize();e.beginPath(),e.rect(t.min.x,t.min.y,a.x,a.y),e.clip()}if(null!==se&&m.hasLayer(Z)){e.beginPath();for(const t in Q){const a=Q[t]._parts;a&&a.forEach((t=>{if(t.length){e.moveTo(t[0].x,t[0].y);for(let a=1;a<t.length;a++)e.lineTo(t[a].x,t[a].y);e.closePath()}}))}e.globalAlpha=.7,e.strokeStyle="#123642",e.lineWidth=.8,e.lineJoin=e.lineCap="round",e.stroke(),e.globalAlpha=1}ie&&function(e){const t=m.getZoom(),a=function(e){const t=m.getBounds().pad(.3),a=t.getSouth(),s=t.getNorth(),n=t.getWest(),o=t.getEast(),i=[];let l=0;return Ee.forEach((t=>{const r=Jo&&Jo.has(t.key),c=r||!(t.key in ct)||e>=ct[t.key],d=ht[t.key];if(c)return;const p=ut[t.key]||"#546e7a",h=dt[t.key];t.ents.forEach((c=>{c._lk=t.key,bt(t,c,!!(h&&e>=h(c)),d,r,a,s,n,o)&&(i.push({lat:c.lat,lon:c.lon,c:p,id:c.id}),l=33*l+mt(c)|0)}))})),{ds:i,k:i.length+":"+l}}(t);if(ft=a.k,!a.ds.length)return;const s=Math.max(1.8,Math.min(3.4,1.8+.4*(t-6.2))),n=new Map;a.ds.forEach((e=>{const t=m.latLngToLayerPoint([e.lat,e.lon]);let a=n.get(e.c);a||n.set(e.c,a=[]),a.push(t)})),e.save(),e.lineWidth=.8,e.strokeStyle="rgba(255,255,255,.75)",n.forEach(((t,a)=>{e.beginPath(),t.forEach((t=>{e.moveTo(t.x+s,t.y),e.arc(t.x,t.y,s,0,6.2832)})),e.globalAlpha=.6,e.fillStyle=a,e.fill(),e.globalAlpha=.5,e.stroke()})),e.restore()}(e),e.restore()}(this._ctx,this._redrawBounds),e&&L.Canvas.prototype._draw.call(this)}}),de=new ce({pane:"ctyFill"});de._ovl=!0,de.addTo(m);const pe=e=>{e._map&&(e._full=!0,e._redrawRequest||(e._redrawRequest=L.Util.requestAnimFrame(e._redraw,e)))},he=()=>pe(oe||de);function ue(){return oe||(oe=new ce({pane:"ctyLine"}),oe._ovl=!0,oe.addTo(m),de._ovl=!1,pe(de),oe)}Z.on("add remove",he);let me=null;window.addEventListener("resize",(()=>{me=null,ye(m.getZoom())}));const be=.1,fe=12.5;let ge=-1;function ye(e){const t=Math.round(200*function(e){if(null==me)try{me=lt().zoom}catch(e){me=6.2}const t=me+.2,a=Math.max(0,Math.min(1,(e-t)/(fe-t)));return 1-a*a*(3-2*a)*(1-be/.55)}(e))/200;t!==ge&&(t<1&&ue(),ge=t,re.style.opacity=t)}let $e=null,ve=0;m.on("zoom",(()=>{return e=m.getZoom(),ve=e,void($e||($e=L.Util.requestAnimFrame((()=>{$e=null,ye(ve)}))));var e})),m.on("zoomanim",(e=>ye(e.zoom))),m.on("zoomend",(()=>ye(m.getZoom()))),location.hash&&ye(m.getZoom());{const e=()=>setTimeout((()=>(window.requestIdleCallback||(e=>setTimeout(e,1)))((()=>ue()),{timeout:3e3})),1500);"complete"===document.readyState?e():window.addEventListener("load",e,{once:!0})}function ke(){const a=U(V);null===se?(e.counties||[]).forEach((e=>{const s=L.polygon(te(e),ae(e,a));s.bindTooltip((()=>function(e,a){if(!a)return o(e.name);if(_&&S){const t=S.tip(e,a);if(t)return t}const s=e.m[a.m.key],n=e.appeal;return a.m.key===H&&n?`<b>${o(e.name)}</b> · Appeal ${o(r(n.score))} · #${n.rank} of ${t.n}<br>${o(n.band)}`:`<b>${o(e.name)}</b>: ${o(X(a.m,s))} <span class="small">(${o(a.labelOf(e))})</span>${n?`<br>Appeal ${o(r(n.score))} · #${n.rank}`:""}`}(e,U(V))),{sticky:!0}),s.on("click",at(e)),Z.addLayer(s),Q[e.name]=s})):se!==V&&(e.counties||[]).forEach((e=>Q[e.name].setStyle(ae(e,a)))),se=V,he(),-1!==ge&&ye(m.getZoom())}function we(){null!==se&&ke(),function(e){const t=n("#legend");t.innerHTML=e?`<div class="bar">${e.classes.map((e=>`<span style="background:${e.color}"></span>`)).join("")}</div>\n      <div class="ends"><span>${e.m.neutral?"highest":"best"}</span><span>${e.m.neutral?"lowest":"worst"}</span></div>\n      <div class="small">${o(e.m.desc)}<br>Source: ${o(e.m.src)}</div>`:I.length?"":'<span class="small">County metrics will appear when data CSVs are available.</span>'}(U(V)),B&&os()}let Le=!1;const Se=n("#metricSel");I.length||(Se.innerHTML="<option>(no county metrics yet)</option>");const _e={};I.forEach((e=>(_e[e.group]=_e[e.group]||[]).push(e))),Object.entries(_e).forEach((([e,t])=>{const a=document.createElement("optgroup");a.label=e,t.forEach((e=>{const t=document.createElement("option");t.value=e.key,t.textContent=e.label,e.key===V&&(t.selected=!0),a.appendChild(t)})),Se.appendChild(a)})),Se.onchange=()=>{V=Se.value,localStorage.setItem(t.ls+"metric2",V),we()},we();const Ee=new Set;let xe=null;const Me=e=>{if(xe){if(!e)return;clearTimeout(xe)}xe=setTimeout((()=>{xe=null,function(){const e=m.getZoom(),t=m.getBounds().pad(.3),a=t.getSouth(),s=t.getNorth(),n=t.getWest(),o=t.getEast(),i=e<10,l=e<kt;i!==ze&&(ze=i,Ze.forEach((e=>{e.zh&&e.mk&&e.mk.setZIndexOffset(Ue(e))})));const r=(Xo||"")+"|"+(Oe?Oe.k:"");r!==Be&&(Be=r,He=!(!Jo&&!Oe),Ee.forEach((e=>e.shown.forEach(Ve))),document.documentElement.classList.toggle("kfoc",He));const c=[],d=new Map;let p=0;var h,u;Ee.forEach((t=>{const i=Jo&&Jo.has(t.key),r=i||!(t.key in ct)||e>=ct[t.key],h=ht[t.key],u=ut[t.key]||"#546e7a",m=wt.has(t.key),b=!r&&dt[t.key];t.ents.forEach((f=>{f._lk=t.key;const g=r||!!(b&&e>=b(f)),y=f.lat>=a&&f.lat<=s&&f.lon>=n&&f.lon<=o;if(f.px||!y||i&&Vo&&!Vo(f))return void(t.shown.has(f)&&t._hide(f));const $=gt&&vt(f);if(!(g||$||h&&h(f.it)||Oe&&Ye(f)))return t.shown.has(f)&&t._hide(f),c.push({lat:f.lat,lon:f.lon,c:u,id:f.id}),void(p=33*p+mt(f)|0);if($||m||!l)return void(t.shown.has(f)||t._show(f));const v=St(t,f)+(He&&Ye(f)?"*":"");let k=d.get(v);k||d.set(v,k=[]),k.push([t,f])}))})),function(e,t){const a=t<7?44:t<9?40:36,s=([e,t])=>{e.shown.has(t)||e._show(t)},n=new Map;e.forEach(((e,o)=>{if(1===e.length)return void s(e[0]);const i=e.map((e=>{const a=m.project([e[1].lat,e[1].lon],t);return{x:e,px:a.x,py:a.y,k:Ie(e[1]),t:!1}}));i.sort(((e,t)=>t.k-e.k||e.py-t.py||e.px-t.px));const l=new Map,r=(e,t)=>e+":"+t;i.forEach((e=>{const t=r(Math.floor(e.px/a),Math.floor(e.py/a));let s=l.get(t);s||l.set(t,s=[]),s.push(e)})),i.forEach((e=>{if(e.t)return;e.t=!0;const t=[e],i=Math.floor(e.px/a),c=Math.floor(e.py/a);for(let s=i-1;s<=i+1;s++)for(let n=c-1;n<=c+1;n++)(l.get(r(s,n))||[]).forEach((s=>{!s.t&&(s.px-e.px)**2+(s.py-e.py)**2<=a*a&&(s.t=!0,t.push(s))}));if(1===t.length)return void s(e.x);t.forEach((e=>{const[t,a]=e.x;t.shown.has(a)&&t._hide(a)}));const d=t[0].x[1],p=o+"|"+t.map((e=>e.x[1].type+":"+e.x[1].id)).sort().join(",")+"|"+(ze?1:0)+(He?"f":"")+(d._txt||d.it&&d.it.ptop||"");let h=_t.get(p);if(!h){let e=0,a=0;t.forEach((t=>{e+=t.x[1].lat,a+=t.x[1].lon})),h={cl:!0,type:"cluster",g:o,n:t.length,xs:t.map((e=>e.x)),ll:L.latLng(e/t.length,a/t.length),key:p};const s=Qe[h.xs[0][1].type]||h.xs[0][1].type;h.id=p,h.title=`${h.n} × ${s}`,h.ic=()=>xt(h),h.f=He?o.endsWith("*")?1:-1:0,h.mk=L.marker(h.ll,{icon:Xe(xt(h),h.f,!0),zIndexOffset:Math.min(9900,t[0].k+300)+(1===h.f?De+("trauma"===t[0].x[0].key?Re:0):0),title:h.title+" (tap to zoom in)",keyboard:!0}),h.mk.on("click",(e=>{const t=e.originalEvent;if(t){if(t._kyxHandled)return;t._kyxHandled=!0}it(t&&t.detail>0&&(t.clientX||t.clientY)?m.mouseEventToContainerPoint(t):m.latLngToContainerPoint(h.mk.getLatLng()),(()=>Mt(h)),t)})),_t.set(p,h)}n.set(p,h)}))})),Et.forEach((e=>{n.has(e.key)||m.removeLayer(e.mk)})),Et=[...n.values()];const o=[],i=[[0,0]];[24,32].forEach(((e,t)=>{for(let a=0;a<8;a++){const s=(a+t/2)*Math.PI/4-Math.PI/2;i.push([e*Math.cos(s),e*Math.sin(s)])}})),Et.map((e=>({c:e,q:m.project(e.ll,t),k:(e.mk.options.zIndexOffset||0)+Math.min(e.n,99)}))).sort(((e,t)=>t.k-e.k)).forEach((({c:e,q:a})=>{let s=a;for(const[e,t]of i){const n=L.point(a.x+e,a.y+t);if(o.every((e=>(e.x-n.x)**2+(e.y-n.y)**2>=900))){s=n;break}}o.push(s);const n=s===a?e.ll:m.unproject(s,t);e.mk.getLatLng().equals(n)||e.mk.setLatLng(n)})),Et.forEach((e=>{e.mk._map||m.addLayer(e.mk)})),_t.size>600&&_t.forEach(((e,t)=>{n.has(t)||_t.delete(t)}))}(d,e),h=c,u=c.length+":"+p,ne=h,u!==ft&&he()}()}),e?0:90)},Ce=L.Layer.extend({initialize(e){this.key=e,this.ents=new Set,this.shown=new Set},addLayer(e){return this.ents.add(e),this._map&&Me(),this},removeLayer(e){return this.ents.delete(e)&&this.shown.has(e)&&this._hide(e),this},hasLayer(e){return this.ents.has(e)},eachLayer(e){return this.ents.forEach(e),this},getLayers(){return[...this.ents]},onAdd(){Ee.add(this),Me(!0)},onRemove(){Ee.delete(this),this.shown.forEach((e=>this._hide(e))),Me(!0)},_show(e){e._lk=this.key,e.mk&&Ve(e),m.addLayer(function(e){if(e.mk)return e.mk;const t=e.ic();e._fm=We(e);const a=e.mk=L.marker([e.lat,e.lon],{icon:Je(e,t),zIndexOffset:Ue(e),title:e.title||"",opacity:e.op||1});return e.tip&&a.bindTooltip(e.tip),a.on("click",(t=>{const s=t.originalEvent;if(s){if(s._kyxHandled)return;s._kyxHandled=!0}const n=s&&s.detail>0&&(s.clientX||s.clientY),o=n?m.mouseEventToContainerPoint(s):m.latLngToContainerPoint(a.getLatLng());it(o,(()=>{n&&o.distanceTo(m.latLngToContainerPoint(a.getLatLng()))>12&&tt(o)||et(e)}),s)})),Ze.push(e),a}(e)),this.shown.add(e)},_hide(e){e.mk&&m.removeLayer(e.mk),this.shown.delete(e)}}),je={},Te=new Map,Ae=(e,t)=>je[e]||(je[e]=t(),Te.set(je[e],e),je[e]),Pe=new Map,Ne=e=>(Pe.has(e)||Pe.set(e,L.divIcon(Object.assign({},e.options,{html:e.options.html.replace('class="mk ','class="mk stout ')}))),Pe.get(e));let ze=null;const Ie=e=>ze&&e.zh?e.zh:e.z||0;var Oe=null;let Be="",He=!1;const Re=15e3,De=2e4,qe=1.4,Fe=1.15,Ke=.72,Ye=e=>!!(Jo&&Jo.has(e._lk)&&(!Vo||Vo(e))||Oe&&e.type===Oe.ty&&Oe.ll.has((e=>e._llk||(e._llk=(+e.lat).toFixed(5)+","+(+e.lon).toFixed(5)))(e))),We=e=>He?Ye(e)?1:-1:0,Ue=e=>Ie(e)+(1===e._fm?De+("trauma"===e._lk?Re:0):0);function Xe(e,t,a){if(!t||!e||!e.options||null==e.options.html)return e;const s=e.options,n=L.point(s.iconSize||[12,12]),o=s.iconAnchor?L.point(s.iconAnchor):n.divideBy(2),i=1===t?a?Fe:qe:Ke;return L.divIcon(Object.assign({},s,{html:`<div class="${1===t?"kfz":"kdim"}" style="width:${n.x}px;height:${n.y}px;transform:scale(${i});transform-origin:${o.x}px ${o.y}px">${s.html}</div>`}))}const Je=(e,t)=>(t=t||e.ic(),Xe(e.stout?Ne(t):t,e._fm));function Ve(e){const t=We(e);e.mk&&e._fm!==t&&(e._fm=t,e.mk.setIcon(Je(e)),e.mk.setZIndexOffset(Ue(e)))}const Ze=[],Ge=30,Qe={cluster:"Group: tap to zoom in",property:"Property / home",hospital:"Hospital",school:"School",college:"College",activity:"Activity",history:"History",travel:"Travel RN jobs",perm:"Permanent RN jobs",airport:"Airport",business:"Business for sale",building:"Building for sale",attraction:"Attraction",city:"City",ski:"Ski area",peak:"Mountain peak",target:"Target store"},et=e=>e.cl?Mt(e):Ln(e.type,e.id,{fly:!1,peek:!0});function tt(e,t){const a=function(e){const t=[];return Ee.forEach((a=>a.shown.forEach((a=>{const s=a.mk;if(!s||!s._icon)return;const n=m.latLngToContainerPoint(s.getLatLng()).distanceTo(e);n<=Ge&&t.push({e:a,d:n})})))),Et.forEach((a=>{if(!a.mk._icon)return;const s=m.latLngToContainerPoint(a.mk.getLatLng()).distanceTo(e)-6;s<=Ge&&t.push({e:a,d:Math.max(0,s)})})),t.sort(((e,t)=>e.d-t.d))}(e);return a.length?1===a.length||a[1].d>=1.5*a[0].d?(et(a[0].e),!0):(function(e,t){const a=`<div class="tapch"><div class="tapch-h">${t.length} places here</div>${t.map(((e,t)=>`<button type="button" data-tc="${t}"><span class="tcico">${e.e.ic().options.html.replace(/<b class="plab[^]*?<\/b>/,"")}</span><span class="tct">${o(e.e.title||e.e.id)}<small>${o(Qe[e.e.type]||e.e.type)}</small></span></button>`)).join("")}</div>`,s=L.popup({className:"tappop",closeButton:!0,autoPan:!0,maxWidth:270,minWidth:200,offset:[0,-6]}).setLatLng(m.containerPointToLatLng(e)).setContent(a).openOn(m);s.getElement().addEventListener("click",(e=>{const a=e.target.closest("[data-tc]");a&&(m.closePopup(s),et(t[+a.dataset.tc].e))}))}(e,a.filter((e=>e.d<1.5*a[0].d+8)).slice(0,6)),!0):(t&&t(),!1)}m.on("click",(e=>{const t=e.originalEvent;if(!t||t._kyxHandled||t._kyxTap)return;t._kyxTap=!0;const a=e.containerPoint;it(a,(()=>tt(a)),t)}));const at=e=>a=>{const s=a.originalEvent;if(s&&(s._kyxHandled||s._kyxTap))return;s&&(s._kyxTap=!0);const n=a.containerPoint;it(n,(()=>tt(n,(()=>(e=>!f[e.name]||gt&&gt.name===e.name?Ln("county",e.name,{peek:!0}):(e=>{try{const e=m.getCenter();sessionStorage.setItem(t.ls+"cityret",JSON.stringify({lat:e.lat,lon:e.lng,z:m.getZoom(),t:Date.now()}))}catch(e){}location.href=e})(f[e.name]))(e)))),s)},st=250;let nt=null,ot=null;function it(e,t,a){if(a&&0===a.detail&&!a.clientX&&!a.clientY)return void t();if(nt&&ot&&e.distanceTo(ot.pt)<40){clearTimeout(nt),nt=null;const e=ot.pt;return ot=null,void function(e){m.closePopup();const t=lt(),a=m.getZoom()>t.zoom+.75;if(an(location.hash,!1,Qs(),{kyxZoom:1}),a){pi();const e=m.options.zoomSnap;return m.options.zoomSnap=.05,m.flyTo(t.center,t.zoom,{duration:.9}),void(m.options.zoomSnap=e)}const s=m.containerPointToLatLng(e),n=rt(s);n&&n.bbox?xn(n):m.flyTo(s,10,{duration:.8})}(e)}if(nt){clearTimeout(nt),nt=null;const e=ot.fn;ot=null,e()}const s=t;t=()=>{if(gt){const t=m.containerPointToLatLng(e);$t(gt.c,t.lng,t.lat)||pi()}s()},ot={pt:e,fn:t},nt=setTimeout((()=>{nt=null;const e=ot&&ot.fn;ot=null,e&&e()}),st)}function lt(){const e=m.options.zoomSnap;h&&(m.options.zoomSnap=.05);const a=h?m._getBoundsCenterZoom(L.latLngBounds(t.bp),{padding:[2,2]}):m._getBoundsCenterZoom(L.latLngBounds(t.bd),{paddingTopLeft:[325,50],paddingBottomRight:[8,8]});return m.options.zoomSnap=e,a}function rt(t){const a=t.lng,s=t.lat;return(e.counties||[]).find((e=>{const t=e.bbox;if(t&&(a<t[0]||a>t[2]||s<t[1]||s>t[3]))return!1;let n=!1;return(e.rings||[]).forEach((e=>{for(let t=0,o=e.length-1;t<e.length;o=t++){const i=e[t][0],l=e[t][1],r=e[o][0],c=e[o][1];l>s!=c>s&&a<(r-i)*(s-l)/(c-l)+i&&(n=!n)}})),n}))||null}const ct={feat:7.5,trauma:8,hosp:8,props:8.5,nh:8.5,cab:8.5,big:8,cvf:8,homes:9,travel:9,perm:9,a_museum:9.5,a_aqua:9.5,col:9.5,a_park:10,a_water:10,act:10,a_camp:10,h_hist:10.5,sch:10.5,h_coal:11,h_ghost:11,h_mine:11,ski:8,peak:9.5,tgt:9},dt={peak:e=>1===e.it.tier?8:9.5},pt=e=>!!e.bargain,ht={trauma:e=>/^Level (I|II)(\s|$)/.test(e.trauma||""),props:pt,homes:pt,nh:pt,cab:pt,big:()=>!0,cvf:()=>!0},ut={props:"#c62828",homes:"#c62828",nh:"#c62828",cab:"#6d4c41",big:"#111",cvf:"#1d1d1f",trauma:"#8b0000",hosp:"#d32f2f",travel:"#c62828",perm:"#1565c0",sch:"#5e35b1",col:"#6a1b9a",act:"#2e7d32",feat:"#b8860b",h_hist:"#b8860b",h_coal:"#37474f",h_ghost:"#7e57c2",h_mine:"#5d4037",a_park:"#ef6c00",a_water:"#0288d1",a_aqua:"#0288d1",a_museum:"#8d6e63",a_camp:"#2e7d32",ski:"#0277bd",peak:"#546e7a",tgt:"#cc0000"};ie=!0;const mt=e=>{let t=e._hk;if(void 0===t){t=0;const a=String(e.id);for(let e=0;e<a.length;e++)t=31*t+a.charCodeAt(e)|0;e._hk=t}return t},bt=(e,t,a,s,n,o,i,l,r)=>!(t.px||!(t.lat>=o&&t.lat<=i&&t.lon>=l&&t.lon<=r)||n&&Vo&&!Vo(t)||a||gt&&vt(t)||s&&s(t.it)||Oe&&Ye(t));let ft="";var gt=null,yt=!1;function $t(e,t,a){const s=e.bbox;if(s&&(t<s[0]||t>s[2]||a<s[1]||a>s[3]))return!1;let n=!1;return(e.rings||[]).forEach((e=>{for(let s=0,o=e.length-1;s<e.length;o=s++){const i=e[s][0],l=e[s][1],r=e[o][0],c=e[o][1];l>a!=c>a&&t<(r-i)*(a-l)/(c-l)+i&&(n=!n)}})),n}const vt=e=>(e._fz!==gt.name&&(e._fz=gt.name,e._fin=$t(gt.c,e.lon,e.lat)||!!e.it&&"string"==typeof e.it.county&&e.it.county.replace(/ County$/i,"").toLowerCase()===gt.name.toLowerCase()),e._fin),kt=13,wt=new Set(["city","apt"]),Lt={biz:"#1b5e20",bldg:"#2e7d32",trauma:"#8b0000"},St=(e,t)=>t._g||(t._g=(()=>{const a=Te.get(t.ic());return a?"i:"+(e=>/^hosp/.test(e)?"hosp":/^sch/.test(e)?"sch":/^col_/.test(e)?"col":e)(a):"l:"+e.key})()),_t=new Map;let Et=[];function xt(e){const t=e.xs[0][1],a=(t.stout?Ne(t.ic()):t.ic()).options,s=a.iconSize[0],n=a.iconSize[1],o=e.n,i=o>=50?1.75:o>=10?1.6:1.45,l=Math.round(s*i),r=Math.round(n*i),c=/^i:barg\*?$/.test(e.g)?"#8e24aa":Lt[e.xs[0][0].key]||ut[e.xs[0][0].key]||"#37474f",d=a.html.replace(/<b class="plab[^]*?<\/b>/g,"");return L.divIcon({className:"kclw",html:`<div class="kcg" style="width:${l}px;height:${r}px"><div class="kcgi" style="width:${s}px;height:${n}px;transform:scale(${i})">${d}</div><b class="kcn" style="background:${c}">${o}</b></div>`,iconSize:[l,r],iconAnchor:[l/2,r/2]})}function Mt(e){m.closePopup();const t=L.latLngBounds(e.xs.map((([,e])=>[e.lat,e.lon]))),a=m.getZoom(),s=m.options.zoomSnap;m.options.zoomSnap=.25;let n=t.getNorthEast().equals(t.getSouthWest())?kt:m.getBoundsZoom(t,!1,L.point(110,160));m.options.zoomSnap=s,n=Math.min(Math.max(n,a+1),Math.max(kt,a+1),m.getMaxZoom()),an(location.hash,!1,Qs(),{kyxZoom:1}),m.flyTo(t.getCenter(),n,{duration:.6})}m.on("zoomend moveend",(()=>Me()));const Ct=(e,t,a,s={})=>{const n=Object.assign({type:e,id:t.id,it:t,lat:t.lat,lon:t.lon,ic:a,title:t.title||t.name},s);return w[e+":"+t.id]=n,n},jt=[],Tt=e=>new Ce(e),At=Tt("props"),Pt=Tt("homes"),Nt=Tt("nh"),zt=Tt("cab"),It=Tt("big"),Ot=Tt("cvf"),Bt=Tt("hosp"),Ht=Tt("trauma"),Rt=Tt("sch"),Dt=Tt("col"),qt=Tt("act"),Ft={mine:Tt("h_mine"),coal_camp:Tt("h_coal"),ghost_town:Tt("h_ghost"),historic:Tt("h_hist")},Kt={mine:["⛏","Old mine (USGS MRDS)"],coal_camp:["🏚","Historic coal camp"],ghost_town:["👻","Ghost town"],historic:["🏛","Historic site"]},Yt={Blue:"#1e5bd8",Green:"#2e9a4b",Yellow:"#e6c229",Orange:"#ef7d1a",Red:"#d33a2c"},Wt={Park:"🌲","Park / public land":"🏞",Waterfall:"💧",Cave:"🕳",Distillery:"🥃","Natural arch":"🌉",Attraction:"🎡","Hiking trail":"🥾"},Ut=e=>"1-acre-home"===e.cat,Xt=e=>"near-hospital-home"===e.cat,Jt=t.cabin?t.cabin.cat||"cabin-home":null,Vt=e=>!!Jt&&e.cat===Jt,Zt=e=>"big-land"===e.cat,Gt=e=>!(!e.cf||!e.cf.length),Qt=e=>"cave"===e.cat||"falls"===e.cat,ea=e=>Gt(e)&&e.cf.includes("cave"),ta=e=>Gt(e)&&e.cf.includes("falls"),aa=e=>ea(e)&&ta(e)?"🦇 Cave + waterfall on the property":ea(e)?"🦇 Cave on the property":"💧 Waterfall on the property",sa=(e.properties||[]).filter(Gt),na=(e.properties||[]).filter(Ut),oa=(e.properties||[]).filter(Xt),ia=(e.properties||[]).filter(Vt),la=(e.properties||[]).filter(Zt),ra=(e.properties||[]).filter((e=>!(Ut(e)||Xt(e)||Vt(e)||Zt(e)||Qt(e)))),ca=t.cabin?`${t.cabin.label||"Cabin"}s (more than ${t.cabin.acres||25} acres, 1+ bd / 1+ ba, under ${a("cab")})`:"",da={};let pa={maxp:0,maxm:0,typ:""};try{pa=Object.assign(pa,JSON.parse(localStorage.getItem(t.ls+"nhfilter")||"{}"))}catch(e){}const ha=e=>e?Math.round(e).toLocaleString():"—",ua=()=>Ae("barg",(()=>N("barg",P.starDot("#8e24aa"),24,24))),ma=()=>Ae("hs",(()=>N("hs",P.house(!1),22,22)));oa.forEach((e=>{if(null==e.lat||null==e.lon)return;if(Gt(e))return;const t=Ct("property",e,e.bargain?ua:()=>Ae("nhh",(()=>N("hs nhh",P.house(!0),24,24))),{z:e.bargain?3500:1600,zh:e.bargain?6500:0,tip:()=>`🏥 ${o(e.title)}${e.price?" · "+l(e.price):""} · ${ha(e.sqft)} sq ft · ${o(e.beds)} bd/${o(e.baths)} ba${e.nh?` · ~${o(e.nh.minutes_free_flow)} min to ${o(e.nh.name)}`:""}`});da[e.id]=t,Nt.addLayer(t)}));const ba={};let fa={maxp:0,mina:0};try{fa=Object.assign(fa,JSON.parse(localStorage.getItem(t.ls+"homefilter")||"{}"))}catch(e){}na.forEach((e=>{if(null==e.lat||null==e.lon)return;if(Gt(e))return;const t=Ct("property",e,e.bargain?ua:ma,{z:e.bargain?3500:1500,zh:e.bargain?6500:0,tip:()=>`🏠 ${o(e.title)}${e.price?" · "+l(e.price):""}${e.acres?" · "+e.acres+" ac":""}${e.beds?" · "+o(e.beds)+" bd/"+o(e.baths)+" ba":""}`});ba[e.id]=t,Pt.addLayer(t)})),ia.forEach((e=>{null!=e.lat&&null!=e.lon&&(Gt(e)||zt.addLayer(Ct("property",e,e.bargain?ua:()=>Ae("cab",(()=>N("hs cab",P.cabin(24),24,24))),{z:e.bargain?3500:1400,zh:e.bargain?6500:0,tip:()=>`${o(t.cabin.label||"Cabin")} · ${o(e.title)}${e.price?" · "+l(e.price):""}${e.acres?" · "+e.acres+" ac":""}${e.beds?" · "+o(e.beds)+" bd/"+o(e.baths)+" ba":""}`})))}));const ga=()=>Ae("big",(()=>N("big",P.bigStar(18),18,18)));la.forEach((e=>{null!=e.lat&&null!=e.lon&&(Gt(e)||It.addLayer(Ct("property",e,ga,{z:3e3,zh:6e3,tip:()=>`★ 50+ ac · ${o(e.title)}${e.price?" · "+l(e.price):""}${e.acres?" · "+Math.round(e.acres)+" ac":""}${e.price&&e.acres?" · "+l(e.price/e.acres)+"/ac":""}`})))}));const ya=()=>Ae("cave",(()=>N("cvf",P.bat(24),24,11))),$a=()=>Ae("fall",(()=>N("cvf",P.fall(19),19,19)));sa.forEach((e=>{null!=e.lat&&null!=e.lon&&Ot.addLayer(Ct("property",e,ea(e)?ya:$a,{cfl:!0,z:3200,zh:6200,tip:()=>`${ea(e)?"🦇 Cave":""}${ea(e)&&ta(e)?" + ":""}${ta(e)?"💧 Waterfall":""} · ${o(e.title)}${e.price?" · "+l(e.price):""}${e.acres?" · "+(+e.acres).toLocaleString(void 0,{maximumFractionDigits:1})+" ac":""}`}))})),ra.forEach((e=>{if(null==e.lat||null==e.lon)return;if(Gt(e))return;const t=e.standout&&e.standout.length;At.addLayer(Ct("property",e,e.bargain?ua:ma,{z:e.bargain?3500:t?2e3:1e3,zh:e.bargain?6500:0,tip:()=>`${o(e.title)}${e.price?" · "+l(e.price):""}${e.acres?" · "+e.acres+" ac":""}${t?" ★ "+o(e.standout.join(", ")):""}`}))})),(e.hospitals||[]).forEach((e=>{const t=e.trauma,a="general"===e.kind,s=t?(t.match(/Level (I{1,3}V?|IV)/)||[0,""])[1]+(/Pediatric/.test(t)?"P":""):"",n=t?()=>Ae("tr"+s,(()=>C("trauma",s,28))):a?()=>Ae("hosp",(()=>N("hosp",P.nurse(),20,20))):()=>Ae("hosp_s",(()=>N("hosp spec",P.nurse(),17,17)));(t?Ht:Bt).addLayer(Ct("hospital",e,n,{z:t?500:0,zh:t?9e3:8e3,op:a?1:.75,tip:()=>o(e.name)+(t?" — Trauma "+o(t):a?"":" (specialty)")}))})),(e.schools||[]).forEach((e=>Rt.addLayer(Ct("school",e,(()=>Ae("sch"+e.rating,(()=>N("sch",P.cap(Yt[e.rating]||"#9e9e9e"),22,18)))),{tip:()=>`${o(e.name)}${e.rating?" — "+o(e.rating):""}`})))),(e.colleges||[]).forEach((e=>{const t=/community|technical|trade|beauty/i.test(e.kind||"");Dt.addLayer(Ct("college",e,t?()=>Ae("col_c",(()=>N("col",P.diploma(),20,18))):()=>Ae("col_u",(()=>N("col",P.univ(),40,18))),{tip:()=>o(e.name)}))})),(e.activities||[]).forEach((e=>{const t=function(e){const t=e.name||"",a=e.kind||"";return"Distillery"===a||"Attraction"===a?null:/campground|\brv\b|camp ?site/i.test(t)?"tent":"Cave"===a||/\bcaves?\b|cavern/i.test(t)?"cave":/^Park/.test(a)&&/\bpark\b|recreation area/i.test(t)&&!/wildlife management|forest/i.test(t)?"park":"Waterfall"===a?"lake":"Natural arch"===a?"mountain":/lake|river|falls|spring|creek|pond|reservoir|\bfork\b|branch|\bdam\b|marina|landing/i.test(t)?"lake":/gorge|peak|mountain|\bmtn\b|knob|overlook|ridge|bluff|\brock|cliff|arch|bridge|summit|pinnacle|\bgap\b|\btop\b|point|breaks|hollow/i.test(t)?"mountain":"tree"}(e),a=Ct("activity",e,t?()=>Ae("og"+t,(()=>N("act og-"+t,P[t](),22,22))):()=>Ae("act"+e.kind,(()=>C("act",Wt[e.kind]||"★",24))),{tip:()=>`${o(e.name)} (${o(e.kind)})`});e.featured?(a.stout=!0,a.z=2500,a.zh=6e3,jt.push(a)):qt.addLayer(a)})),(e.history||[]).forEach((e=>{const t=Kt[e.type]||["•",e.type],a=Ct("history",e,(()=>Ae("h"+e.type,(()=>C("hist h-"+e.type,t[0],"mine"===e.type?22:26)))),{tip:()=>`${o(e.name)} — ${o(t[1])}`});e.featured?(a.stout=!0,a.z=2500,a.zh=6e3,jt.push(a)):(Ft[e.type]||Ft.historic).addLayer(a)}));const va=e.travel||{meta:{},hospitals:[]},ka=va.meta||{},wa=ka.bands||[],La=Tt("travel"),Sa=Tt("perm");window.KYXPJM=e=>{window.KYXPJM_D=e},window.KYXPJD=e=>{window.KYXPJD_D=e};const _a=e=>null!=e.lo&&e.lo!==e.hi?`${l(e.lo)}–${l(e.hi).slice(1)}`:l(e.hi);va.hospitals.forEach((e=>{k.travel[e.id]=e,La.addLayer(Ct("travel",e,(()=>(e=>{return L.divIcon({className:"",html:`<div class="mk sv tjc" style="width:36px;height:22px">${P.nurseCap((t=null!=e.ptop?e.ptop:e.top,(Math.round(t/100)/10).toFixed(1)),"#fff","#c62828","#fff")}</div>`,iconSize:[36,22],iconAnchor:[18,11]});var t})(e)),{z:2500+Math.round(e.top/10),tip:()=>`💼 ${o(e.name)} · top ${l(e.top)}/wk · ${e.n} travel RN job${e.n>1?"s":""}`}))}));const Ea=va.hospitals.flatMap((e=>e.jobs.map((t=>Object.assign({h:e},t))))).sort(((e,t)=>t.hi-e.hi||(t.lo||0)-(e.lo||0)));va.hospitals.length&&(k.travel.all={id:"all",name:"All travel nurse assignments (ranked by weekly pay)",city:`${Ea.length} jobs`});const xa=()=>`<div class="small tjnote">💵 Pay is <b>gross weekly pay as posted</b> by the agency (taxable wage + stipends, before taxes); a range is shown when the posting gives one, and the high end is used for ranking. Travel postings change often (seen ${o(ka.date_seen||"")}); confirm on the source.</div>`,Ma=(e,t)=>`<div class="tjrow"><div class="tjtop">${No("job",e.id)}<b class="tjpay">${_a(e)}/wk</b> <span>${o(e.u||e.sp)}</span>${t?` · ${rs("travel",e.h.id,e.h.name)}<span class="small"> (${o(e.h.city||"")})</span>`:""}</div>\n      <div class="small">${o(e.sh||"—")} · ${o(e.len||"length n/a")} · start ${o(e.st||"n/a")} · ${o(e.ag||"")}${e.na>1?` <span title="${o(e.pn||"")}">(+${e.na-1} more agenc${e.na>2?"ies":"y"})</span>`:""}</div>\n      <div class="small">${e.fac?`Posted as “${o(e.fac)}” · `:""}${o(e.src||"")}${e.po?" · posted "+o(e.po):""} · <a href="${o(e.url)}" target="_blank" rel="noopener">Apply / view ↗</a></div></div>`,Ca=(e,t)=>wi?wi.jobs(e,t):e,ja=t.cities||[{id:"louisville",name:"Louisville",full:"Louisville/Jefferson County",county:"Jefferson",pop:795222,lat:38.2527,lon:-85.7585,rank:1,note:"Louisville/Jefferson County Metro: the consolidated city-county (all of Jefferson County)"},{id:"lexington",name:"Lexington",full:"Lexington-Fayette",county:"Fayette",pop:329751,lat:38.0406,lon:-84.5037,rank:2,note:"Lexington-Fayette Urban County: the merged city-county (all of Fayette County)"},{id:"bowling-green",name:"Bowling Green",county:"Warren",pop:78505,lat:36.9685,lon:-86.4808,rank:3,note:"City limits"},{id:"owensboro",name:"Owensboro",county:"Daviess",pop:60892,lat:37.7719,lon:-87.1112,rank:4,note:"City limits"},{id:"covington",name:"Covington",county:"Kenton",pop:41847,lat:39.0837,lon:-84.5086,rank:5,note:"City limits (Northern Kentucky, across the Ohio River from Cincinnati)"}],Ta=e=>e>=1e6?Math.round(e/1e5)/10+"m":Math.round(e/1e3)+"k";k.city={},ja.forEach((e=>k.city[e.id]=e));const Aa=Tt("city");ja.forEach((e=>Aa.addLayer(Ct("city",e,(()=>L.divIcon({className:"",html:`<div class="mk sv city">${P.tower()}</div><b class="plab city">${Ta(e.pop)}</b>`,iconSize:[12,16],iconAnchor:[6,9]})),{z:-3e3,zh:6600,tip:()=>`🏙 ${o(e.full||e.name)} · ${e.pop.toLocaleString()} people (2025 est.)`}))));const Pa=t=>(e.history||[]).filter((e=>e.type===t)).length,Na=[{key:"props",label:"★ Notable Properties (5+ acres)",layer:At,on:!0,n:ra.length},{key:"homes",label:"🏠 Homes (1+ acre, 3bd/2ba, under "+a("p1")+")",layer:Pt,on:!0,n:na.length,filter:!0},{key:"nh",label:"🏥 Near-hospital homes (1,600+ sq ft, 3bd/2ba, under "+a("nh")+")",layer:Nt,on:!0,n:oa.length,nfilter:!0},...t.cabin?[{key:"cab",ic:P.cabin(16),label:ca,layer:zt,on:!0,n:ia.length}]:[],...la.length?[{key:"big",ic:P.bigStar(16),label:"50+ acres under $250k (land or home)",layer:It,on:!0,n:la.length}]:[],...sa.length?[{key:"cvf",ic:`<span class="cfic">${P.bat(18)}${P.fall(14)}</span>`,label:"Caves & waterfalls on the property",layer:Ot,on:!0,n:sa.length}]:[],{key:"city",label:"🏙 5 largest cities (population)",layer:Aa,on:!0,n:ja.length},{key:"trauma",label:"Trauma centers",layer:Ht,on:!0,n:(e.hospitals||[]).filter((e=>e.trauma)).length},{key:"hosp",label:"Other hospitals",layer:Bt,on:!0,n:(e.hospitals||[]).filter((e=>!e.trauma)).length},{key:"travel",label:"💼 Travel nurse assignments (by weekly pay)",layer:La,on:!1,n:Ea.length||null,disabled:!va.hospitals.length,note:va.hospitals.length?"":" (no data)"},{key:"perm",label:"🩺 Permanent RN jobs (staff, at each hospital)",layer:Sa,on:!0,n:null,pfilter:!0,disabled:!(e.meta&&e.meta.pj),note:e.meta&&e.meta.pj?"":" (no data)"},{key:"sch",label:`Schools (${t.sch} ${t.rlab?"A–F grade":"color rating"})`,layer:Rt,on:!1,n:(e.schools||[]).length},{key:"col",label:"Colleges & universities",layer:Dt,on:!0,n:(e.colleges||[]).length},{key:"act",label:"Activities & outdoors",layer:qt,on:!1,n:(e.activities||[]).length},{key:"hist",label:"History",group:!0},{key:"h_hist",label:"🏛 Historic sites & landmarks",layer:Ft.historic,on:!1,n:Pa("historic"),sub:!0},{key:"h_coal",label:"🏚 Coal camps",layer:Ft.coal_camp,on:!1,n:Pa("coal_camp"),sub:!0},{key:"h_ghost",label:"👻 Ghost towns",layer:Ft.ghost_town,on:!1,n:Pa("ghost_town"),sub:!0},{key:"h_mine",label:"⛏ Old mines (USGS MRDS)",layer:Ft.mine,on:!1,n:Pa("mine"),sub:!0},{key:"cty",label:`${t.cuP} (colored by metric below)`,layer:Z,on:!0,prep:ke},{key:"sweet",label:`Sweet-spot ${t.cup}`,layer:G,prep:function(){if(Le)return;Le=!0;const t=O&&U(O);t&&(e.counties||[]).forEach((e=>{const a=L.polygon(te(e),{renderer:de,color:"#3d2a00",weight:0===t.cls(e)?2.5:.6,fillColor:t.color(e),fillOpacity:.6});a.bindTooltip(`${o(e.name)} — sweet spot: ${o(X(t.m,e.m[O]))} (${o(t.labelOf(e))})`,{sticky:!0}),a.on("click",at(e)),G.addLayer(a)}))},on:!1,disabled:!O,note:O?"":" (data pending)"}];!function(a){const s=e.airports||[],n=e.businesses||[],i=e.buildings||[],r=e.attractions||[];k.airport={},k.business={},k.building={},k.attraction={},s.forEach((e=>k.airport[e.id]=e)),n.forEach((e=>k.business[e.id]=e)),i.forEach((e=>k.building[e.id]=e)),r.forEach((e=>k.attraction[e.id]=e)),Qn={amusement:["🎢","Amusement & theme parks","a_park","Amusement park"],water:["🌊","Water parks","a_water","Water park"],aquarium:["🐟","Aquariums","a_aqua","Aquarium"],museum:["🏛","Museums","a_museum","Museum"],camp:["⛺","Campgrounds (state park, Corps, national forest, private)","a_camp","Campground"]},eo=Object.values(Qn).map((e=>e[2]));const c=Tt("apt"),d=Tt("biz"),p=Tt("bldg"),h={};Object.keys(Qn).forEach((e=>h[e]=Tt(Qn[e][2]))),s.forEach((e=>c.addLayer(Ct("airport",e,(()=>L.divIcon({className:"",html:`<div class="mk apt${e.oos?" oos":""}${e.nonstops?"":" ga"}" style="width:28px;height:28px">✈</div><b class="plab apt">${o(e.code)}</b>`,iconSize:[28,28],iconAnchor:[14,14]})),{z:3e3,zh:7e3,tip:()=>`✈ ${o(e.name)} (${o(e.code)}) · ${e.nonstops?e.nonstops+" nonstop destinations":"no scheduled airline service"}`}))));const u=(e,t,a)=>{return L.divIcon({className:"",html:`<div class="mk ${e}" style="width:22px;height:22px">${t}</div>${a.price?`<b class="plab ${e.split(" ")[0]}">${s=a.price,null==s?"":s>=1e6?"$"+(s/1e6).toFixed(1).replace(/\.0$/,"")+"M":"$"+Math.round(s/1e3)+"k"}</b>`:""}`,iconSize:[22,22],iconAnchor:[11,11]});var s};n.forEach((e=>d.addLayer(Ct("business",e,(()=>u("biz","$",e)),{z:1200,zh:5500,tip:()=>`🏪 ${o(e.title)}${e.price?" · "+l(e.price):""} · ${o(e.kind)}${e.town?" · "+o(e.town):""}`})))),i.forEach((e=>p.addLayer(Ct("building",e,(()=>u("bldg sv",P.starDot("#2e7d32"),e)),{z:1200,zh:5500,tip:()=>`🔔 ${o(e.title)}${e.price?" · "+l(e.price):""}${e.was?" · was: "+o(e.was):""}${e.town?" · "+o(e.town):""}`})))),r.forEach((e=>{const t=Qn[e.type];if(!t)return;const a=Ct("attraction",e,"camp"===e.type?()=>Ae("at_camp",(()=>N("att at-camp",P.tent(),22,22))):()=>Ae("at_"+e.type,(()=>C("att at-"+e.type,t[0],24))),{z:100,zh:"museum"===e.type||"aquarium"===e.type?5e3:0,tip:()=>`${t[0]} ${o(e.name)} (${o(t[3])})`});e.featured?(a.stout=!0,a.z=2500,a.zh=6e3,jt.push(a)):h[e.type].addLayer(a)}));const m=(e,t)=>{const s=a.findIndex((t=>t.key===e));a.splice(s<0?a.length:s+1,0,...t)};m("nh",[{key:"biz",label:"🏪 Businesses for sale (under $1M)",layer:d,on:!0,n:n.length,disabled:!n.length},{key:"bldg",label:"🔔 Interesting buildings for sale (under $600k)",layer:p,on:!0,n:i.length,disabled:!i.length}]),m("hosp",[{key:"apt",label:t.apt,layer:c,on:!0,n:s.length,disabled:!s.length}]),m("act",[{key:"attr",label:"Attractions",group:!0},...Object.entries(Qn).map((([e,t])=>({key:t[2],label:t[0]+" "+t[1],layer:h[e],on:"camp"!==e,n:r.filter((t=>t.type===e)).length,sub:!0,disabled:!r.some((t=>t.type===e))})))]);const b=Tt("feat");jt.forEach((e=>b.addLayer(e)));const f=jt.length;m("apt",[{key:"feat",label:t.feat,layer:b,on:!0,n:f,disabled:!f}]),Gn={_feat:e=>e&&e.featured?"feat":null,airport:()=>"apt",business:()=>"biz",building:()=>"bldg",attraction:e=>Qn[e.type]&&Qn[e.type][2]}}(Na),function(a){const s=e.ski||[],n=e.peaks||[];if(k.ski={},k.peak={},s.forEach((e=>k.ski[e.id]=e)),n.forEach((e=>k.peak[e.id]=e)),!s.length&&!n.length)return;const i=Tt("ski"),l=Tt("peak"),r=e=>null==e?"":Math.round(e).toLocaleString();s.forEach((e=>i.addLayer(Ct("ski",e,(()=>Ae("ski",(()=>N("ski",P.skier(22),22,22)))),{z:900,zh:1500,tip:()=>`⛷ ${o(e.name)}${e.st&&e.st!==t.ab?" ("+o(e.st)+")":""}${e.trails?" · "+e.trails+" trails":""}${e.vert?" · "+r(e.vert)+" ft vertical":""}`})))),n.forEach((e=>l.addLayer(Ct("peak",e,(()=>Ae("peak",(()=>N("peak",P.peak(22),22,22)))),{z:1===e.tier?800:300,zh:1===e.tier?1400:0,tip:()=>`⛰ ${o(e.name)}${e.elev?" · "+r(e.elev)+" ft":""}${e.hp?" · "+o(t.name)+"'s highest point":""}`}))));const c=a.findIndex((e=>"act"===e.key)),d=[];s.length&&d.push({key:"ski",ic:P.skier(16),label:"Ski areas (trails, lifts, ticket prices)",layer:i,on:!0,n:s.length}),n.length&&d.push({key:"peak",ic:P.peak(16),label:"Mountain peaks (elevation, hikes, climate)",layer:l,on:!0,n:n.length}),a.splice(c<0?a.length:c+1,0,...d),Gn&&(Gn.ski=()=>"ski",Gn.peak=()=>"peak"),e.mtnd&&window.addEventListener("load",(()=>setTimeout((()=>{try{(window.requestIdleCallback||(e=>e()))((()=>vn("_mtn")))}catch(e){}}),6e3)),{once:!0})}(Na),function(a){const s=e.targets||[];if(k.target={},s.forEach((e=>k.target[e.id]=e)),!s.length)return;const n=Tt("tgt");s.forEach((e=>n.addLayer(Ct("target",e,(()=>Ae("tgt",(()=>N("tgt",P.tgt(18),18,18)))),{z:500,zh:1200,tip:()=>`🎯 ${o(e.name)} · ${o(e.city||"")}${e.st?", "+o(e.st):""}`}))));const i=s.filter((e=>!e.bst)).length,l=s.length-i;let r=a.findIndex((e=>"peak"===e.key));r<0&&(r=a.findIndex((e=>"ski"===e.key))),r<0&&(r=a.findIndex((e=>"act"===e.key))),a.splice(r<0?a.length:r+1,0,{key:"tgt",ic:P.tgt(16),label:`Target stores (${i} in ${t.name}${l?` + ${l} just over the line`:""})`,layer:n,on:!0,n:s.length}),Gn&&(Gn.target=()=>"tgt")}(Na);let za={};try{za=JSON.parse(localStorage.getItem(t.ls+"layers")||"{}")}catch(e){}const Ia=n("#layerList");function Oa(e,i){if(e.group){const t=document.createElement("div");return t.innerHTML=`<b>${o(e.label)}</b>`,t.style.marginTop="6px",e.lab=t,void i(t)}const l=!e.disabled&&!M(e)&&(e.key in za?za[e.key]:e.on),r=document.createElement("label");e.sub&&(r.className="sub"),e.disabled&&r.classList.add("dis"),r.innerHTML=`<input type="checkbox" ${l?"checked":""} ${e.disabled?"disabled":""}> ${e.ic?`<span class="lic">${e.ic}</span> `:""}${o(e.label)}${o(e.note||"")}<span class="cnt">${null!=e.n?e.n:""}</span>`;const c=r.querySelector("input");if(c.onchange=()=>{Da(e,c.checked),za[e.key]=c.checked,localStorage.setItem(t.ls+"layers",JSON.stringify(za))},e.cb=c,e.lab=r,i(r),e.filter&&(e.cnt=r.querySelector(".cnt"),i(function(){const e=document.createElement("div");e.className="hfilter sub",e.id="homeFilter";const o=(e,t,a)=>e.map((e=>`<option value="${e}" ${+t===e?"selected":""}>${a(e)}</option>`)).join("");return e.innerHTML=`<label class="hf">Max price <select id="hfPrice">${o([0].concat(s("p1",[2e5,25e4,3e5,35e4,4e5])),fa.maxp,(e=>e?"$"+e/1e3+"k":"Any (≤"+a("p1")+")"))}</select></label>\n      <label class="hf">Min acres <select id="hfAcres">${o([0,2,5,10,20],fa.mina,(e=>e?e+"+ ac":"Any (1+)"))}</select></label>`,e.querySelectorAll("select").forEach((e=>e.onchange=()=>{fa={maxp:+n("#hfPrice").value,mina:+n("#hfAcres").value},localStorage.setItem(t.ls+"homefilter",JSON.stringify(fa)),Ra()})),e}())),e.nfilter&&(e.cnt=r.querySelector(".cnt"),i(function(){const e=document.createElement("div");e.className="hfilter sub",e.id="nhFilter";const o=(e,t,a)=>e.map((e=>`<option value="${e}" ${String(t)===String(e)?"selected":""}>${a(e)}</option>`)).join("");return e.innerHTML=`<label class="hf">Max price <select id="nfPrice">${o([0].concat(s("nh",[2e5,25e4,275e3,3e5])),pa.maxp,(e=>e?"$"+e/1e3+"k":"Any (<"+a("nh")+")"))}</select></label>\n      <label class="hf">Drive ≤ <select id="nfMin">${o([0,5,7],pa.maxm,(e=>e?e+" min":"10 min"))}</select></label>\n      <label class="hf">Type <select id="nfType">${o(["","House","Townhome"],pa.typ,(e=>"Townhome"===e?"Townhome/condo":e||"Any"))}</select></label>`,e.querySelectorAll("select").forEach((e=>e.onchange=()=>{pa={maxp:+n("#nfPrice").value,maxm:+n("#nfMin").value,typ:n("#nfType").value},localStorage.setItem(t.ls+"nhfilter",JSON.stringify(pa)),Ba()})),e}())),e.pfilter&&!e.disabled){const e=document.createElement("div");e.className="hfilter sub pjfilter",e.id="pjFilter",e.innerHTML='<span class="small">Filters load in a moment…</span>',i(e)}l&&(e.prep&&e.prep(),e.layer.addTo(m))}function Ba(){let e=0;oa.forEach((t=>{const a=da[t.id];a&&(function(e){return(!pa.maxp||null!=e.price&&e.price<=pa.maxp)&&(!pa.maxm||e.nh&&e.nh.minutes_free_flow<=pa.maxm)&&(!pa.typ||("House"===pa.typ?"House"===e.ptype:"House"!==e.ptype))}(t)||bn&&bn.id===t.id?(e++,Nt.hasLayer(a)||Nt.addLayer(a)):Nt.hasLayer(a)&&Nt.removeLayer(a))}));const t=Na.find((e=>"nh"===e.key));t&&t.cnt&&(t.cnt.textContent=e===oa.length?String(e):`${e} of ${oa.length}`),B&&os()}function Ha(){return[pa.maxp&&"≤ "+l(pa.maxp),pa.maxm&&"≤ "+pa.maxm+" min drive",pa.typ&&("House"===pa.typ?"houses only":"townhomes/condos only")].filter(Boolean).join(", ")}function Ra(){let e=0;na.forEach((t=>{const a=ba[t.id];a&&(function(e){return(!fa.maxp||null!=e.price&&e.price<=fa.maxp)&&(!fa.mina||null!=e.acres&&e.acres>=fa.mina)}(t)||bn&&bn.id===t.id?(e++,Pt.hasLayer(a)||Pt.addLayer(a)):Pt.hasLayer(a)&&Pt.removeLayer(a))}));const t=Na.find((e=>"homes"===e.key));t&&t.cnt&&(t.cnt.textContent=e===na.length?String(e):`${e} of ${na.length}`),B&&os()}function Da(e,t){if(t&&M(e)&&(t=!1),t&&"perm"===e.key)try{Ro()}catch(e){}t?(e.prep&&e.prep(),e.layer.addTo(m),"cty"!==e.key&&"sweet"!==e.key||e.layer.eachLayer((e=>e.bringToBack&&e.bringToBack()))):m.removeLayer(e.layer),e.cb&&(e.cb.checked=t),os()}Na.forEach((e=>Oa(e,(e=>Ia.appendChild(e))))),Ra(),Ba();const qa=n("#layersBtn"),Fa=n("#layersPanel");qa.onclick=()=>{Fa.hidden=!Fa.hidden,qa.setAttribute("aria-expanded",!Fa.hidden)},document.querySelectorAll("[data-close]").forEach((e=>e.onclick=()=>{n("#"+e.dataset.close).hidden=!0}));const Ka=e.meta&&e.meta.sources||{};n("#srcNote").innerHTML="Sources: "+Object.entries(Ka).map((([e,t])=>`<b>${o(e)}</b>: ${o(t)}`)).join("; ")+(e.meta?`<br>Built ${o(e.meta.built)}`:"");const Ya=n("#mapKey"),Wa=n("#keyBody"),Ua=n("#keyToggle"),Xa=n("#topbar"),Ja=document.createElement("button");Ja.type="button",Ja.id="srchPill",Ja.className="tpill2",Ja.setAttribute("aria-controls","search"),Xa.appendChild(Ja);var Va=null;let Za=0;function Ga(e){Va=e||null,Ya.classList.toggle("collapsed","key"!==Va),Ua.setAttribute("aria-expanded","key"===Va);const t="search"===Va;if(Xa.classList.toggle("collapsed",!t),Ja.setAttribute("aria-expanded",t),Ja.innerHTML=t?'<span aria-hidden="true">✕</span>':'<span aria-hidden="true">🔍</span> Search',Ja.setAttribute("aria-label",t?"Close search and layers":"Open search and layers"),Ja.title=t?"Close search & layers":"Search & layers",!t){Fa.hidden=!0,qa.setAttribute("aria-expanded",!1);const e=n("#results"),t=n("#search");e&&(e.hidden=!0),t&&document.activeElement===t&&t.blur()}document.documentElement.classList.toggle("pnlopen",!!Va),document.documentElement.classList.toggle("srchopen",t)}function Qa(e){if((e=e||null)===Va)return;const t=history.state||{};e?(Va&&t.pnl?history.replaceState(Object.assign({},t,{pnl:e}),"",location.href):(history.replaceState(Object.assign({},t,{v:Qs()}),"",location.href),history.pushState(Object.assign({},t,{pnl:e}),"",location.href)),Ga(e)):t.pnl?history.back():Ga(null)}window.addEventListener("popstate",(e=>{const t=(history.state||{}).pnl||null;t!==Va&&(Ga(t),e.stopImmediatePropagation())})),document.addEventListener("pointerdown",(e=>{var t;Va&&e.target.closest&&(t=e.target,!("key"===Va?t.closest("#mapKey, #infoPop"):t.closest("#topbar, #layersPanel")))&&!e.target.closest("#srchPill, #keyToggle")&&(Za=e.target.closest("#map")?Date.now():0,Qa(null))}),!0),document.addEventListener("click",(e=>{Za&&Date.now()-Za<900&&e.target.closest&&e.target.closest("#map")&&(Za=0,e.stopPropagation(),e.preventDefault())}),!0),document.addEventListener("keydown",(e=>{"Escape"!==e.key||!Va||e.target&&"search"===e.target.id&&n("#results")&&!n("#results").hidden||Qa(null)})),Ga(null),Ua.onclick=()=>Qa("key"===Va?null:"key"),Ja.onclick=()=>Qa("search"===Va?null:"search");const es=()=>{Qa("search"),Fa.hidden=!1,qa.setAttribute("aria-expanded",!0)},ts=(e,t,a,s="")=>`<span class="mk ${e}" style="width:${a}px;height:${a}px;${s}">${t}</span>`,as=(e,t,a)=>`<div class="krow"><span class="ksym">${e}</span><span>${t}${a?`<span class="small"> ${a}</span>`:""}</span></div>`,ss={props:()=>`<div class="ksec"><b>Home + 5 acres or more</b> <span class="small">(5+ acres, 2+ bd / 2+ ba, up to ${a("p5")})</span>${as(z(P.house(!1)),"Red house = home on land","(5-acre and 1-acre searches)")}</div>`,cab:()=>`<div class="ksec"><b>${o(t.cabin.label||"Cabin")}s</b> <span class="small">(remote cabins and homes on more than ${t.cabin.acres||25} acres, 1+ bd / 1+ ba, under ${a("cab")}, active)</span>${as(z(P.cabin(24)),"Log cabin = cabin / home on "+(t.cabin.acres||25)+"+ acres","(25+ acre homes with 1–2 bedrooms are always listed here)")}</div>`,cvf:()=>`<div class="ksec"><b><span class="cfic">${P.bat(18)}${P.fall(15)}</span> Caves & waterfalls on the property</b> <span class="small">(the listing says so; land or homes, any size, up to this map's highest home cap; active)</span>${as(z(P.bat(24)),"Flying bat = a cave on the property","· a cave + waterfall shows as the bat (and under both buttons)")}${as(z(P.fall(19)),"Small waterfall = a waterfall on the property","· shown at every zoom; close ones group with a count")}</div>`,big:()=>`<div class="ksec"><b><span class="bkstar">${P.bigStar(16)}</span> 50+ acres under $250k</b> <span class="small">(raw land or with a home, any size; same cap on every map; active)</span>${as(z(P.bigStar(18)),"Black star = 50+ acre lot or home under $250k","· shown at every zoom; close ones group into a bigger star with a count")}</div>`,bargain:()=>`<div class="ksec"><b><span class="bstar">${P.starDot("#8e24aa")}</span> Bargain homes</b>${as(z(P.starDot("#8e24aa")),"Meets every criterion and is priced well below nearby listings","· shown at every zoom; the card says why")}</div>`,homes:()=>`<div class="ksec"><b>🏠 Homes</b> <span class="small">(1+ acre, 3+ bd, 2+ full ba, ≤ ${a("p1")}, active)</span>\n      ${as(z(P.house(!1)),"Home on 1+ acre","(red house)")}\n      ${fa.maxp||fa.mina?`<div class="small">Filter on: ${fa.maxp?"≤ "+l(fa.maxp):""}${fa.maxp&&fa.mina?", ":""}${fa.mina?fa.mina+"+ acres":""} · <button type="button" class="linkbtn" data-openlayers="1">change</button></div>`:""}</div>`,nh:()=>`<div class="ksec"><b>🏥 Near-hospital homes</b> <span class="small">(1,600+ sq ft, 3+ bd, 2+ full ba, under ${a("nh")}, active, good condition, ≤ 10 min free-flow to a hospital with a 24/7 ER of 10+ beds)</span>\n      ${as(z(P.house(!0)),"Near-hospital home","(red house with a white nursing cross; houses, townhomes, condos)")}\n      ${Ha()?`<div class="small">Filter on: ${o(Ha())} · <button type="button" class="linkbtn" data-openlayers="1">change</button></div>`:""}</div>`,trauma:()=>`<div class="ksec"><b>Trauma centers</b> <span class="small">(KYHA Jan 2026 + border centers)</span>\n      ${as(ts("trauma","I",22),"Level I","(highest: UK, UofL, Cincinnati, Vanderbilt, Knoxville)")}${as(ts("trauma","II",22),"Level II","(Pikeville, Evansville, Huntington)")}\n      ${as(ts("trauma","III",22),"Level III")}${as(ts("trauma","IV",22),"Level IV","(stabilize & transfer)")}${as(ts("trauma","IP",22),"Pediatric Level I","(Norton Children's)")}</div>`,travel:()=>`<div class="ksec"><b>💼 Travel nurse assignments</b> <span class="small">(red nurse's hat at the hospital = its top weekly pay in $1,000s, e.g. 2.4 = $2,400/wk)</span>${as(z(P.nurseCap("2.4","#fff","#c62828","#fff")),"Top pay $2,400/week")}\n      ${xa()}<div class="kbtns"><a class="linkbtn" href="#travel=all">📋 All ${Ea.length} jobs ranked by pay</a></div></div>`,perm:()=>`<div class="ksec"><b>🩺 Permanent RN jobs</b> <span class="small">(blue nurse's hat at the hospital = top listed hourly pay, e.g. $45; a plain number = how many jobs pass your filters when none lists pay)</span>${as(z(P.nurseCap("$45","#fff","#1565c0","#fff")),"Top listed pay $45/hr")}${as(z(P.nurseCap("12","#fff","#1565c0","#fff")),"12 jobs, pay not listed")}\n      <div class="small">Only about 19% of postings list pay. Filters (specialty, FT/PT/PRN, shift, pay, roles, bonus): Layers → Permanent RN jobs. · <button type="button" class="linkbtn" data-pjedit="1">change</button></div>\n      <div class="kbtns"><a class="linkbtn" href="#top-perm-er">🏆 Perm ER</a> <a class="linkbtn" href="#top-perm-sdms">🏆 Step-down + Med-surg</a> <a class="linkbtn" href="#top-perm-icu">🏆 ICU</a> <a class="linkbtn" href="#top-bonus">💰 Sign-on bonuses</a></div></div>`,city:()=>`<div class="ksec"><b>🏙 Largest cities</b>${as(`<span class="kcity">${z(P.tower())}<b class="plab city">${t.topCity}</b></span>`,`${t.name}'s 5 largest cities, with population`,t.cityNote)}</div>`,hosp:()=>`<div class="ksec"><b>Other hospitals</b>${as(z(P.nurse()),"Hospital (not a trauma center)",`· nursing cross; icon from zoom ${ct.hosp}`)}</div>`,sch:()=>`<div class="ksec"><b>Schools</b> <span class="small">(${t.schLab}, best → lowest)</span>\n      <div class="kgrid">${["Blue","Green","Yellow","Orange","Red"].map((e=>as(z(P.cap(Yt[e])),t.rlab?t.rlab[e]:e))).join("")}${as(z(P.cap("#9e9e9e")),"Not rated")}</div></div>`,col:()=>`<div class="ksec"><b>Colleges</b> <span class="small">(NCES)</span>${as(z(P.univ()),"College or university")}${as(z(P.diploma()),"Community / technical college or trade school","(KCTCS etc.)")}</div>`,act:()=>`<div class="ksec"><b>Activities & outdoors</b><div class="kgrid">${as(z(P.park()),"Park (state, national, city, county)")}${as(z(P.tent()),"Campground")}${as(z(P.cave()),"Cave")}${as(z(P.mountain()),"Gorge, peak, arch, overlook")}${as(z(P.lake()),"Lake, river, waterfall, spring")}${as(z(P.tree()),"Forest, trail, wildlife area")}${as(ts("act",Wt.Distillery,20),"Distillery")}${as(ts("act",Wt.Attraction,20),"Zoo / attraction")}</div></div>`,h_hist:()=>as(ts("hist h-historic",Kt.historic[0],20),"Historic site / National Historic Landmark"),h_coal:()=>as(ts("hist h-coal_camp",Kt.coal_camp[0],20),"Historic coal camp"),h_ghost:()=>as(ts("hist h-ghost_town",Kt.ghost_town[0],20),"Ghost town"),h_mine:()=>as(ts("hist h-mine",Kt.mine[0],20),"Old mine (USGS MRDS)")};function ns(e,a){if(!e)return"";const s=e.m,n=s.key===H,i=s.neutral?"No better/worse direction: blue = highest → lowest.":s.lower_better?"Lower is better here, so the lowest values are green.":"Higher is better here.";return`<div class="ksec"><div class="ktitle">${o(a)}</div><div class="kmetric">${o(s.label)}</div>\n      ${e.classes.map((e=>`<div class="kband"><span class="sw" style="background:${e.color}"></span><span class="kl">${o(e.label)}</span><span class="kr">${(e=>e.n?e.lo===e.hi?o(X(s,e.lo)):`${o(X(s,e.lo))} – ${o(X(s,e.hi))}`:"—")(e)}</span><span class="kn">${e.n}</span></div>`)).join("")}\n      ${e.missing?`<div class="kband"><span class="sw" style="background:${Y}"></span><span class="kl">No data</span><span class="kr"></span><span class="kn">${e.missing}</span></div>`:""}\n      <div class="small">${n?`Bands are fifths of the ${t.n} ${t.cup} by rank (${Math.round(t.n/5)} each). `:`Fifths of the ${t.cup} by rank; last column = number of ${t.cup}. `}${i}</div>\n      <div class="kbtns">${R&&/appeal/.test(s.key)?'<button type="button" class="linkbtn" data-info="appeal">ⓘ How this score works</button>':""}${S&&/^anna-/.test(s.key)?'<button type="button" class="linkbtn" data-annainfo="1">ⓘ How the Anna score works</button>':""}<button type="button" class="linkbtn" data-openlayers="1">Change metric</button></div></div>`}function os(){const a=e=>{const t=Na.find((t=>t.key===e));return t&&t.layer&&m.hasLayer(t.layer)};let s="";a("cty")&&(s+=ns(U(V),"Counties colored by")),a("sweet")&&(s+=ns(U(O),"Sweet-spot layer")),a("cty")||a("sweet")||(s+=`<div class="ksec small">${t.cu} coloring is off. Turn on “${t.cuP}” in Layers to color by the ${_?"Anna":"Appeal"} score.</div>`);const o=["eng","spj","ahome","props","homes","nh","cab","big","cvf","bargain","biz","bldg","travel","perm","trauma","hosp","apt","city","feat","ski","peak","tgt","sch","col","act"].filter((a=>!M({key:a,anna:/^(eng|spj|ahome)$/.test(a)})&&("cab"===a?!!t.cabin:"big"===a?la.length>0:"cvf"===a?sa.length>0:"bargain"===a?(e.properties||[]).some((e=>e.bargain)):ss[a]))),i=["h_hist","h_coal","h_ghost","h_mine"],l=(eo||[]).filter((e=>ss[e])),r=l.filter(a),c=l.filter((e=>!a(e))),d=e=>"bargain"===e?a("homes")||a("nh")||a("props")||t.cabin&&a("cab"):"cab"===e?!!t.cabin&&a(e):a(e),p=o.filter(d),h=o.filter((e=>!d(e)));s+=p.map((e=>ss[e]())).join("");const u=i.filter(a),b=i.filter((e=>!a(e)));u.length&&(s+=`<div class="ksec"><b>History</b>${u.map((e=>ss[e]())).join("")}</div>`),r.length&&(s+=`<div class="ksec"><b>Attractions</b>${r.map((e=>ss[e]())).join("")}</div>`),s+=as('<span class="ksel"></span>',"Selected item","(orange ring)"),ss._lod&&(s+=ss._lod()),ss._border&&(s+=ss._border()),(h.length||b.length||c.length)&&(s+=`<details class="ksec koff"><summary>Symbols for layers that are off</summary>${h.map((e=>ss[e]())).join("")}${b.length?`<div class="ksec"><b>History</b>${b.map((e=>ss[e]())).join("")}</div>`:""}${c.length?`<div class="ksec"><b>Attractions</b>${c.map((e=>ss[e]())).join("")}</div>`:""}</details>`);const f=Wa.querySelector("details.koff[open]");if(Wa.innerHTML=s,f){const e=Wa.querySelector("details.koff");e&&(e.open=!0)}const g=a("cty")?U(V):a("sweet")?U(O):null;n("#keyMini").innerHTML=g?g.classes.map((e=>`<span style="background:${e.color}"></span>`)).join(""):"",n("#keyMetric").textContent=g?g.m.label.replace(/^★\s*/,""):""}!function(a){const s=(e,t,a)=>`<span class="mk ${e}" style="width:${a}px;height:${a}px">${t}</span>`,n=(e,t,a)=>`<div class="krow"><span class="ksym">${e}</span><span>${t}${a?`<span class="small"> ${a}</span>`:""}</span></div>`;a.biz=()=>`<div class="ksec"><b>🏪 Businesses for sale</b> <span class="small">(under $1M asking; Crexi &amp; Zillow, seen ${o((e.businesses||[])[0]?e.businesses[0].seen:"")})</span>${n(s("biz","$",20),"Business for sale","(green $) · tag beside the pin = asking price")}</div>`,a.bldg=()=>`<div class="ksec"><b>🔔 Interesting buildings for sale</b> <span class="small">(under $600k: old churches, banks, schools, stores…)</span>${n(z(P.starDot("#2e7d32")),"Unusual building for sale","(green circle, yellow star) · tag = asking price")}</div>`,a.apt=()=>`<div class="ksec"><b>✈ Airports</b>${n(s("apt","✈",20),t.name+" airport with airline service","· code beside the pin")}${n(s("apt oos","✈",20),t.aptOos)}${n(s("apt ga","✈",20),"No scheduled flights right now")}</div>`,Object.values(Qn||{}).forEach((([e,t,i])=>{const l=Object.keys(Qn).find((e=>Qn[e][2]===i));a[i]=()=>n("camp"===l?z(P.tent()):s("att at-"+l,e,20),o(t))})),a.feat=()=>`<div class="ksec"><b>★ ${t.name} standouts</b> <span class="small">(a short hand-picked list: big parks, gorges, caves, battlefields, landmark homes, plus the famous museums, Newport Aquarium and Ark Encounter)</span>${n(`<span class="mk sv stout">${P.mountain()}</span>`,"Standout site",`· gold glow; icon from zoom ${ct.feat}`)}</div>`,a._lod=()=>{const e={feat:"★ standouts",trauma:"other trauma centers",hosp:"hospitals",props:"5+ acre homes",nh:"near-hospital homes",cab:"cabins",big:"50+ acre lots",cvf:"caves & waterfalls",homes:"1+ acre homes",travel:"travel jobs",perm:"permanent jobs",a_museum:"museums",a_aqua:"aquariums",col:"colleges",a_park:"amusement parks",a_water:"water parks",act:"outdoors",a_camp:"campgrounds",h_hist:"historic sites",sch:"schools",h_coal:"coal camps",h_ghost:"ghost towns",h_mine:"mines",ski:"ski areas + top peaks",peak:"other peaks",tgt:"Target stores"},t={};return Object.entries(ct).forEach((([a,s])=>{e[a]&&(t[s]=t[s]||[]).push(e[a])})),`<div class="ksec small"><b>Zoomed out?</b> Statewide the map shows only Level I/II trauma centers, airports, businesses and unusual buildings for sale, ⭐ bargain homes and the 5 largest cities; every other pin is a faint dot. Zooming in turns the dots into icons a few kinds at a time (zoom ${Object.keys(t).sort(((e,t)=>e-t)).map((e=>`<b>${e}</b> ${t[e].join(", ")}`)).join(" · ")}). Pins of one kind that sit close together show as one bigger icon with a count: tap it to zoom in; from zoom ${kt} every pin stands alone. The county colors fade as you zoom in; the county lines stay.</div>`}}(ss),function(a){(e.ski||[]).length&&(a.ski=()=>`<div class="ksec"><b>⛷ Ski areas</b> <span class="small">(every alpine ski area in ${o(t.name)} plus ones just over the border worth the drive; card: trails, lifts, vertical, snowfall, season, ticket &amp; pass prices with season and source, discounts, special days)</span>${as(z(P.skier(20)),"Ski area",`· icon from zoom ${ct.ski}`)}${"KY"===t.ab?'<div class="small">Kentucky has no operating ski area (Ski Butler closed in the late 1990s); the nearest are in Indiana, Ohio, West Virginia and Tennessee.</div>':""}</div>`),(e.peaks||[]).length&&(a.peak=()=>`<div class="ksec"><b>⛰ Mountain peaks</b> <span class="small">(state high point, well-known peaks and popular hiking summits; card: elevation, prominence, activities, estimated summit weather)</span>${as(z(P.peak(20)),"Notable peak",`· best-known from zoom ${dt.peak({it:{tier:1}})}, the rest from ${ct.peak}`)}</div>`)}(ss),function(a){if(!(e.targets||[]).length)return;const s=e.meta&&e.meta.target||{};a.tgt=()=>`<div class="ksec"><b>🎯 Target stores</b> <span class="small">(every Target in ${o(t.name)}${null!=s.n_in?` (${s.n_in})`:""}${s.n_border?` plus ${s.n_border} within ~${o(s.miles||15)} mi over the state line`:""}; card: address, hours, phone; from Target's store directory, checked ${o(s.checked||"")})</span>${as(z(P.tgt(18)),"Target store",`· icon from zoom ${ct.tgt}`)}</div>`}(ss),Ya.addEventListener("click",(e=>{if(e.target.closest("[data-pjedit]"))return es(),void Ro().then((()=>{const e=n("#pjEdit"),t=n("#pjForm");e&&t&&t.hidden&&e.click();const a=n("#pjFilter");a&&a.scrollIntoView({block:"start"})}));e.target.closest("[data-openlayers]")&&(es(),Se.focus())})),B=!0,os();const is=n("#infoPop"),ls=n("#infoBody");n("#infoClose").onclick=()=>{is.hidden=!0},is.addEventListener("click",(e=>{e.target===is&&(is.hidden=!0)})),document.addEventListener("click",(e=>{e.target.closest("[data-info]")&&(e.preventDefault(),ls.innerHTML=function(){if(!R)return"<p>The Appeal score method file (ky_county_appeal_method.json) was not available when this map was built.</p>";const e=R.weights,a=R.band_ranges||[],s=(e,t,a)=>`<tr><td class="n"><b>${e}</b></td><td><b>${t}</b><br><span class="small">${a}</span></td></tr>`;return`<h2>How the Appeal score works</h2>\n      <p>A 0–100 score built for a <b>two-nurse household</b>: most of the weight is on what a nurse's pay buys, given where the jobs are. Every input is a published data set; every county is scored against ${t.name}'s other ${t.n-1}.</p>\n      <div class="kicker">Nurse financial value · ${e.afford+e.hosp+e.l12} points</div>\n      <table class="tbl wtbl">\n      ${s(e.afford,"RN pay vs. home price",`Area RN median annual wage (BLS OEWS, May 2025) ÷ county median home value (ACS 2020–24). Scored as a percentile: 100 = the wage buys the most house in ${t.ab}. Two RN incomes double the ratio but don't change the ranking.`)}\n      ${s(e.hosp,"Drive to the nearest acute-care hospital",`Where the nurse jobs are: ${R.job_hospitals} hospitals = ${t.jobHosp}. Critical-access (≤25 beds), rural emergency, psychiatric and military hospitals are left out. 100 at ≤${R.hosp_min[0]} min, falling to 0 at ${R.hosp_min[1]} min.`)}\n      ${s(e.l12,"Drive to the nearest Level I/II trauma center",`The big teaching/tertiary employers (${o(R.l12_centers.join("; "))}). 100 at ≤${R.l12_min[0]} min, 0 at ${R.l12_min[1]} min.`)}\n      </table>\n      <div class="kicker">Everything else · ${e.land+e.school+e.trauma} points</div>\n      <table class="tbl wtbl">\n      ${s(e.land,"Land suitability","Existing land score: % of land in farms, rainfall, number of farms, cropland share, dry-summer risk, surface water (NASS 2022, NOAA).")}\n      ${s(e.school,"Schools",`Existing school score: ${t.schoolScore}.`)}\n      ${s(e.trauma,"Trauma access for the family",`Drive to the nearest adult trauma center of any level (I–IV, ${R.trauma_centers} centers). 100 at ≤${R.trauma_min[0]} min, 0 at ${R.trauma_min[1]} min.`)}\n      </table>\n      <p class="small"><b>Score</b> = Σ (component 0–100 × points) ÷ 100. The county card shows each county's breakdown.</p>\n      <div class="kicker">Bands on the map</div>\n      <table class="tbl">${R.bands.map(((e,t)=>`<tr><td><span class="sw" style="background:${D[t]}"></span> ${o(e)}</td><td class="n">${a[t]?r(a[t][0])+" – "+r(a[t][1]):""}</td><td class="n small">ranks ${24*t+1}–${24*t+24}</td></tr>`)).join("")}</table>\n      <div class="kicker">Caveats</div>\n      <ul class="small">\n        <li>Drive times: ${o(R.drive_source)}, from each county's 2020 Census population centroid, fetched ${o(R.drive_fetched)}. No traffic: real rush-hour times are longer.</li>\n        <li>RN wages are BLS area medians (all settings), shared by every county in an area. ${o(R.owensboro_note)}</li>\n        <li>Out-of-state hospitals are included only if they are Level I/II trauma centers, so border counties (e.g. near Clarksville, Union City, Huntington's other hospitals) may be under-credited.</li>\n        <li>Hospital size beyond the critical-access cut-off isn't in the data; a few "acute-care" hospitals are small.</li>\n      </ul>\n      <p class="small">Data: <code>data/statewide/ky_county_appeal.csv</code> · method: <code>maps/statewide/notes.md</code> · code: <code>scripts/appeal_build.py</code></p>`}(),is.hidden=!1,n("#infoClose").focus())}));const rs=(e,t,a)=>`<a class="inl" data-go="${o(e)}" data-id="${o(t)}">${o(a)}</a>`,cs=(e,t)=>e?`<a href="${o(e)}" target="_blank" rel="noopener">${o(t||e)}</a>`:"—",ds=(e,t)=>null==t||""===t?"":`<tr><td>${o(e)}</td><td>${t}</td></tr>`,ps=(e,t)=>`<div class="stat"><b>${e}</b><span>${o(t)}</span></div>`;function hs(e){if(!e)return"";const a=k.county[e]&&k.county[e].school,s=k.county[e]?k.county[e].m:{};if(!a&&null==s.sch_pp_ky)return"";const n=a&&a.letters?o(a.letters).replace(/([ABCDF])(\d+)/g,"<b>$1</b>&nbsp;$2").replace(/ (?=<b>)/g," · "):a&&a.ratings?a.ratings.split("/").map((e=>d(e))).join(" "):"—";return`<table class="kv">${ds("County"===t.cu?"County district":"Districts",o(a&&a.district||e+t.cus))}\n      ${ds(`Schools vs ${t.ab}`,`${o(c(s.sch_pp_ky,1))} pp ${a&&a.band_ky?"("+o(a.band_ky)+")":""}`)}\n      ${ds("Schools vs US",`${o(c(s.sch_gl_us,2))} grade levels ${a&&a.band_us?"("+o(a.band_us)+")":""}`)}\n      ${ds(t.rlab?"Schools graded A–F":"KDE rating ES/MS/HS",n)}${ds(`Rank in ${t.ab}`,null!=s.sch_rank?"#"+Math.round(s.sch_rank)+" of "+t.n:null)}\n      ${a&&a.independents?ds(t.rlab?"Other districts here":"Independent districts",o(a.independents)):""}</table>`}const us={travel:e=>e.name,hospital:e=>e.name,school:e=>e.name,college:e=>e.name,activity:e=>e.name,history:e=>e.name,county:e=>e.name+t.cus+", "+t.name,property:e=>e.title},ms={c:"Imagery: Esri, Maxar, Earthstar Geographics",s:"https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9"};function bs(e,t){let a=t.th;if(!a||!a.u)return"";const s="satellite"===a.k;s&&(a=Object.assign({},ms,a));const n=us[e]?us[e](t):"",i=s?`Satellite view of ${n}`:`Photo of ${n}`,l=a.s?` · <a href="${o(a.s)}" target="_blank" rel="noopener">${s?"about":"source"}</a>`:"";return`<figure class="thumb${s?" sat":""}"><button type="button" class="thumbbtn" data-thumb="1" aria-label="Enlarge ${o(i)}">\n      <img src="${o(a.u)}" alt="${o(i)}" loading="lazy" decoding="async" width="400" height="260">${s?'<span class="thtag">🛰 Satellite view</span>':""}</button>\n      <figcaption class="attr">${s?"Satellite view · ":""}${o(a.c||"")}${l}</figcaption></figure>`}const fs={};function gs(e){if(!e)return"";const a=e=>e?`${rs("hospital",e.id,e.n)} · ${null!=e.min?`<b>~${o(e.min)} min</b> <span class="small">drive (${o(e.src||"OSRM")})</span>`:`<b>~${r(e.rd)} road mi</b> <span class="small">approx (${r(e.mi)} mi straight-line × 1.3)</span>`}${e.tr?" · "+o(e.tr):""}${e.er?` · ${o(e.er)} ER beds`:e.erl?` · ER ${o(e.erl)}`:""}`:null,s=(e.poi||[]).map((e=>`${rs(e.t,e.id,e.n)} <span class="small">${r(e.mi)} mi</span>`)).join("<br>"),n=a=>{const s=(e.s||{})[a];return s?`${rs("school",s.id,s.n)} ${d(s.r)}${null!=s.d?` <span class="small">${s.d>=0?"+":""}${r(s.d)} pts vs ${t.ab} avg</span>`:""} <span class="small">· ${r(s.mi)} mi</span>`:null};return`<div class="kicker">Nearby</div><table class="kv nb">${ds("🏥 Hospital",a(e.h))}${!e.t||e.h&&e.t.id===e.h.id?"":ds("🚑 Level I/II",a(e.t))}${e.tg?ds("🎯 Target",(i=e.tg,`${rs("target",i.id,i.n)}${i.st?` <span class="small">(${o(i.st)})</span>`:""} · ${null!=i.min?`<b>~${o(i.min)} min</b> <span class="small">drive (OSRM, free-flow)</span>`:`<b>~${r(i.rd)} road mi</b> <span class="small">approx (${r(i.mi)} mi straight-line × 1.3)</span>`}`)):""}${ds("📍 Places",s||null)}${ds("🎓 Elementary",n("ES"))}${ds("🎓 Middle",n("MS"))}${ds("🎓 High",n("HS"))}</table>`;var i}const ys=e=>e.bargain?`<div class="note deal"><span class="bstar">${P.starDot("#8e24aa")}</span> <b>Bargain:</b> ${o(e.deal||"")}</div>`:"";fs.property=e=>{const s=e.photos||[],n=s.length?`<div class="gal" id="gal">${s.map(((t,a)=>`<img src="${o(t)}" data-i="${a}" loading="${a<2?"eager":"lazy"}" alt="Photo ${a+1} of ${o(e.title)}">`)).join("")}</div><div class="galcount">${s.length} photo${s.length>1?"s":""} · swipe or tap to enlarge</div>`:"",i=e.price&&e.acres?l(e.price/e.acres)+"/ac":null,p=(e.drives||[]).length?`<div class="kicker">Hospital drive times</div>\n      <table class="tbl"><tr><th>Hospital</th><th class="n">Miles</th><th class="n">7 AM</th><th class="n">7 PM</th></tr>\n      ${e.drives.map((e=>`<tr><td>${o(e.hospital)}${e.role?`<br><span class="small"><b>${o(e.role)}</b></span>`:""}${e.traffic_aware||e.source&&/free-flow/.test(e.source)?"":'<br><span class="small">free-flow, no traffic data</span>'}${e.source?`<br><span class="small">${o(e.source)}</span>`:""}</td>\n        <td class="n">${r(e.miles)}</td>${null!=e.min_7am||null!=e.min_7pm||e.range_7am||null==e.minutes_free_flow?`<td class="n">${e.range_7am?o(e.range_7am)+" min":null!=e.min_7am?Math.round(e.min_7am)+" min":"—"}</td><td class="n">${e.range_7pm?o(e.range_7pm)+" min":null!=e.min_7pm?Math.round(e.min_7pm)+" min":"—"}</td></tr>`:`<td class="n" colspan="2">~${Math.round(e.minutes_free_flow)} min<br><span class="small">no traffic</span></td></tr>`}`)).join("")}</table>`:"",h=e.near_schools||{};if(Gt(e))return function(e,a,s){const n=e.cfq||{},i=Zt(e)?"50+ acres under $250k":Xt(e)?"near-hospital home":Ut(e)?"1-acre home":Vt(e)?(t.cabin.label||"Cabin").toLowerCase():Qt(e)?"":"5+ acre land",r=e.price&&e.acres>=1?l(e.price/e.acres):null,c=e.dwell?"yes"===e.dwell:null!=e.beds;return`<div class="kicker"><span class="cfic">${ea(e)?P.bat(20):""}${ta(e)?P.fall(15):""}</span> ${ea(e)&&ta(e)?"Cave + waterfall":ea(e)?"Cave":"Waterfall"} on the property${i?" · also "+o(i):""}</div><h2>${o(e.title)}</h2>\n      <div class="sub">${o(e.address||[e.town,e.county&&e.county+t.cus].filter(Boolean).join(", "))}</div>\n      ${a||bs("property",e)}\n      ${["cave","falls"].filter((e=>n[e])).map((e=>`<div class="note good cfq">${"cave"===e?"🦇":"💧"} <b>The listing says:</b> “${o(n[e])}”</div>`)).join("")}\n      <div class="stats">${ps(l(e.price),"price")}${ps(null!=e.acres?(+e.acres).toLocaleString(void 0,{maximumFractionDigits:e.acres<10?2:0}):"—","acres")}${r?ps(r,"per acre"):""}\n        ${c?ps(`${null!=e.beds?o(e.beds):"—"} / ${null!=e.baths?o(e.baths):"—"}`,"bed / bath")+ps(e.sqft?Math.round(e.sqft).toLocaleString():"—","sq ft"):ps("maybe"===e.dwell?"Maybe":"No","dwelling")}${ps(o(e.seen||"—"),"date seen")}</div>\n      ${e.bargain?'<div class="note">⭐ Also flagged as a bargain on this map.</div>':""}\n      ${e.dwn?`<div class="note">${"yes"===e.dwell?"🏠":"maybe"===e.dwell?"❔":"🌲"} <b>Dwelling:</b> ${o(e.dwn)}</div>`:""}\n      ${gs(e.nearby)}\n      ${e.features&&e.features.length?`<div class="kicker">Features</div><div class="badges">${e.features.map((e=>`<span class="badge">${o(e)}</span>`)).join("")}</div>`:""}\n      <div class="kicker">Health care</div><table class="kv">\n        ${ds("Nearest hospital",e.near_hosp?`${rs("hospital",e.near_hosp.id,e.near_hosp.name)} · ${e.near_hosp.miles} mi straight-line${e.near_hosp.trauma?" · "+o(e.near_hosp.trauma):""}`:null)}\n        ${ds("Nearest trauma center",e.near_trauma?`${rs("hospital",e.near_trauma.id,e.near_trauma.name)} · ${o(e.near_trauma.trauma)} · ${e.near_trauma.miles} mi straight-line`:null)}</table>\n      <div class="kicker">Schools</div>${hs(e.county)}\n      <table class="kv">${ds("Nearest elementary",s.ES?`${rs("school",s.ES.id,s.ES.name)} ${d(s.ES.rating)} · ${s.ES.miles} mi`:null)}\n        ${ds("Nearest high school",s.HS?`${rs("school",s.HS.id,s.HS.name)} ${d(s.HS.rating)} · ${s.HS.miles} mi`:null)}</table>\n      <table class="kv">${ds(t.cu,e.county?rs("county",e.county,e.county+t.cus):null)}${ds("Listing",cs(e.url,"Open original listing ↗"))}${ds("Source",e.source?o(e.source):null)}${ds("Date seen",o(e.seen))}${ds("Status",e.status?o(e.status):null)}</table>\n      <div class="note">Cave / waterfall: from the listing text (checked so place names like “Cave City” or “Falls Rd” don't count). Confirm with the seller or agent before you go.</div>\n      ${e.desc?`<div class="kicker">Description</div><div class="desc">${o(e.desc)}</div>`:""}`}(e,n,h);if(Xt(e))return function(e,s,n,i){const c=e.nh||{},p=c.er_beds?`${o(c.er_beds)} ER beds/bays${c.er_beds_label?` <span class="small">(${o(c.er_beds_label)})</span>`:""}`:c.estimate?"Likely 10+ ER beds <b>(estimate</b>: 100+ licensed beds, 24/7 ER; no published count)":o(c.er_beds_label||"—");return`<div class="kicker">🏥 Near-hospital home · ${o(e.ptype||"House")} · 1,600+ sq ft, 3bd/2ba, under ${a("nh")}</div><h2>${o(e.title)}</h2>\n      <div class="sub">${o(e.address||[e.town,e.county&&e.county+t.cus].filter(Boolean).join(", "))}</div>\n      ${s||bs("property",e)}\n      ${c.name?`<div class="nhbox"><div class="nhmin"><b>~${o(Math.round(c.minutes_free_flow))}</b><span>min</span></div><div><b>${c.hospital_id?rs("hospital",c.hospital_id,c.name):o(c.name)}</b>${c.city?` <span class="small">(${o(c.city)})</span>`:""}\n        <br><span class="small">${o(r(c.miles))} mi · free-flow drive, no traffic (OSRM)${c.gmaps_check?" · "+o(c.gmaps_check):""}</span><br>🚑 ${p}${c.source_url?` · <a href="${o(c.source_url)}" target="_blank" rel="noopener">ER source ↗</a>`:""}</div></div>`:""}\n      <div class="stats">${ps(l(e.price),"price")}${ps(ha(e.sqft),"sq ft")}${ps(`${null!=e.beds?o(e.beds):"—"} / ${null!=e.baths?o(e.baths):"—"}`,"bed / bath")}\n        ${ps(o(e.ptype||"—"),"type")}${ps(e.year_built?o(e.year_built):"—","built")}${ps(o(e.seen||"—"),"date seen")}</div>\n      ${ys(e)}${e.condition?`<div class="note good">✅ <b>Condition:</b> ${o(e.condition)}</div>`:""}${gs(e.nearby)}\n      ${e.notes?`<div class="note">⚠️ ${o(e.notes)}</div>`:""}\n      <table class="kv">${ds("Address",e.address?o(e.address):null)}${ds("Type",o(e.ptype||"House"))}${ds("Baths",e.bath_detail?o(e.bath_detail):null)}${ds("Lot",e.acres?r(e.acres)+" acres":null)}${ds("MLS #",e.mls?o(e.mls):null)}</table>\n      ${e.features&&e.features.length?`<div class="kicker">Features</div><div class="badges">${e.features.map((e=>`<span class="badge">${o(e)}</span>`)).join("")}</div>`:""}\n      ${n}\n      <div class="kicker">Schools</div>${hs(e.county)}\n      <table class="kv">${ds("Nearest elementary",i.ES?`${rs("school",i.ES.id,i.ES.name)} ${d(i.ES.rating)} · ${i.ES.miles} mi`:null)}\n        ${ds("Nearest high school",i.HS?`${rs("school",i.HS.id,i.HS.name)} ${d(i.HS.rating)} · ${i.HS.miles} mi`:null)}</table>\n      <table class="kv">${ds(t.cu,e.county?rs("county",e.county,e.county+t.cus):null)}${ds("Listing",cs(e.url,"Open original listing ↗"))}${ds("Source",e.source?o(e.source):null)}${ds("Date seen",o(e.seen))}${ds("Status",e.status?o(e.status):null)}</table>\n      ${e.desc?`<div class="kicker">Description</div><div class="desc">${o(e.desc)}</div>`:""}`}(e,n,p,h);if(Zt(e))return function(e,a,s){const n=e.price&&e.acres?l(e.price/e.acres):"—",i="yes"===e.dwell?"Yes":"maybe"===e.dwell?"Maybe":"No";return`<div class="kicker"><span class="bkstar">${P.bigStar(16)}</span> 50+ acres under $250k · ${"yes"===e.dwell?"with a home":"land"}</div><h2>${o(e.title)}</h2>\n      <div class="sub">${o(e.address||[e.town,e.county&&e.county+t.cus].filter(Boolean).join(", "))}</div>\n      ${a||bs("property",e)}\n      <div class="stats">${ps(l(e.price),"price")}${ps(null!=e.acres?Math.round(e.acres).toLocaleString():"—","acres")}${ps(n,"per acre")}${ps(i,"dwelling")}\n        ${"yes"===e.dwell?ps(`${null!=e.beds?o(e.beds):"—"} / ${null!=e.baths?o(e.baths):"—"}`,"bed / bath")+ps(e.sqft?Math.round(e.sqft).toLocaleString():"—","sq ft"):""}${ps(o(e.seen||"—"),"date seen")}</div>\n      ${e.dwn?`<div class="note${"yes"===e.dwell?" good":""}">${"yes"===e.dwell?"🏠":"maybe"===e.dwell?"❔":"🌲"} <b>Dwelling:</b> ${o(e.dwn)}</div>`:""}\n      ${gs(e.nearby)}\n      ${e.features&&e.features.length?`<div class="kicker">Features</div><div class="badges">${e.features.map((e=>`<span class="badge">${o(e)}</span>`)).join("")}</div>`:""}\n      ${e.water&&e.water.length?`<div class="kicker">Water features</div><div class="badges">${e.water.map((e=>`<span class="badge">💧 ${o(e)}</span>`)).join("")}</div>`:""}\n      <div class="kicker">Health care</div><table class="kv">\n        ${ds("Nearest hospital",e.near_hosp?`${rs("hospital",e.near_hosp.id,e.near_hosp.name)} · ${e.near_hosp.miles} mi straight-line${e.near_hosp.trauma?" · "+o(e.near_hosp.trauma):""}`:null)}\n        ${ds("Nearest trauma center",e.near_trauma?`${rs("hospital",e.near_trauma.id,e.near_trauma.name)} · ${o(e.near_trauma.trauma)} · ${e.near_trauma.miles} mi straight-line`:null)}</table>\n      <div class="kicker">Schools</div>${hs(e.county)}\n      <table class="kv">${ds("Nearest elementary",s.ES?`${rs("school",s.ES.id,s.ES.name)} ${d(s.ES.rating)} · ${s.ES.miles} mi`:null)}\n        ${ds("Nearest high school",s.HS?`${rs("school",s.HS.id,s.HS.name)} ${d(s.HS.rating)} · ${s.HS.miles} mi`:null)}</table>\n      <table class="kv">${ds(t.cu,e.county?rs("county",e.county,e.county+t.cus):null)}${ds("Listing",cs(e.url,"Open original listing ↗"))}${ds("Source",e.source?o(e.source):null)}${ds("Date seen",o(e.seen))}${ds("Status",e.status?o(e.status):null)}</table>\n      ${e.notes?`<div class="note">${o(e.notes)}</div>`:""}\n      ${e.desc?`<div class="kicker">Description</div><div class="desc">${o(e.desc)}</div>`:""}`}(e,n,h);const u=Ut(e);return`<div class="kicker">${Vt(e)?`<span class="lic">${P.cabin(16)}</span> ${o(t.cabin.label||"Cabin")} · over ${t.cabin.acres||25} ac · under ${a("cab")}`:u?"🏠 Home · 1+ acre, 3bd/2ba, under "+a("p1")+(e.standout&&e.standout.length?" · ★ standout":""):e.standout&&e.standout.length?"★ Standout property":"Property"}</div><h2>${o(e.title)}</h2>\n      <div class="sub">${o([e.town,e.county&&e.county+t.cus].filter(Boolean).join(", "))}</div>\n      ${n||bs("property",e)}\n      ${e.standout&&e.standout.length?`<div class="badges">${e.standout.map((e=>`<span class="badge gold">★ ${o(e)}</span>`)).join("")}</div>`:""}\n      ${"town"===e.precision?`<div class="note">📍 Approximate pin: placed at the town center (${o(e.town||"town")}); the exact parcel location wasn't published.</div>`:""}\n      ${e.pending?'<div class="note">Listing details are still being collected (listings.json not ready when this map was built). Re-run build.py to fill in price, acreage and the exact location.</div>':""}\n      <div class="stats">${ps(l(e.price),"price")}${ps(null!=e.acres?r(e.acres):"—","acres")}${ps(i||"—","per acre")}\n        ${ps(`${null!=e.beds?o(e.beds):"—"} / ${null!=e.baths?o(e.baths):"—"}`,"bed / bath")}${u?ps(e.sqft?Math.round(e.sqft).toLocaleString():"—","sq ft")+ps(e.year_built?o(e.year_built):"—","built"):ps(null!=e.dwellings?o(e.dwellings):"—","dwellings")}${ps(o(e.seen||"—"),"date seen")}</div>\n      ${ys(e)}${gs(e.nearby)}\n      ${u?`<table class="kv">${ds("Address",e.address?o(e.address):null)}${ds("Baths",e.bath_detail?o(e.bath_detail):null)}${ds("Dwellings",e.dwellings?o(e.dwellings):null)}</table>`:""}\n      ${e.notes?`<div class="note">⚠️ ${o(e.notes)}</div>`:""}\n      ${e.water&&e.water.length?`<div class="kicker">Water & cave features</div><div class="badges">${e.water.map((e=>`<span class="badge">💧 ${o(e)}</span>`)).join("")}</div>`:""}\n      ${e.features&&e.features.length?`<div class="kicker">Features</div><div class="badges">${e.features.map((e=>`<span class="badge">${o(e)}</span>`)).join("")}</div>`:""}\n      <div class="kicker">Health care</div><table class="kv">\n        ${ds("Nearest hospital",e.near_hosp?`${rs("hospital",e.near_hosp.id,e.near_hosp.name)} · ${e.near_hosp.miles} mi straight-line${e.near_hosp.trauma?" · "+o(e.near_hosp.trauma):""}`:null)}\n        ${ds("Nearest trauma center",e.near_trauma?`${rs("hospital",e.near_trauma.id,e.near_trauma.name)} · ${o(e.near_trauma.trauma)} · ${e.near_trauma.miles} mi straight-line`:null)}</table>\n      ${p}\n      <div class="kicker">Schools</div>${hs(e.county)}\n      ${e.school_ind?`<table class="kv">${ds(e.school_ind.name,`${o(c(e.school_ind.pp_vs_ky,1))} pp vs ${t.ab} · ${o(c(e.school_ind.gl_vs_us,2))} GL vs US · ${d(e.school_ind.es)} ${d(e.school_ind.ms)} ${d(e.school_ind.hs)}`)}</table>`:""}\n      <table class="kv">${ds("Nearest elementary",h.ES?`${rs("school",h.ES.id,h.ES.name)} ${d(h.ES.rating)} · ${h.ES.miles} mi`:null)}\n        ${ds("Nearest high school",h.HS?`${rs("school",h.HS.id,h.HS.name)} ${d(h.HS.rating)} · ${h.HS.miles} mi`:null)}</table>\n      <table class="kv">${ds(t.cu,e.county?rs("county",e.county,e.county+t.cus):null)}${ds("Listing",cs(e.url,"Open original listing ↗"))}${ds("Date seen",o(e.seen))}${ds("Listing updated",e.updated?o(e.updated):null)}${ds("Status",e.status?o(e.status):null)}</table>\n      ${e.desc?`<div class="kicker">Description</div><div class="desc">${o(e.desc)}</div>`:""}`},fs.hospital=e=>`${bs("hospital",e)}<div class="kicker">${e.trauma?"Trauma center":"general"===e.kind?"Hospital":"Specialty hospital"}</div><h2>${o(e.name)}</h2>\n    <div class="sub">${o([e.addr,e.city,e.state].filter(Boolean).join(", "))}</div>\n    ${e.trauma?`<div class="badges"><span class="badge gold">🚑 Trauma ${o(e.trauma)}</span></div>`:""}\n    <table class="kv">${ds("Trauma designation",e.trauma?`${o(e.trauma)}${e.trauma_name?" — listed as “"+o(e.trauma_name)+"”":""}<br><span class="small">${o(e.trauma_src)}</span>`:`Not on the ${t.traumaList}`)}\n    ${ds("Emergency dept.","yes"===e.emergency?"Yes (per OpenStreetMap)":"no"===e.emergency?"No (per OpenStreetMap)":null)}\n    ${ds("Type","general"===e.kind?"General / acute care":"Specialty (psychiatric, rehab, long-term, etc.)")}\n    ${ds("ER beds",e.er?(e.er.beds?`${o(e.er.beds)} <span class="small">(${o(e.er.label||"")})</span>`:e.er.ok?'Likely 10+ <span class="small">(estimate: 100+ licensed beds, 24/7 ER)</span>':'Unknown <span class="small">(no published count; not used for near-hospital homes)</span>')+(e.er.src?` · <a href="${o(e.er.src)}" target="_blank" rel="noopener">source</a>`:""):null)}\n    ${ds("Licensed beds",e.lic_beds?`${o(e.lic_beds)}${e.lic_type?" · "+o(e.lic_type):""}<br><span class="small">${t.licSrc}${e.lic_name?` · licensed as “${o(e.lic_name)}”`:""}</span>`:e.beds?`${o(e.beds)} <span class="small">(OpenStreetMap)</span>`:null)}\n    ${ds("CMS star rating",e.cms_rating?`${"★".repeat(Math.round(e.cms_rating))}${"☆".repeat(5-Math.round(e.cms_rating))} ${o(e.cms_rating)}/5 <span class="small">(CMS overall rating)</span>`:null)}\n    ${ds(t.cu,e.county?rs("county",e.county,e.county+t.cus):o(e.state||"out of state"))}\n    ${ds("Phone",e.phone?`<a href="tel:${o(e.phone)}">${o(e.phone)}</a>`:null)}${ds("Website",e.web?cs(e.web,"Website ↗"):null)}\n    ${ds("Map data",e.osm?cs(e.osm,"OpenStreetMap ↗"):o(e.note||""))}</table>${vs(e)}`,fs.travel=function(e){if("all"===e.id)return`<div class="kicker">💼 Travel nurse assignments</div><h2>All ${Ea.length} jobs, ranked by weekly pay</h2>\n      <div class="sub">${va.hospitals.length} ${t.name} hospitals · tap a hospital name for its card</div>${xa()}${wi?wi.note("jobs"):""}${Ca(Ea).map((e=>Ma(e,!0))).join("")}${function(){const e=ka.excluded||{},t=Object.values(e).reduce(((e,t)=>e+t),0);return t?`<details class="small"><summary>Left out: ${t} postings</summary>${Object.entries(e).map((([e,t])=>`${t} · ${o(e)}`)).join("<br>")}${ka.dups?`<br>${ka.dups} · duplicate postings`:""}<br>Sources: ${Object.entries(ka.sources||{}).map((([e,t])=>`${o(e)} — ${o(t)}`)).join("; ")}</details>`:""}()}`;const a=wa[e.band]||{};return`${bs("travel",e)}<div class="kicker">💼 Travel nurse assignments</div><h2>${o(e.name)}</h2>\n      <div class="sub">${o([e.city,e.county&&e.county+t.cus].filter(Boolean).join(", "))}</div>\n      <div class="badges"><span class="badge" style="background:${D[e.band]};color:${2===e.band?"#222":"#fff"}">Top pay ${l(e.top)}/wk · ${o(a.label||"")}</span></div>\n      <div class="stats">${ps(l(e.top),"top weekly pay")}${ps(e.n,"travel RN jobs")}${ps(l(e.jobs[e.jobs.length-1].hi),"lowest (high end)")}</div>\n      ${xa()}${wi?wi.note("jobs"):""}<div class="kicker">Jobs, highest weekly pay first</div>${Ca(e.jobs,e).map((e=>Ma(e,!1))).join("")}\n      <table class="kv">${ds("Hospital",e.hospital_id?rs("hospital",e.hospital_id,"Hospital details (trauma level, ER, website)"):null)}${ds(t.cu,e.county?rs("county",e.county,e.county+t.cus):null)}${ds("All jobs",'<a href="#travel=all">Every Kentucky travel job, ranked by pay</a>')}</table>${vs(e)}`},fs.perm=e=>Oo?Oo.card(e):"",fs.city=e=>`<div class="kicker">🏙 ${t.name}'s #${e.rank} largest city</div><h2>${o(e.full||e.name)}</h2><div class="sub">${o(e.county)}${t.cus}, ${t.name}</div>\n    <div class="stats">${ps(e.pop.toLocaleString(),"people (July 1, 2025 estimate)")}${ps(Ta(e.pop),"on the map")}</div>\n    <table class="kv">${ds("Counted as",o(e.note))}${ds(t.cu,rs("county",e.county,e.county+t.cus))}${ds("Source","U.S. Census Bureau, Vintage 2025 population estimates")}</table>`;const $s=fs.hospital;function vs(t){const a=(e.properties||[]).filter((e=>null!=e.lat)).map((e=>[e,ks(t.lat,t.lon,e.lat,e.lon)])).filter((e=>e[1]<25)).sort(((e,t)=>e[1]-t[1])).slice(0,5);return a.length?`<div class="kicker">Properties within 25 mi</div><table class="kv">${a.map((([e,t])=>ds(t.toFixed(1)+" mi",rs("property",e.id,e.title)))).join("")}</table>`:""}function ks(e,t,a,s){const n=Math.PI/180,o=Math.sin((a-e)*n/2)**2+Math.cos(e*n)*Math.cos(a*n)*Math.sin((s-t)*n/2)**2;return 7917.6*Math.asin(Math.sqrt(o))}fs.hospital=e=>{const t=va.hospitals.find((t=>t.hospital_id===e.id));return $s(e)+(t?`<div class="kicker">💼 Travel nurse assignments</div><table class="kv">${ds("Travel RN jobs",`${rs("travel",t.id,t.n+" job"+(t.n>1?"s":"")+", top "+l(t.top)+"/wk")}`)}</table>`:"")},fs.school=e=>{const a=Object.entries(e.levels||{}),s=e.drank||{};return`${bs("school",e)}<div class="kicker">School</div><h2>${o(e.name)}</h2><div class="sub">${o(e.district)} · grades ${o(e.grades)}</div>\n    ${e.letter?`<table class="kv">${ds(t.schLab,`${d(e.rating)}${null!=e.lg_score?` &nbsp;<b>${r(e.lg_score)}</b>${t.schOf||" of 5"}`:""}`)}\n      ${ds("Success rate (TCAP/EOC on track + mastered)",null!=e.success?o(r(e.success))+"%":null)}\n      ${ds("Achievement · growth · college & career",[["Ach",e.ach],["Growth",e.growth],["CCR",e.ccr]].filter((e=>e[1])).map((e=>`${e[0]} <b>${o(e[1])}</b>`)).join(" · ")||null)}</table>`:a.length?`<table class="tbl"><tr><th>Level</th><th>${t.schLab}</th><th class="n">Score</th></tr>${a.map((([e,t])=>`<tr><td>${o(e)}</td><td>${d(t.rating)}${t.fed?`<br><span class="small">${o(t.fed)}</span>`:""}</td><td class="n">${null!=t.score?r(t.score):"—"}</td></tr>`)).join("")}</table>`:`<div class="note">${t.schNone||(t.rlab?"No 2024-25 TDOE letter grade for this school/program":"No 2025 accountability rating for this school/program")}.</div>`}\n    <table class="kv">${ds("ACT composite (2024-25)",null!=e.act?o(e.act):null)}\n    ${Object.entries(s).map((([e,t])=>ds(`District rank (${e})`,`#${o(t.rank)} of ${o(t.of)} districts`))).join("")}\n    ${ds("Address",o([e.addr,e.city].filter(Boolean).join(", ")))}${ds("Phone",e.phone?`<a href="tel:${o(e.phone)}">${o(e.phone)}</a>`:null)}\n    ${ds(t.cu,rs("county",e.county,e.county+t.cus))}</table>\n    <div class="kicker">${"County"===t.cu?"County district":t.cu+" school"} context</div>${hs(e.county)}\n    <div class="small">${t.rlab?"Letter grades F &lt; D &lt; C &lt; B &lt; A":"KDE colors: Red &lt; Orange &lt; Yellow &lt; Green &lt; Blue"} (${t.schSrc}).</div>`},fs.college=e=>`${bs("college",e)}<div class="kicker">${o(e.kind)}</div><h2>${o(e.name)}</h2><div class="sub">${o([e.addr,e.city].join(", "))}</div>\n    <table class="kv">${ds(t.cu,rs("county",e.county,e.county+t.cus))}${ds("Details",cs(e.src,"NCES College Navigator ↗"))}</table>`,fs.activity=e=>`${bs("activity",e)}<div class="kicker">${o(e.kind)}</div><h2>${o(e.name)}</h2>\n    ${e.desc?`<div class="desc">${o(e.desc)}</div>`:""}\n    <table class="kv">${ds(t.cu,rs("county",e.county,e.county+t.cus))}${ds("Website",e.web?cs(e.web,"Website ↗"):null)}\n    ${ds("Wikipedia",e.wiki?cs("https://en.wikipedia.org/wiki/"+encodeURIComponent((e.wiki.split(":")[1]||e.wiki).replace(/ /g,"_")),(e.wiki.split(":")[1]||e.wiki)+" ↗"):null)}\n    ${ds("Map data",cs(e.src,"OpenStreetMap ↗"))}</table>${vs(e)}`,fs.history=e=>{const a=Kt[e.type]||["",e.type];return`${e.th?bs("history",e):""}<div class="kicker">${a[0]} ${o(a[1])}${e.nhl?" · National Historic Landmark":""}</div><h2>${o(e.name)}</h2>\n    ${!e.th&&e.img?`<figure class="thumb"><img src="${o(e.img.thumb)}" alt="${o(e.name)}" loading="lazy"><figcaption class="attr">Photo: ${o(e.img.artist)} · ${o(e.img.license)} · <a href="${o(e.img.page)}" target="_blank" rel="noopener">Wikimedia Commons</a></figcaption></figure>`:""}\n    <div class="desc">${o(e.desc)}</div>\n    <table class="kv">${ds(t.cu,e.county?rs("county",e.county,e.county+t.cus):null)}${ds("Source",cs(e.src,(e.src_name||"Source")+" ↗"))}</table>`},fs.county=a=>{const s=I.map((t=>{const s=a.m[t.key];if(null==s)return"";const n=e.counties.map((e=>e.m[t.key])).filter((e=>null!=e)).sort(((e,a)=>t.lower_better?e-a:a-e));return`<tr><td>${o(t.label)}</td><td class="n">${o(X(t,s))}</td><td class="n small">#${n.indexOf(s)+1}/${n.length}</td></tr>`})).join(""),n=(e.properties||[]).filter((e=>e.county===a.name)),i=a.districts||[],p=a.text?Object.entries(a.text).map((([e,t])=>ds(e,o(t)))).join(""):"";return`${bs("county",a)}<div class="kicker">${t.cu}</div><h2>${o(a.name)}${t.cus}, ${t.name}</h2>\n      ${function(e){const a=e.appeal;if(!a||!a.jh)return"";const s=Math.max(0,q.indexOf(a.band)),n=R&&R.weights||{},i=[["RN pay vs. home price",a.afford,n.afford,`${l(a.wage)} RN median${a.wage_flag?"†":""} ÷ ${l(a.home)} home = ${null!=a.ratio?a.ratio.toFixed(2):"—"}`],["Drive to acute-care hospital",a.hosp,n.hosp,`${o(a.jh.name)} · ${Math.round(a.jh.min)} min / ${r(a.jh.mi)} mi`],["Drive to Level I/II trauma",a.l12,n.l12,`${o(a.l12h.name)} (Level ${o(a.l12h.level)}) · ${Math.round(a.l12h.min)} min / ${r(a.l12h.mi)} mi`],["Land suitability",a.land,n.land,"land score"],["Schools",a.school,n.school,"school score"],["Trauma access (any level)",a.trauma,n.trauma,`${o(a.trh.name)} (Level ${o(a.trh.level)}) · ${Math.round(a.trh.min)} min`]];return`<div class="appeal" style="--band:${D[s]}"><div class="ascore"><b>${r(a.score)}</b><span>/100</span></div>\n      <div class="ameta"><div class="kicker" style="margin-top:0">Appeal score</div><div class="arank">#${a.rank} of ${t.n} · <span class="aband">${o(a.band)}</span></div>\n      <div class="small">Nurse financial value ${r(a.nfv)}/100 · <button type="button" class="linkbtn" data-info="appeal">ⓘ How this score works</button></div></div></div>\n      <details class="abreak"><summary>Score breakdown</summary><table class="tbl"><tr><th>Component</th><th class="n">0–100</th><th class="n">pts</th></tr>\n      ${i.map((([e,t,a,s])=>`<tr><td>${e}<br><span class="small">${s}</span></td><td class="n">${r(t)}</td><td class="n">${null!=t&&a?r(t*a/100):"—"}<span class="small">/${a}</span></td></tr>`)).join("")}</table>\n      ${a.wage_flag?`<div class="small">† ${o(a.wage_flag)}.</div>`:""}<div class="small">RN wage area: ${o(a.area)}. Drive times are free-flow (no traffic) from the county's population center.</div></details>`}(a)}\n      <div class="stats gtiles">${ws.map((e=>function(e,t){const a=Es(e,t);return null==a?`<a class="stat gt tap" href="${Ss(e.name,t.k)}" data-grp="${t.k}" aria-label="${o(t.label)}: open the list"><b data-pjn="${o(e.name)}">…</b><span>${o(t.label)}</span><i class="gchev" aria-hidden="true">›</i></a>`:a?`<a class="stat gt tap" href="${Ss(e.name,t.k)}" data-grp="${t.k}" aria-label="${a} ${o(t.label)}: open the list"><b>${a}</b><span>${o(t.label)}</span><i class="gchev" aria-hidden="true">›</i></a>`:`<div class="stat gt zero" aria-label="No ${o(t.label)}"><b>0</b><span>${o(t.label)}</span></div>`}(a,e))).join("")}</div><div class="small gtip">Tap a tile to list them · tap a row to fly to its pin</div>\n      ${O&&null!=a.m[O]?`<div class="badges"><span class="badge gold">Sweet-spot: ${o(X(I.find((e=>e.key===O)),a.m[O]))}</span></div>`:""}\n      ${s?`<div class="kicker">${t.cu} metrics</div><table class="tbl"><tr><th>Metric</th><th class="n">Value</th><th class="n">Rank</th></tr>${s}</table>`:""}\n      ${p?`<table class="kv">${p}</table>`:""}\n      <div class="kicker">Health care</div><table class="kv">${ds("Trauma centers in "+t.cu.toLowerCase(),a.n.trauma.length?o(a.n.trauma.join("; ")):"None")}\n      ${ds("Nearest trauma center",a.near_trauma?`${rs("hospital",a.near_trauma.id,a.near_trauma.name)} · ${o(a.near_trauma.trauma)} · ~${a.near_trauma.miles} mi from county center`:null)}</table>\n      <div class="kicker">Schools</div>${hs(a.name)}\n      ${i.length?`<table class="tbl"><tr><th>District</th><th class="n">vs ${t.ab}</th><th class="n">vs US</th><th>${t.rlab?"A/B/C/D/F":"ES/MS/HS"}</th></tr>${i.map((e=>`<tr><td>${o(e.name)}</td><td class="n">${o(c(e.pp_vs_ky,0))}</td><td class="n">${o(c(e.gl_vs_us,1))}</td><td>${e.lg?o(e.lg):`${d(e.es)} ${d(e.ms)} ${d(e.hs)}`}</td></tr>`)).join("")}</table>`:""}\n      ${n.length?`<div class="kicker">Properties here</div><table class="kv">${n.map((e=>ds(Gt(e)?ea(e)?P.bat(20):P.fall(16):Xt(e)?"🏥":Ut(e)?"🏠":Vt(e)?P.cabin(16):Zt(e)?P.bigStar(16):e.standout&&e.standout.length?"★":"⌂",rs("property",e.id,e.title)+(e.price?" · "+l(e.price):"")))).join("")}</table>`:""}`};const ws=[{k:"listings",n:"props",label:"listings",one:"listing",title:"Listings",icon:"🏡",layers:["props","homes","nh","cab","big","cvf"]},{k:"hospitals",n:"hosp",label:"hospitals",title:"Hospitals",icon:"🏥",layers:["trauma","hosp"]},{k:"travel",n:"travel",label:"travel jobs",one:"travel job",title:"Travel nurse jobs",icon:"💼",layers:["travel"]},{k:"perm",n:"perm",label:"permanent RN jobs",one:"permanent RN job",title:"Permanent RN jobs",icon:"🩺",layers:["perm"]},{k:"schools",n:"schools",label:"schools",title:"Schools",icon:"🏫",layers:["sch"]},{k:"colleges",n:"colleges",label:"colleges",title:"Colleges",icon:"🎓",layers:["col"]},{k:"activities",n:"acts",label:"activities",one:"activity",title:"Activities & outdoors",icon:"🌲",layers:["act"]},{k:"history",n:"hist",label:"history",h2:"history sites",title:"History",icon:"🏛",layers:["h_hist","h_coal","h_ghost","h_mine"]}],Ls={};ws.forEach((e=>Ls[e.k]=e));const Ss=(e,t)=>`#county=${i(e)}&cat=${t}`,_s={listings:t=>(e.properties||[]).filter((e=>e.county===t&&(!wi||wi.prop(e)))),hospitals:t=>(e.hospitals||[]).filter((e=>e.county===t)),travel:e=>Ea.filter((t=>t.h.county===e&&(!wi||wi.job(t,t.h)))),perm:e=>Oo?Oo.countyJobs(e):[],schools:t=>(e.schools||[]).filter((e=>e.county===t&&(!wi||wi.school(e)))),colleges:t=>(e.colleges||[]).filter((e=>e.county===t)),activities:t=>(e.activities||[]).filter((e=>e.county===t)),history:t=>(e.history||[]).filter((e=>e.county===t))};function Es(t,a){return"perm"===a.k?Oo?_s.perm(t.name).length:e.meta&&e.meta.pj?null:0:wi&&/^(listings|travel|schools)$/.test(a.k)?_s[a.k](t.name).length:"travel"===a.k?null!=t.n.travel?t.n.travel:_s.travel(t.name).length:t.n[a.n]||0}const xs=(e,t)=>e?`<img class="gth" src="${o(e)}" alt="" loading="lazy" decoding="async" width="60" height="60">`:`<span class="gth ph" aria-hidden="true">${t}</span>`,Ms=(e,t,a,s,n,i,l,r)=>`<a class="grow" href="#${e}=${o(encodeURIComponent(t))}" data-go="${e}" data-id="${o(t)}" data-from="${o(a)}">${s}\n    <span class="gtx"><span class="g1">${No(e,t)}${n}</span>${i?`<span class="g2${r?" wrap":""}">${i}</span>`:""}${l?`<span class="g3">${l}</span>`:""}</span><i class="gchev" aria-hidden="true">›</i></a>`,Cs=e=>e.filter((e=>null!=e&&""!==e&&!1!==e)).join(" · "),js=e=>String(e||"").replace(/\s*\(.*?\)\s*/g," ").replace(/\s+-\s+.*$/,"").trim();function Ts(e){const t=(e.drives||[]).map((e=>({d:e,m:null!=e.min_7am?e.min_7am:e.minutes_free_flow}))).filter((e=>null!=e.m));if(!t.length)return null;const a=t.find((e=>/nearest acute/i.test(e.d.role||"")))||t.sort(((e,t)=>e.m-t.m))[0];return`🏥 ${Math.round(a.m)} min to ${o(js(a.d.hospital))}`}const As=e=>e?/Level I\b(?! ?I)/.test(e)&&!/II|IV/.test(e)?1:/Level II\b/.test(e)&&!/III/.test(e)?2:/III/.test(e)?3:/IV/.test(e)?4:5:9,Ps=e=>e.lic_beds||e.beds&&+e.beds||null,Ns={HS:"High",MS:"Middle",ES:"Elementary"},zs=e.meta&&e.meta.school_ky||{},Is=e=>["HS","MS","ES"].find((t=>e.levels&&e.levels[t]))||null,Os=["University / college","Community & technical college","Other","Seminary","Beauty / trade school"],Bs=["historic","ghost_town","coal_camp","mine"],Hs={historic:"🏛 Historic sites & landmarks",ghost_town:"👻 Ghost towns",coal_camp:"🏚 Coal camps",mine:"⛏ Old mines (USGS MRDS)"},Rs=e=>{try{return new URL(e).hostname.replace(/^www\./,"")}catch(e){return""}},Ds=(e,t=140)=>{const a=(e=String(e||"").replace(/\s+/g," ").trim()).match(/^(.{20,}?[.!?])\s/);return(e=a?a[1]:e).length>t?e.slice(0,t-1)+"…":e},qs={listings:(e,a,s)=>{const n=(e,t)=>(null==e.price)-(null==t.price)||(e.price||0)-(t.price||0),i=e=>Ms("property",e.id,s,xs(e.rt||e.th&&e.th.u,Ut(e)?"🏠":Vt(e)?"🪵":Zt(e)?"★":Qt(e)?ea(e)?"🦇":"💧":"⌂"),`<b>${null!=e.price?l(e.price):"Price n/a"}</b>${null!=e.beds?` · ${o(e.beds)} bd${null!=e.baths?" / "+o(e.baths)+" ba":""}`:""}${null!=e.acres?` · ${o((+e.acres).toLocaleString(void 0,{maximumFractionDigits:2}))} ac`:""}`,`${e.standout&&e.standout.length?`<span class="gstar">★ ${o(e.standout.join(", "))}</span> · `:""}${o(e.title)}`,Cs([e.town&&o(e.town),Ts(e)])),r=a.filter((e=>!(Ut(e)||Xt(e)||Vt(e)||Zt(e)||Qt(e)))).sort(n),c=a.filter(Gt).sort(n),d=a.filter(Ut).sort(n),p=a.filter(Xt).sort(n),h=a.filter(Vt).sort(n),u=a.filter(Zt).sort(n);return{sub:"Sorted by price, lowest first",secs:[["⌂ 5+ acre land",r.map(i),"No 5+ acre land listings here right now."],["🏠 1-acre homes",d.map(i),"No 1-acre home listings here right now."],["🏥 Near-hospital homes",p.map((e=>Ms("property",e.id,s,xs(e.rt||e.th&&e.th.u,"🏥"),`<b>${null!=e.price?l(e.price):"Price n/a"}</b> · ${o(e.beds)} bd / ${o(e.baths)} ba · ${ha(e.sqft)} sq ft`,`${o(e.ptype||"House")} · ${o(e.title)}`,Cs([e.town&&o(e.town),e.nh&&`🏥 ${Math.round(e.nh.minutes_free_flow)} min to ${o(js(e.nh.name))}${e.nh.er_beds?` (${o(e.nh.er_beds)} ER beds)`:e.nh.estimate?" (10+ ER beds, est.)":""}`])))),"No near-hospital homes here right now."]].concat(t.cabin?[[(t.cabin.label||"Cabin")+"s ("+(t.cabin.acres||25)+"+ acres)",h.map(i),"No cabins here right now.",P.cabin(16)]]:[]).concat(u.length?[["★ 50+ acres under $250k",u.map(i),"None here right now.",P.bigStar(16)]]:[]).concat(c.length?[["Caves & waterfalls on the property",c.map(i),"None here right now.",P.bat(20)+P.fall(14)]]:[])}},hospitals:(e,a,s)=>{const n=(e,t)=>As(e.trauma)-As(t.trauma)||(Ps(t)||0)-(Ps(e)||0)||e.name.localeCompare(t.name),i=e=>{const t=(e=>va.hospitals.find((t=>t.hospital_id===e.id)))(e),a=Ps(e);return Ms("hospital",e.id,s,xs(e.th&&e.th.u,"🏥"),`<b>${o(e.name)}</b>`,Cs([e.trauma&&`<span class="gtag tr">🚑 Trauma ${o(e.trauma.replace(/^Level /,"Lvl "))}</span>`,a&&`${o(a)} beds${e.lic_name&&/\//.test(e.lic_name)?" (shared license)":""}`,e.lic_type&&"Acute care"!==e.lic_type&&o(e.lic_type),e.cms_rating&&`CMS ${o(e.cms_rating)}★/5`,"yes"===e.emergency&&"ER"]),Cs([e.city&&o(e.city),t&&`<span class="gpay">💼 top ${l(t.top)}/wk</span> (${t.n} job${t.n>1?"s":""})`]),!0)},r=a.filter((e=>"general"===e.kind)).sort(n),c=a.filter((e=>"general"!==e.kind)).sort(n);return{sub:"Trauma centers first, then by size · beds = state licensed beds",secs:[["Hospitals",r.map(i),"No general hospitals in this "+t.cu.toLowerCase()+"."],...c.length?[["Specialty (psychiatric, rehab, long-term)",c.map(i)]]:[]]}},perm:(e,t,a)=>Oo.group(e,t,a),travel:(e,t,a)=>({sub:"Highest weekly pay first · gross pay as posted",note:xa(),secs:[["Travel RN assignments",t.map((e=>Ms("travel",e.h.id,a,xs(e.h.th&&e.h.th.u,"💼"),`<b class="gpay">${_a(e)}/wk</b> · ${o(e.u||e.sp||"RN")}`,Cs([e.sh&&o(e.sh),e.len&&o(e.len),e.st&&"start "+o(e.st)]),Cs([o(e.h.name),e.ag&&o(e.ag)]))))]]}),schools:(e,a,s)=>{const n=e=>{const t=Is(e);return t&&null!=e.levels[t].score?e.levels[t].score:-1},i=e=>Ms("school",e.id,s,xs(e.th&&e.th.u,"🏫"),`<b>${o(e.name)}</b>`,(e=>Object.entries(e.levels||{}).sort(((e,t)=>["HS","MS","ES"].indexOf(e[0])-["HS","MS","ES"].indexOf(t[0]))).map((([a,s])=>{const n=null!=s.score&&null!=zs[a]?s.score-zs[a]:null;return`<span class="glv">${s.rating?`<span class="r ${o(s.rating)}">${a}${e.letter?" "+o(e.letter):""}</span>`:`<span class="r nr">${a}</span>`}${null!=s.score?` ${r(s.score)}`:""}${null!=n?` <span class="${n>=0?"up":"dn"}">${n>=0?"+":"−"}${r(Math.abs(n))} vs ${t.ab}</span>`:""}</span>`})).join(" "))(e)||"Not rated in 2025",Cs([e.grades&&"Grades "+o(e.grades),o(e.district),e.city&&o(e.city)]),!0),l=["HS","MS","ES"].map((e=>[`${Ns[e]} schools`,a.filter((t=>Is(t)===e)).sort(((e,t)=>n(t)-n(e)||e.name.localeCompare(t.name))).map(i)])),c=a.filter((e=>!Is(e))).sort(((e,t)=>e.name.localeCompare(t.name))).map(i);return c.length&&l.push(["Other / not rated",c]),{sub:t.schSub?t.schSub:t.rlab?"TDOE 2024-25 letter grade (A–F) and score (1–5) · best first":`KDE 2025 overall score by level vs the KY average (ES ${r(zs.ES)}, MS ${r(zs.MS)}, HS ${r(zs.HS)}) · best first`,secs:l.filter((e=>e[1].length)),jump:!0}},colleges:(e,t,a)=>({sub:"Universities first, then community & technical, other",secs:[["Colleges & schools",t.slice().sort(((e,t)=>Os.indexOf(e.kind)-Os.indexOf(t.kind)||e.name.localeCompare(t.name))).map((e=>Ms("college",e.id,a,xs(e.th&&e.th.u,"🎓"),`<b>${o(e.name)}</b>`,Cs([o(e.kind),/nurs/i.test(e.name)&&'<span class="gtag">🩺 Nursing</span>']),Cs([e.city&&o(e.city)]))))]]}),activities:(e,t,a)=>({sub:"Grouped by type",secs:[["Activities & outdoors",t.slice().sort(((e,t)=>e.kind.localeCompare(t.kind)||e.name.localeCompare(t.name))).map((e=>Ms("activity",e.id,a,xs(e.th&&e.th.u,Wt[e.kind]||"★"),`<b>${o(e.name)}</b>`,`${Wt[e.kind]||"★"} ${o(e.kind)}`,e.desc?o(Ds(e.desc)):e.wiki?"Wikipedia: "+o(e.wiki.split(":").pop()):e.web?o(Rs(e.web)):"")))]]}),history:(e,t,a)=>{const s=e=>Ms("history",e.id,a,xs(e.th&&e.th.u||e.img&&e.img.thumb,(Kt[e.type]||["•"])[0]),`<b>${o(e.name)}</b>`,`${o((Kt[e.type]||["",e.type])[1])}${e.nhl?" · National Historic Landmark":""}`,o((e=>{if("mine"===e.type){const t=(e.desc||"").match(/recorded as a (.+?) of (.+?)\. /);return t?`${t[1][0].toUpperCase()+t[1].slice(1)} of ${t[2]}`:""}return Ds(e.desc)})(e)));return{sub:"Grouped by type",secs:Bs.map((e=>[Hs[e],t.filter((t=>t.type===e)).sort(((e,t)=>e.name.localeCompare(t.name))).map(s)])).filter((e=>e[1].length)),jump:!0}}},Fs=(e,t)=>"file:"===location.protocol||"perm"===t?new URL("index.html"+Ss(e,t),location.href).href:new URL("share/county-"+i(e+"-"+t)+".html",location.href).href;let Ks=!1,Ys=null;function Ws(e,a,s={}){const i=k.county[e],l=Ls[a];if(!i||!l)return p("List not found"),!1;const r=Qs(),c=$n("county",i);if(!("perm"!==a||Oo&&Oo.hasD())){const t={type:"group",id:e,cat:a,loading:!0,prev:bn};return wn(t,Ss(e,a),s,r),Do().then((()=>{bn===t&&(bn=t.prev,Ws(e,a,Object.assign({},s,{replace:!0})))})),!0}if(!kn(c)){const t={type:"group",id:e,cat:a,loading:!0,prev:bn};return wn(t,Ss(e,a),s,r),vn(c).then((()=>{bn===t&&(bn=t.prev,Ws(e,a,Object.assign({},s,{replace:!0})))})),!0}const d=bn;return bn={type:"group",id:e,cat:a},Ks=!!s.fromCounty,Zs.innerHTML=Sn("group",{c:i,g:l},function(e,a){const s=_s[a.k](e.name),n=e.name+"|"+a.k,i=Es(e,a),l=qs[a.k](e,s,n),r=l.secs,c=r.length>1,d=l.jump&&r.length>2?`<nav class="gjump" aria-label="Jump to section">${r.map(((e,t)=>`<button type="button" data-jump="gs${t}">${o(e[0].replace(/^\S+\s(?=[A-Z])/u,""))} <b>${e[1].length}</b></button>`)).join("")}</nav>`:"",p=r.map(((e,t)=>`${c?`<div class="gsec" id="gs${t}">${e[3]?`<span class="lic">${e[3]}</span> `:""}${o(e[0])} <span>${e[1].length}</span></div>`:""}${e[1].length?e[1].join(""):`<div class="gempty">${o(e[2]||"None here.")}</div>`}`)).join("");return`<div class="gbar"><button type="button" class="gback" id="gBack" aria-label="Back to ${o(e.name)}${t.cus} card">‹ ${o(e.name)}${t.cus}</button>\n        <button type="button" class="gshare" id="gShare" aria-label="Share this list">${navigator.share?"Share":"Copy link"}</button></div>\n      <div class="kicker">${a.icon} ${o(a.title)}</div><h2>${i} ${o(1===i?a.one||(a.h2||a.label).replace(/s$/,""):a.h2||a.label)} in ${o(e.name)}${t.cus}</h2>\n      <div class="sub">${o(l.sub)}${s.length?" · tap a row to open it on the map":""}</div>${l.note||""}${wi&&/^(listings|travel|schools)$/.test(a.k)?wi.note(a.label):""}${d}\n      <div class="glist">${s.length||r.some((e=>e[2]))?p:`<div class="gempty">No ${o(a.label)} recorded in ${o(e.name)}${t.cus}.</div>`}</div>\n      <div class="actions"><button class="btn" id="shareBtn">${navigator.share?"Share…":"Share"}</button><button class="btn ghost" id="copyBtn">Copy link</button><button class="btn ghost" id="zoomBtn">Zoom to ${t.cu.toLowerCase()}</button></div>\n      <div class="small" style="word-break:break-all">Link: <a href="${Ss(e.name,a.k)}">${Ss(e.name,a.k)}</a></div>`}(i,l)),Vs.hidden=!1,Tn(!1),Vs.classList.add("tall"),Vs.scrollTop=nn(Ys&&Ys.key===e+"|"+a?Ys.top:0),Ys=null,Va&&Ga(null),n("#gBack").onclick=()=>{tn()?history.back():Ln("county",e,{fly:!1})},n("#gShare").onclick=n("#shareBtn").onclick=()=>async function(e,a){const s=`${Ls[a].title} in ${e}${t.cus}, ${t.ab}`,n=pn(Fs(e,a));if(navigator.share)try{return void await navigator.share({title:s+" — "+t.app,text:s,url:n})}catch(e){if(e&&"AbortError"===e.name)return}Js(n)}(e,a),n("#copyBtn").onclick=()=>Js(pn(Fs(e,a))),n("#zoomBtn").onclick=()=>Mn("county",i,!0),Zs.querySelectorAll("[data-jump]").forEach((e=>e.onclick=()=>{const t=n("#"+e.dataset.jump);t&&Vs.scrollTo({top:t.offsetTop-n(".gbar").offsetHeight-4,behavior:"smooth"})})),an(dn(Ss(e,a)),s.replace,r),document.title=`${l.title} in ${e}${t.cus}, ${t.ab} — ${t.app}`,l.layers.forEach((e=>{const t=Na.find((t=>t.key===e));!t||t.disabled||m.hasLayer(t.layer)||Da(t,!0)})),!1===s.fly||d&&("county"===d.type||"group"===d.type)&&d.id===e||Mn("county",i,!1),Cn("county",i),!0}const Us={city:e=>(e.full||e.name)+", "+t.ab,travel:e=>"all"===e.id?t.name+" travel nurse assignments":e.name+" — travel RN jobs",property:e=>e.title,hospital:e=>e.name,school:e=>e.name,college:e=>e.name,activity:e=>e.name,history:e=>e.name,county:e=>e.name+t.cus+", "+t.ab,perm:e=>e.name+" — permanent RN jobs"};function Xs(e,t){return"file:"===location.protocol||_||"city"===e||"perm"===e||"ski"===e||"peak"===e||"target"===e||k[e]&&k[e][t]&&k[e][t].bst?function(e,t){return new URL("index.html"+(_?"?anna=1":"")+"#"+e+"="+encodeURIComponent(t),location.href).href}(e,t):function(e,t){return new URL("share/"+e+"-"+i(t)+".html",location.href).href}(e,t)}function Js(e){const t=()=>p("Link copied");function a(){const a=document.createElement("textarea");a.value=e,a.style.position="fixed",a.style.opacity="0",document.body.appendChild(a),a.select();try{document.execCommand("copy"),t()}catch(t){prompt("Copy this link:",e)}a.remove()}navigator.clipboard&&window.isSecureContext?navigator.clipboard.writeText(e).then(t,(()=>a())):a()}const Vs=n("#card"),Zs=n("#cardBody"),Gs=e=>/^#(county=[^&]+&cat=|deals$|top-|cmap=)/.test(e.replace(/&full=1$/,"")),Qs=()=>{const e=m.getCenter();return{c:[e.lat,e.lng],z:m.getZoom(),s:Vs.hidden?0:Vs.scrollTop}},en=()=>history.state&&history.state.d||0,tn=()=>en()>=2;function an(e,t,a,s){const n=e||location.pathname+location.search;if((e||"")===location.hash&&!s)return Va&&Qa(null),void on();if(t)return history.replaceState(history.state,"",n),void on();const o=history.state||{d:0},i=!!o.pnl;Va&&Ga(null),i||history.replaceState(Object.assign({},o,{v:a||Qs()}),"",location.href);const l=e?(o.d||0)+1:0;history[i?"replaceState":"pushState"](e?Object.assign({d:l,L:Gs(e)?l:o.L,nob:o.nob?1:0,fz:gt?gt.name:null},s||{}):{d:0},"",n),on()}let sn=null;const nn=e=>{if(null!=sn){const e=sn;return sn=null,e}return e};function on(){const e=tn();Vs.classList.toggle("hasback",e),Mo();const t=n("#gBack");t&&(t.dataset.base||(t.dataset.base=t.textContent),t.textContent=e?"‹ Back":t.dataset.base)}function ln(){if(bn&&"county"===bn.type&&!bn.loading&&k.county[bn.id])return void function(e){const a=Qs();jn(!1),an("#cmap="+encodeURIComponent(e),!1,a,{fz:e}),di(e,!0),document.title=e+t.cus+" map — "+t.app}(bn.id);const e=history.state||{},a=e.d||0,s=(!bn||"group"!==bn.type&&"top"!==bn.type)&&null!=e.L&&e.L<a?e.L:0;a>s&&(s>0||!e.nob)?history.go(s-a):(jn(),b(!0))}n("#cardBack").onclick=()=>history.back();let rn=!1;const cn=n("#cardExp"),dn=e=>rn?e+"&full=1":e,pn=e=>rn?e.includes("#")?e+"&full=1":e+"#full":e,hn=()=>location.hash.replace(/&full=1$/,"");function un(e){rn=!!e,Vs.classList.toggle("full",rn),document.documentElement.classList.toggle("cardfull",rn),cn.textContent=rn?"⤡":"⤢",cn.setAttribute("aria-label",rn?"Collapse to the preview":"Expand to full screen"),cn.setAttribute("aria-pressed",rn),cn.title=rn?"Collapse":"Expand"}function mn(){rn&&(history.state&&history.state.kyxFull?history.back():(un(!1),history.replaceState(Object.assign({},history.state,{kyxFull:0}),"",hn()),on()))}cn.onclick=()=>rn?mn():function(){if(rn||Vs.hidden)return;const e=Qs();un(!0),Vs.scrollTop=0,an(hn()+"&full=1",!1,e,{kyxFull:1})}(),n("#cardShare").onclick=()=>{const e=n("#shareBtn");e&&e.click()},n("#cardMap").onclick=()=>{const e=n("#zoomBtn");mn(),e&&setTimeout((()=>e.click()),80)};var bn=null;let fn=null;const gn=new Set(e.meta&&e.meta.shards||[]),yn={},$n=(t,a)=>{if(a&&a.anna)return gn.has("_anna")?"_anna":null;if("eng"===t||"spj"===t||"target"===t)return null;if("ski"===t||"peak"===t)return e.mtnd?"_mtn":null;if("travel"===t&&"all"===a.id||"city"===t||"perm"===t)return null;const s="county"===t?i(a.name):a.county?i(a.county):a.bst?"_b-"+i(a.bco||a.bst):"_other";return gn.has(s)?s:null};function vn(t){const a=yn[t];if(a&&(a.done||a.p))return a.p||Promise.resolve();const s=yn[t]={};return s.p=new Promise((a=>{const n=document.createElement("script");n.async=!0,n.src="data/d/"+encodeURIComponent(t)+".js"+(e.meta&&e.meta.stamp?"?v="+e.meta.stamp:""),n.onload=()=>{s.done=!0,a()},n.onerror=()=>{s.done=!0,s.failed=!0,a()},document.head.appendChild(n)}))}window.KYXD=(e,t)=>{Object.keys(t).forEach((e=>{const a=k[e];if(!a)return;const s=t[e];Object.keys(s).forEach((e=>{a[e]&&Object.assign(a[e],s[e])}))})),(yn[e]=yn[e]||{}).done=!0};const kn=e=>!e||!(!yn[e]||!yn[e].done);function wn(e,t,a,s){bn=e,Vs.classList.toggle("tall","group"===e.type),Zs.innerHTML='<div class="cardload" role="status">Loading…</div>',Vs.hidden=!1,Tn(!!a.peek&&h),Vs.scrollTop=0,Va&&Ga(null),an(dn(t),a.replace,s)}function Ln(e,a,s={}){if(!("perm"!==e||Oo&&Oo.hasD())){const t={type:e,id:a,loading:!0},n=Qs();return wn(t,"#perm="+encodeURIComponent(a),s,n),Do().then((()=>{if(bn===t){if(!k.perm||!k.perm[a]){const e=k.perm&&Object.keys(k.perm).find((e=>i(e)===i(a)));e&&(a=e)}Ln(e,a,Object.assign({},s,{replace:!0}))}})),!0}const r=k[e]&&k[e][a];if(!r)return p("Item not found"),!1;const c=Qs(),d=$n(e,r);if(!kn(d)){const t={type:e,id:a,loading:!0};return wn(t,"#"+e+"="+encodeURIComponent(a),s,c),vn(d).then((()=>{bn===t&&Ln(e,a,Object.assign({},s,{replace:!0}))})),!0}if(s.from&&(Ls[s.from.cat]||s.from.top&&no[s.from.top])&&s.from,bn={type:e,id:a},Vs.classList.remove("tall"),Zs.innerHTML=function(e,t){const a=Po[e+":"+t];return a?`<div class="nbline">${"cut"===a.k?`<span class="nbdg cut">↓ Price cut</span> since your last visit (was ${l(a.was)})`:a.jobs?`<span class="nbdg new">New</span> ${a.jobs} new job${a.jobs>1?"s":""} since your last visit`:'<span class="nbdg new">New</span> since your last visit'} · <a href="#new">all new</a></div>`:""}(e,a)+Sn(e,r,function(e,a){if(!a||!a.bst)return fs[e](a);const s={},n=a.bsch;let i;"school"===e&&["sch","schLab","schSrc","rlab","schOf"].forEach((e=>{s[e]=t[e],n&&(t[e]=null==n[e]?"rlab"===e?null:t[e]:n[e])})),"school"!==e||n||(t.schLab="State grade",t.schSrc="no grades loaded for "+(to[a.bst]||a.bst)+" schools",t.schNone="No grade shown: this map has no school grades for "+(to[a.bst]||a.bst)+" (school directory listing from NCES only)");try{i=fs[e](a)}finally{Object.assign(t,s),"school"===e&&(t.schNone=s.schNone)}const l=a.bco&&a.bco!==a.bst?a.bco:null,r=o(l||to[a.bst]||a.bst);i=i.replace(/<a class="inl" data-go="county" data-id="(?:null|undefined|)">[^<]*<\/a>/g,r),i=i.replace(/<a class="inl" data-go="([a-z]+)" data-id="([^"]*)">([^<]*)<\/a>/g,((e,t,a,s)=>"county"===t?k.county[a]?e:s:!k[t]||k[t][a]?e:s));const c=new RegExp(`<tr><td>${o(t.cu)}</td><td>(?:${r.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}|${o(a.bst)}|${o(a.state||a.bst)}|out of state)</td></tr>`);i=i.replace(c,`<tr><td>${/County|Parish/.test(r)?"County":"Location"}</td><td>${r}</td></tr>`),("hospital"===e||"travel"===e)&&(i=i.replace(`Not on the ${t.traumaList}`,`Not known: this map has no ${o(to[a.bst]||a.bst)} trauma list`),/CMS/.test(a.src||"")&&(i=i.replace(/\(per OpenStreetMap\)/g,"(per CMS Care Compare)"))),"school"===e&&(i=i.replace(/<div class="kicker">[^<]*context<\/div>/,n?'<div class="kicker">Grades</div>':""),n||(i=i.replace(/<div class="small">(?:Letter grades|KDE colors)[\s\S]*?\)\.<\/div>/,"")));const d=`<div class="btag">🧭 Just over the state line in <b>${o(to[a.bst]||a.bst)}</b> <span class="bst">${o(a.bst)}</span>${l?" · "+o(l):""}${null!=a.bmi?` · ${o(a.bmi)} mi outside ${o(t.name)}`:""}</div>`,p=i.indexOf('<div class="kicker">');if(p>=0){const e=i.indexOf("</div>",p)+6;return i.slice(0,e)+d+i.slice(e)}return d+i}(e,r))+`<div class="actions">\n        <button class="btn" id="shareBtn">${navigator.share?"Share…":"Share"}</button>\n        <button class="btn ghost" id="copyBtn">Copy link</button>\n        ${null!=r.lat||"county"===e?'<button class="btn ghost" id="zoomBtn">Zoom here</button>':""}\n        ${Ao(e,r)?`<a class="btn ghost" id="dirBtn" href="${o(Ao(e,r))}" target="_blank" rel="noopener">🧭 Directions</a>`:""}\n        ${"property"===e?`<button class="btn ghost" id="cmpBtn">${To(a)}</button>`:""}</div>\n        <div class="small" style="word-break:break-all">Link: <a href="#${o(e)}=${o(encodeURIComponent(a))}">#${o(e)}=${o(a)}</a></div>`,null!=r.lat&&"peak"!==e||"county"===e){const t=document.createElement("div");t.id="climBox";const s=Zs.querySelector(".actions");s&&s.before(t),Yo().then((()=>KYXA.card(e,a,r,t))).then((()=>{_&&S&&S.clean(t)}))}_||(Oo?Oo.hook(e,r,Zs):("hospital"===e||"travel"===e||Zs.querySelector("[data-pjn]"))&&Ro().then((()=>{bn&&bn.type===e&&bn.id===a&&(Oo.hook(e,r,Zs),Oo.apply())}))),Vs.hidden=!1,Tn(!!s.peek&&h),Vs.scrollTop=nn(0),Va&&Ga(null),n("#shareBtn").onclick=()=>async function(e,a){const s=k[e][a],n=Us[e](s),o=pn(Xs(e,a));if(navigator.share)try{return void await navigator.share({title:n+" — "+t.app,text:n,url:o})}catch(e){if(e&&"AbortError"===e.name)return}Js(o)}(e,a),n("#copyBtn").onclick=()=>Js(pn(Xs(e,a)));const u=n("#zoomBtn");u&&(u.onclick=()=>Mn(e,r,!0));const b=n("#cmpBtn");b&&(b.onclick=()=>function(e,t){let a=Co();const s=a.indexOf(e);s>=0?a.splice(s,1):(a.push(e),a.length>3&&(a=a.slice(-3))),jo(a),t&&(t.textContent=To(e)),p("",s>=0?`Removed from Compare (${a.length})`:a.length>=2?`⚖ ${a.length} homes picked · <a href="#compare">compare them</a>`:"⚖ Picked for Compare. Pick 1–2 more homes.",3500)}(a,b));const f=n("#gFrom");f&&(f.onclick=()=>history.back());const g=n("#gal");g&&g.querySelectorAll("img").forEach((e=>e.onclick=()=>Rn(r.photos,+e.dataset.i)));const y=Zs.querySelector("[data-thumb]");return y&&r.th&&(y.onclick=()=>Rn([r.th.b||r.th.u],0,["satellite"===r.th.k?"Satellite view · "+ms.c:r.th.c||""],[r.th.u])),an(dn("#"+e+"="+encodeURIComponent(a)),s.replace,c),document.title=Us[e](r)+" — "+t.app,function(e,t){const a=("property"===e&&t&&t.anna?"ahome":null)||Gn&&Gn._feat(t)||{property:Gt(t)?"cvf":Xt(t)?"nh":Ut(t)?"homes":Vt(t)?"cab":Zt(t)?"big":"props",school:"sch",college:"col",activity:"act",travel:"travel",perm:"perm",city:"city"}[e]||("hospital"===e?t.trauma?"trauma":"hosp":null)||("history"===e?{mine:"h_mine",coal_camp:"h_coal",ghost_town:"h_ghost",historic:"h_hist"}[t.type]:null)||(Gn&&Gn[e]?Gn[e](t):null),s=Na.find((e=>e.key===a));s&&!m.hasLayer(s.layer)&&Da(s,!0)}(e,r),"property"===e&&Ut(r)&&Ra(),"property"===e&&Xt(r)&&Ba(),!1!==s.fly&&Mn(e,r,!1),Cn(e,r),!0}const Sn=(e,t,a)=>_&&S?S.card(e,t,a):a;function _n(e,a,s,n={}){const o=Qs();bn=e,Vs.classList.toggle("tall",!!n.tall),Zs.innerHTML=a,Vs.hidden=!1,Tn(!1),Vs.scrollTop=nn(0),Va&&Ga(null),fn&&(m.removeLayer(fn),fn=null),an(dn(s),n.replace,o),document.title=(n.title||"Profile")+" — "+t.app}function En(){const e=bn;!e||Vs.hidden||e.loading||("group"===e.type?(bn=null,Ws(e.id,e.cat,{replace:!0,fly:!1})):"top"===e.type?(bn=null,mo(e.id,{replace:!0})):"profile"!==e.type&&fs[e.type]&&(bn=null,Ln(e.type,e.id,{replace:!0,fly:!1})))}function xn(e){const t=e.bbox,a=window.innerWidth,s=window.innerHeight;let o=6,i=6,l=6,r=6;const c=e=>e&&!e.hidden&&e.offsetWidth?{l:e.offsetLeft,t:e.offsetTop,r:e.offsetLeft+e.offsetWidth,b:e.offsetTop+e.offsetHeight}:null,d=n("#topbar");d&&(o=Math.max(o,d.getBoundingClientRect().bottom+6));const p=o;[n("#mapKey"),_i].forEach((e=>{const t=c(e);t&&(t.b-t.t>.3*s?l=Math.max(l,t.r+8):o=Math.max(o,t.b+6))}));const h=c(Vs);h&&(h.r-h.l>=.9*a?i=Math.max(i,s-h.t+6):r=Math.max(r,a-h.l+8));const u=c(n("#focusChip"));u&&Vs.hidden&&(i=Math.max(i,s-u.t+6));const b=c(ni);b&&b.b>o&&b.t<s-i&&b.l>a-r-120&&(r=Math.max(r,a-b.l+6)),s-i-o<90&&(o=p);const f=m.options.zoomSnap;m.options.zoomSnap=.05;const g=[[t[1],t[0]],[t[3],t[2]]],y=Math.min(12,m.getBoundsZoom(g,!1,L.point(l+r,o+i)));return m.flyToBounds(g,{duration:.8,paddingTopLeft:[l,o],paddingBottomRight:[r,i],maxZoom:12}),m.options.zoomSnap=f,y}function Mn(e,t,a){if(("travel"===e||"perm"===e)&&null==t.lat)return;if(h&&Math.round(.55*u),rn&&!a){if("county"===e){const e=t.bbox;m.fitBounds([[e[1],e[0]],[e[3],e[2]]],{animate:!1})}else m.setView([t.lat,t.lon],Math.max(m.getZoom(),"property"===e?13:12),{animate:!1});return}if("county"===e)return void xn(t);const s="property"===e?13:14,n=L.latLng(t.lat,t.lon),o=Math.max(m.getZoom(),a?s:Math.min(s,12)),i=m.project(n,o);h?i.y+=Math.round(.27*u):i.x+=210,m.flyTo(m.unproject(i,o),o,{duration:.8})}function Cn(e,t){fn&&(m.removeLayer(fn),fn=null),"county"===e?fn=L.polygon(te(t),{renderer:ue(),color:"#e8a317",weight:4,fill:!1,interactive:!1}).addTo(m):null!=t.lat&&(fn=L.circleMarker([t.lat,t.lon],{renderer:ue(),color:"#e8a317",weight:3,fill:!1,interactive:!1}).addTo(m))}function jn(e=!0){Vs.hidden=!0,Vs.classList.remove("tall"),Tn(!1),un(!1),bn=null,Oe&&(Oe=null,Me(!0)),fn&&(m.removeLayer(fn),fn=null),document.title=t.app,e&&location.hash&&an("",!1)}function Tn(e){Vs.classList.toggle("peek",!!e),e&&(Vs.scrollTop=0)}function An(e){return k.county[e]?e:Object.keys(k.county).find((t=>t.toLowerCase()===e.toLowerCase().replace(/\s*county$/,"")))||Object.keys(k.county).find((t=>i(t)===i(e.replace(/\s*county$/i,""))))||e}function Pn(t,a){const s=a?{replace:!0,fly:!1}:{replace:!0},n=/&full=1$/.test(location.hash),o=location.hash.replace(/&full=1$/,"");if(!_&&x.test(o)&&e.meta&&e.meta.anna)return void ji(!0,{quiet:!0}).then((e=>{e?Pn(t,a):p("Couldn't load the Anna data")}));n!==rn&&(!n||o.length>1)&&un(n);const l=o.replace(/&amp;/g,"&").match(/^#county=([^&]+)&cat=([a-z]+)$/);if(l){const e=An(decodeURIComponent(l[1]));if(bn&&"group"===bn.type&&bn.id===e&&bn.cat===l[2])return;return void Ws(e,l[2],s)}if("#areas"===o){if(bn&&bn.hash===o)return;return void Yo().then((()=>KYXA.route(o,s)))}if(/^#(favs|compare|new|near)(=|$)/.test(o)){if(bn&&bn.hash===o)return;return void Fo().then((()=>KYXE.route(o,s)))}if(/^#(profile|pedit|pmatch)=/.test(o)){if(bn&&bn.hash===o)return;return void Mi().then((()=>KYXP.route(o,s)))}const r=o.match(/^#(deals|top-buildings|top-businesses|top-er-jobs|top-other-jobs|top-bonus|top-perm-er|top-perm-sdms|top-perm-icu)$/)||(/^#top-/.test(o)&&oo[o.slice(1)]?[o,o.slice(1)]:null);if(r){const e=oo[r[1]];if(bn&&"top"===bn.type&&e&&bn.id===e.k)return;if(e)return void mo(e.k,{replace:!0})}const c=o.match(/^#(property|hospital|school|college|activity|history|county|travel|perm|airport|business|building|attraction|city|ski|peak|target|eng|spj)=(.+)$/),d=o.match(/^#cmap=(.+)$/);if(d)return Vs.hidden||jn(!1),void(a||di(An(decodeURIComponent(d[1])),!0));if(!c)return void(Vs.hidden||jn(!1));const h=c[1];let u=decodeURIComponent(c[2]);k[h]?"perm"!==h||Oo&&Oo.hasD()?(k[h][u]||"county"!==h||(u=Object.keys(k.county).find((e=>e.toLowerCase()===u.toLowerCase().replace(/\s*county$/,"")))||u),k[h][u]||(u=Object.keys(k[h]).find((e=>i(e)===i(u)))||u),bn&&bn.type===h&&bn.id===u||Ln(h,u,s)):bn&&bn.loading&&bn.id===u||Ln(h,u,s):p("Item not found")}n("#cardClose").onclick=()=>ln(),Zs.addEventListener("click",(e=>{const t=e.target.closest("[data-grp]");if(t&&bn&&"county"===bn.type)return e.preventDefault(),void Ws(bn.id,t.dataset.grp,{fromCounty:!0});const a=e.target.closest("[data-go]");if(!a)return;e.preventDefault();let s=null;if(a.dataset.from&&bn&&"group"===bn.type){const[e,t]=a.dataset.from.split("|");s={county:e,cat:t},Ys={key:a.dataset.from,top:Vs.scrollTop}}else a.dataset.from&&bn&&"top"===bn.type&&(s={top:a.dataset.from.split("|")[1]},Ys={key:a.dataset.from,top:Vs.scrollTop});Ln(a.dataset.go,a.dataset.id,s?{from:s}:{})})),Vs.addEventListener("click",(e=>{Vs.classList.contains("peek")&&!e.target.closest(".cardtools")&&(e.preventDefault(),e.stopPropagation(),Tn(!1))}),!0),function(){let e=null;Vs.addEventListener("touchstart",(t=>{e=Vs.scrollTop<=0||Vs.classList.contains("peek")?t.touches[0].clientY:null}),{passive:!0}),Vs.addEventListener("touchend",(t=>{if(null==e||rn)return void(e=null);const a=t.changedTouches[0].clientY-e,s=Vs.classList.contains("peek");e=null,s?a<-30?Tn(!1):a>50&&ln():a>90&&(h&&bn&&!bn.loading&&fs[bn.type]&&"travel"!==bn.type?Tn(!0):ln())}),{passive:!0})}(),window.addEventListener("hashchange",(()=>{history.state&&null!=history.state.d||history.replaceState({d:1,nob:1,L:Gs(location.hash)?1:void 0},"",location.href),Pn(!0)})),window.addEventListener("popstate",(()=>{const e=history.state||{};sn=e.v?e.v.s:null,yt=!0;try{if(Pn(!0,!!e.v),e.v){const t=m.options.zoomSnap;m.options.zoomSnap=0,m.setView(e.v.c,e.v.z,{animate:!1}),m.options.zoomSnap=t}}finally{yt=!1}e.fz&&k.county[e.fz]?di(e.fz,!1):gt&&pi(!0),Vs.hidden?sn=null:null!=sn&&bn&&!bn.loading&&(Vs.scrollTop=sn,sn=null),on()})),document.addEventListener("click",(e=>{const t=e.target.closest&&e.target.closest('a[href^="#"]');if(!t||e.defaultPrevented||"_blank"===t.target||e.ctrlKey||e.metaKey||e.shiftKey||e.button)return;const a=t.getAttribute("href");a.length<2||a===location.hash||(e.preventDefault(),an(a,!1),Pn(!0))}));const Nn=n("#lightbox"),zn=n("#lbImg");let In=[],On=0,Bn=null,Hn=null;function Rn(e,t,a,s){In=e,On=t,Bn=a||null,Hn=s||null,Nn.hidden=!1,Nn.classList.toggle("single",e.length<2),Dn()}function Dn(){const e=Hn&&Hn[On];zn.onerror=e?()=>{zn.onerror=null,zn.src=e}:null,zn.src=In[On],zn.style.transform="",n("#lbCount").textContent=Bn&&Bn[On]||(In.length>1?`${On+1} / ${In.length}`:"")}function qn(e){In.length&&(On=(On+e+In.length)%In.length,Dn())}n("#lbPrev").onclick=()=>qn(-1),n("#lbNext").onclick=()=>qn(1),n("#lbClose").onclick=()=>Nn.hidden=!0,Nn.addEventListener("click",(e=>{(e.target===Nn||e.target.classList.contains("lbstage"))&&(Nn.hidden=!0)}));let Fn=null,Kn=null;Nn.addEventListener("touchstart",(e=>{1===e.touches.length&&(Fn=e.touches[0].clientX,Kn=e.touches[0].clientY)}),{passive:!0}),Nn.addEventListener("touchmove",(e=>{null!=Fn&&(zn.style.transform=`translateX(${e.touches[0].clientX-Fn}px)`)}),{passive:!0}),Nn.addEventListener("touchend",(e=>{if(null==Fn)return;const t=e.changedTouches[0].clientX-Fn,a=e.changedTouches[0].clientY-Kn;Math.abs(t)>50&&Math.abs(t)>Math.abs(a)?qn(t<0?1:-1):a>120?Nn.hidden=!0:zn.style.transform="",Fn=null})),document.addEventListener("keydown",(e=>{Nn.hidden?"Escape"===e.key&&(is.hidden?Fa.hidden?rn?mn():Vs.hidden||ln():Fa.hidden=!0:is.hidden=!0):"ArrowRight"===e.key?qn(1):"ArrowLeft"===e.key?qn(-1):"Escape"===e.key&&(Nn.hidden=!0)}));const Yn=[];Object.entries(k).forEach((([e,a])=>Object.values(a).forEach((a=>Yn.push({type:e,id:"county"===e?a.name:a.id,name:"county"===e?a.name+t.cus:a.title||a.name,sub:"property"===e?[Xt(a)?"🏥 Near-hospital home"+(a.ptype&&"House"!==a.ptype?" ("+a.ptype.toLowerCase()+")":""):Ut(a)?"🏠 1-acre home":Vt(a)?"🪵 "+(t.cabin.label||"Cabin")+" ("+(t.cabin.acres||25)+"+ acres)":Zt(a)?"★ 50+ acres under $250k"+("yes"===a.dwell?" (with a home)":""):Gt(a)?aa(a):null,Gt(a)&&!Qt(a)?aa(a):null,a.town,a.county].filter(Boolean).join(", "):"history"===e?(Kt[a.type]||[,""])[1]:a.kind||a.district||a.city||"",extra:"property"===e?[a.address,Xt(a)?"near hospital home "+(a.nh?a.nh.name:""):""].filter(Boolean).join(" ").toLowerCase():""})))));const Wn={city:"City",travel:"Travel RN jobs",property:"Property / home",hospital:"Hospital",school:"School",college:"College",activity:"Activity",history:"History",county:t.cu},Un=n("#search"),Xn=n("#results");let Jn=[],Vn=0;function Zn(e){Xn.hidden=!0,Un.value="",Un.blur(),Ln(e.type,e.id)}var Gn,Qn,eo;Un.addEventListener("input",(()=>{const e=Un.value.trim().toLowerCase();if(e.length<2)return void(Xn.hidden=!0);const t={eng:1,spj:2,city:0,county:0,property:1,business:1,building:1,travel:2,hospital:2,airport:2,history:3,activity:4,attraction:4,ski:3,peak:4,target:3,college:5,school:6};Jn=Yn.filter((t=>(e=>_?!("hospital"===e.type||"travel"===e.type||"perm"===e.type||"property"===e.type&&k.property[e.id]&&Xt(k.property[e.id])):!e.anna)(t)&&(t.name.toLowerCase().includes(e)||(t.sub||"").toLowerCase().includes(e)||(t.extra||"").includes(e)))).sort(((a,s)=>(a.name.toLowerCase().startsWith(e)?0:1)-(s.name.toLowerCase().startsWith(e)?0:1)||t[a.type]-t[s.type])).slice(0,30),Vn=0,Xn.innerHTML=Jn.map(((e,t)=>`<div data-i="${t}" class="${0===t?"sel":""}">${o(e.name)}<br><small>${Wn[e.type]}${e.sub?" · "+o(e.sub):""}</small></div>`)).join("")||"<div><small>No matches</small></div>",Xn.hidden=!1})),Un.addEventListener("keydown",(e=>{"ArrowDown"!==e.key&&"ArrowUp"!==e.key||(Vn=Math.max(0,Math.min(Jn.length-1,Vn+("ArrowDown"===e.key?1:-1))),Xn.querySelectorAll("div").forEach(((e,t)=>e.classList.toggle("sel",t===Vn))),e.preventDefault()),"Enter"===e.key&&Jn[Vn]&&Zn(Jn[Vn]),"Escape"===e.key&&(Xn.hidden=!0,Un.blur())})),Xn.addEventListener("click",(e=>{const t=e.target.closest("[data-i]");t&&Zn(Jn[+t.dataset.i])})),document.addEventListener("click",(e=>{e.target.closest(".searchwrap")||(Xn.hidden=!0)}));const to={AL:"Alabama",AR:"Arkansas",CT:"Connecticut",GA:"Georgia",IL:"Illinois",IN:"Indiana",KY:"Kentucky",MA:"Massachusetts",ME:"Maine",MO:"Missouri",MS:"Mississippi",NC:"North Carolina",NH:"New Hampshire",NY:"New York",OH:"Ohio",RI:"Rhode Island",SC:"South Carolina",TN:"Tennessee",VA:"Virginia",VT:"Vermont",WV:"West Virginia",QC:"Québec",NB:"New Brunswick",ON:"Ontario"};!function(){e.airports;const a=e.businesses||[],s=e.buildings||[],n=e.attractions||[],i=Qn;Object.assign(us,{airport:e=>`${e.name} (${e.code})`,business:e=>e.title,building:e=>e.title,attraction:e=>e.name}),Object.assign(Us,{airport:e=>`${e.name} (${e.code})`,business:e=>e.title+" — business for sale",building:e=>e.title+" — building for sale",attraction:e=>e.name}),Object.assign(Wn,{airport:"Airport",business:"Business for sale",building:"Building for sale",attraction:"Attraction"});const c=e=>e?Math.round(e).toLocaleString():"—";function d(e,a){const s=e.photos||[],n=s.length?`<div class="gal" id="gal">${s.map(((t,a)=>`<img src="${o(t)}" data-i="${a}" loading="${a<2?"eager":"lazy"}" alt="Photo ${a+1} of ${o(e.title)}">`)).join("")}</div><div class="galcount">${s.length} photo${s.length>1?"s":""} · swipe or tap to enlarge</div>`:"",i=e.price&&e.sqft?"$"+Math.round(e.price/e.sqft).toLocaleString():"—";return`<div class="kicker">${"business"===a?"🏪 Business for sale · "+o(e.kind):"🔔 Interesting building for sale"+(e.was?" · was: "+o(e.was):"")}</div><h2>${o(e.title)}</h2>\n        <div class="sub">${o(e.address||[e.town,e.county&&e.county+t.cus].filter(Boolean).join(", "))}</div>${n}\n        <div class="badges">${e.biz_only?'<span class="badge">Business only · no real estate</span>':"business"===a?'<span class="badge">Real estate included</span>':""}${e.auction?'<span class="badge gold">Auction</span>':""}</div>\n        ${e.note?`<div class="note">⚠️ ${o(e.note)}</div>`:""}\n        <div class="stats">${ps(l(e.price),"asking price")}${ps(c(e.sqft),"sq ft")}${ps(e.acres?r(e.acres):"—","acres")}${ps(i,"per sq ft")}${ps(e.year_built?o(e.year_built):"—","built")}${ps(o(e.seen||"—"),"date seen")}</div>${gs(e.nearby)}\n        <table class="kv">${ds("business"===a?"Business":"What it was",o("business"===a?e.kind:e.was||e.kind))}${ds("Address",e.address?o(e.address):null)}\n        ${ds(t.cu,e.county?rs("county",e.county,e.county+t.cus):null)}\n        ${ds("Nearest hospital",e.near_hosp?`${rs("hospital",e.near_hosp.id,e.near_hosp.name)} · ${e.near_hosp.miles} mi straight-line`:null)}\n        ${ds("Listing",cs(e.url,"Open on "+(e.source||"source")+" ↗"))}${ds("Broker",e.broker?o(e.broker):null)}${ds("Status",e.status?o(String(e.status).replace(/_/g," ").toLowerCase()):null)}\n        ${ds("Listed",e.listed?o(e.listed):null)}${ds("Updated",e.updated?o(e.updated):null)}${ds("Date seen",o(e.seen))}</table>\n        ${e.headline?`<div class="small">${o(e.headline)}</div>`:""}${e.desc?`<div class="kicker">Description</div><div class="desc">${o(e.desc)}</div>`:""}\n        <div class="small">Asking price as posted; listings change, so confirm on the source.</div>`}fs.airport=e=>`${bs("airport",e)}<div class="kicker">✈ ${e.oos?"Airport · out of state, near "+t.name:t.name+" airport"}</div><h2>${o(e.name)} (${o(e.code)})</h2>\n      <div class="sub">${o(e.city)}, ${o(e.state)}</div>${e.note?`<div class="note">ℹ️ ${o(e.note)}</div>`:""}\n      <div class="stats">${ps(null!=e.nonstops?e.nonstops:"—","nonstop destinations")}${ps((e.airlines||[]).length,"airlines")}${ps(o(e.code),"airport code")}</div>\n      ${(e.airlines||[]).length?`<div class="kicker">Airlines</div><div class="badges">${e.airlines.map((e=>`<span class="badge">${o(e)}</span>`)).join("")}</div>`:""}\n      ${(e.dests||[]).length?`<div class="kicker">Some nonstop destinations</div><div class="desc">${o(e.dests.join(" · "))}${e.nonstops>e.dests.length?" …":""}</div>`:""}\n      <table class="kv">${ds(t.cu,e.county?rs("county",e.county,e.county+t.cus):o(e.state))}${ds("Wikipedia",e.wiki?cs(e.wiki,"Airlines & destinations ↗"):null)}</table>\n      <div class="small">Nonstop count = destinations in Wikipedia's airlines &amp; destinations table (seasonal routes included), checked Oct 2026.</div>${vs(e)}`,fs.business=e=>d(e,"business"),fs.building=e=>d(e,"building"),fs.attraction=e=>{const a=i[e.type]||["★",e.kind,"",e.kind],s=/recreation\.gov|reserveamerica/.test(e.web||"");return`${bs("attraction",e)}<div class="kicker">${a[0]} ${o(a[3])}${e.sub&&e.sub.toLowerCase()!==a[3].toLowerCase()?" · "+o(e.sub):""}</div><h2>${o(e.name)}</h2>\n      <div class="sub">${o(e.county?e.county+t.cus+", "+t.ab:t.name)}</div>${e.desc?`<div class="desc">${o(e.desc)}</div>`:""}\n      <table class="kv">${ds("Campsites",e.sites?o(e.sites):null)}${ds("Run by",e.operator?o(e.operator):null)}${ds("Lake / area",e.area?o(e.area):null)}${ds("Nightly fee",e.price?o(e.price):null)}\n      ${ds(t.cu,e.county?rs("county",e.county,e.county+t.cus):null)}${ds(s?"Reserve":"Website",e.web?cs(e.web,s?"Reservations & details ↗":(Rs(e.web)||"Website")+" ↗"):null)}\n      ${ds("Wikipedia",e.wp?cs((e=>"https://en.wikipedia.org/wiki/"+encodeURIComponent(String(e).replace(/ /g,"_")))(e.wp),e.wp+" ↗"):null)}${ds("Map data",e.osm?cs(e.osm,"OpenStreetMap ↗"):e.wd?cs("https://www.wikidata.org/wiki/"+e.wd,"Wikidata ↗"):null)}</table>${vs(e)}`};const p=["amusement","water","aquarium","museum","camp"];ws.push({k:"business",n:"biz",label:"businesses for sale",one:"business for sale",title:"Businesses for sale",icon:"🏪",layers:["biz"]},{k:"buildings",n:"bldg",label:"buildings for sale",one:"building for sale",title:"Interesting buildings for sale",icon:"🔔",layers:["bldg"]},{k:"attractions",n:"attr",label:"attractions",one:"attraction",title:"Attractions",icon:"🎢",layers:eo.slice()}),ws.slice(-3).forEach((e=>Ls[e.k]=e)),_s.business=e=>a.filter((t=>t.county===e)),_s.buildings=e=>s.filter((t=>t.county===e)),_s.attractions=e=>n.filter((t=>t.county===e));const h=(e,t)=>(null==e.price)-(null==t.price)||(e.price||0)-(t.price||0);qs.business=(e,t,a)=>({sub:"Sorted by asking price, lowest first",secs:[["Businesses for sale",t.slice().sort(h).map((e=>Ms("business",e.id,a,xs(e.rt,"🏪"),`<b>${null!=e.price?l(e.price):"Price n/a"}</b> · ${o(e.kind)}`,o(e.title),Cs([e.town&&o(e.town),e.sqft&&c(e.sqft)+" sq ft",e.biz_only&&"business only"]))))]]}),qs.buildings=(e,t,a)=>({sub:"Sorted by asking price, lowest first",secs:[["Buildings for sale",t.slice().sort(h).map((e=>Ms("building",e.id,a,xs(e.rt,"🔔"),`<b>${null!=e.price?l(e.price):"Price n/a"}</b>${e.was?" · was: "+o(e.was):""}`,o(e.title),Cs([e.town&&o(e.town),e.sqft&&c(e.sqft)+" sq ft"]))))]]}),qs.attractions=(e,t,a)=>({sub:"Grouped by type",jump:!0,secs:p.map((e=>[i[e][0]+" "+i[e][1].replace(/ \(.*\)$/,""),t.filter((t=>t.type===e)).sort(((e,t)=>e.name.localeCompare(t.name))).map((t=>Ms("attraction",t.id,a,xs(t.th&&t.th.u,i[e][0]),`<b>${o(t.name)}</b>`,`${i[e][0]} ${o(i[e][3])}${t.sub?" · "+o(t.sub):""}${t.sites?" · "+t.sites+" sites":""}`,t.desc?o(Ds(t.desc)):t.web?o(Rs(t.web)):"")))])).filter((e=>e[1].length))}),B&&os()}(),function(){const a=e.meta&&e.meta.border;a&&(ss._border=()=>`<div class="ksec small"><b>🧭 Just over the state line:</b> pins up to ~${o(a.miles)} mi outside ${o(t.name)} that meet this map's own criteria (homes, jobs, hospitals, schools, colleges, parks and more) use the same icons; their cards say which state they are in. They don't change any ${o(t.cu.toLowerCase())} colors, scores or counts.</div>`)}(),function(){if(!(e.ski||[]).length&&!(e.peaks||[]).length)return;Object.assign(us,{ski:e=>e.name,peak:e=>e.name}),Object.assign(Us,{ski:e=>e.name+" — ski area",peak:e=>e.name+" — mountain peak"}),Object.assign(Wn,{ski:"Ski area",peak:"Mountain peak"});const a=e=>null==e?"—":Math.round(e).toLocaleString(),s=e=>null==e?"—":"$"+(Math.round(100*e)/100).toLocaleString(void 0,{minimumFractionDigits:e%1?2:0,maximumFractionDigits:2}),n=e=>"https://en.wikipedia.org/wiki/"+encodeURIComponent(String(e).replace(/ /g,"_")),i=e=>e.st&&e.st!==t.ab,l=e=>`<ul class="mtnl">${e.map((e=>`<li>${o(e)}</li>`)).join("")}</ul>`;fs.ski=c=>{const d=c.split,p=c.split_n,h=c.km_split,u=d?`Beginner ${null!=d.beg?d.beg+"%":"—"} · Intermediate ${null!=d.int?d.int+"%":"—"} · Advanced ${null!=d.adv?d.adv+"%":"—"} <span class="small">(share of trails, Wikipedia)</span>`:p?`Beginner ${null!=p.beg?p.beg:"—"} · Intermediate ${null!=p.int?p.int:"—"} · Advanced ${null!=p.adv?p.adv:"—"} <span class="small">(trails, Wikipedia)</span>`:"—",m=h&&h.some((e=>null!=e))?`Easy ${r(h[0])} km · Intermediate ${r(h[1])} km · Difficult ${r(h[2])} km <span class="small">(${r(c.km)} km of slopes, skiresort.com)</span>`:null,b=c.tix||[],f=e=>b.find((t=>t[0]===e)),g=(e,t)=>`<tr><td>${o(e)}</td><td><b>${t?s(t[1]):"—"}</b>${t?`<div class="small">${o(t[2])}</div>`:""}</td></tr>`,y=null!=c.snow?`${a(c.snow)} in <span class="small">(average per season, Wikipedia)</span>`:c.snow_stn?`— at the mountain · ${a(c.snow_stn.inches)} in at ${o(c.snow_stn.stn)} (${a(c.snow_stn.stn_ft)} ft, ${c.snow_stn.mi} mi away; NOAA 1991–2020). The slopes usually get more.`:"—",$=c.plan?c.plan.replace(/^(\d{4}-\d\d-\d\d)\s*-\s*(\d{4}-\d\d-\d\d)$/,"$1 → $2"):null;return`${bs("ski",c)}<div class="kicker">⛷ Ski area${i(c)?" · just over the border in "+o(c.st):" · "+o(t.name)}</div><h2>${o(c.name)}</h2>\n      <div class="sub">${c.town?"Near "+o(c.town)+(c.town_mi?` (${c.town_mi} mi)`:""):""}</div>${c.note?`<div class="note">ℹ️ ${o(c.note)}</div>`:""}\n      <div class="stats">${ps(null!=c.trails?c.trails:"—","runs / trails")}${ps(null!=c.lifts?c.lifts:"—","lifts")}${ps(null!=c.vert?a(c.vert)+" ft":"—","vertical drop")}${ps(null!=c.top?a(c.top)+" ft":"—","summit")}${ps(null!=c.snow?a(c.snow)+" in":"—","avg snowfall")}</div>\n      ${(c.multi||[]).length?`<div class="badges">${c.multi.map((e=>`<span class="badge gold">${o(e[0])} Pass</span>`)).join("")}</div>`:""}\n      <table class="kv">${ds("Trail split",u)}${m?ds("By slope length",m):""}${ds("Lifts",null!=c.lifts?c.lifts+' <span class="small">(skiresort.com)</span>':"—")}\n      ${ds("Vertical / summit / base",`${a(c.vert)} ft / ${a(c.top)} ft / ${a(c.base)} ft`)}${ds("Average snowfall",y)}\n      ${ds("Typical season",c.season?o(c.season)+' <span class="small">(skiresort.com)</span>':"—")}${$?ds("2026–27 plan",o($)+' <span class="small">(planned dates, skiresort.com)</span>'):""}</table>\n      <div class="kicker">Lift tickets (adult, 1 day)</div><table class="kv">${g("Weekday",f("Weekday"))}${g("Weekend",f("Weekend"))}${f("Day (main season)")?g("Day, main season",f("Day (main season)")):""}</table>\n      <div class="kicker">Season pass</div><table class="kv">${ds("This mountain",c.pass?`<b>${s(c.pass[0])}</b><div class="small">${o(c.pass[1])}</div>`:"—")}\n      ${ds("Multi-resort",(c.multi||[]).length?c.multi.map((e=>`<div><b>${o(e[0])}</b> · <span class="small">${o(e[1])}</span></div>`)).join(""):"— (not on Epic, Ikon or Indy)")}</table>\n      <div class="kicker">Discounts</div>${(c.disc||[]).length?l(c.disc):'<div class="small">— none found in our sources; check the website.</div>'}\n      <div class="small">Nurses / healthcare: ${(c.multi||[]).some((e=>"Ikon"===e[0]))?"the Ikon Pass sells a discounted nurse pass.":(c.disc||[]).some((e=>/nurs|healthcare|health care|first responder/i.test(e)))?"see above.":"— no nurse discount found; ask the ticket office."} Early-bird season passes and multi-day tickets are usually cheaper per day when bought online ahead.</div>\n      <div class="kicker">Special days &amp; events</div>${(c.special||[]).length?l(c.special):'<div class="small">—</div>'}\n      <table class="kv">${ds("Website",c.web?cs(c.web,(Rs(c.web)||"Website")+" ↗"):null)}${ds("Wikipedia",c.wp?cs(n(c.wp),c.wp+" ↗"):null)}</table>\n      ${v=c.src,(v||[]).length?`<details class="mtnsrc"><summary>Sources (${v.length})</summary>${v.map((e=>`<div>${cs(e,Rs(e)+" ↗")}</div>`)).join("")}</details>`:""}<div class="small">Prices are as published by each source (season and source on every price; checked ${o((e.mtnd||{}).checked||"Oct 2026")}); '—' = not found. Prices change, so confirm on the resort's site before you go.</div>`;var v},fs.peak=e=>{const s=e.clim||{},l=s.temp,r=s.snow,c=e=>null==e?"—":Math.round(e)+"°F",d=l?`<table class="kv">${ds("Summer (July)",`${c(l.jul_hi)} high / ${c(l.jul_lo)} low`)}${ds("Winter (January)",`${c(l.jan_hi)} high / ${c(l.jan_lo)} low`)}\n        ${null!=l.sum?ds("Summer average (Jun–Aug)",c(l.sum)):""}${null!=l.win?ds("Winter average (Dec–Feb)",c(l.win)):""}</table>\n        <div class="small">Estimate for the summit: ${o(l.stn)} weather station (${a(l.stn_ft)} ft, ${l.mi} mi away, NOAA 1991–2020 normals) adjusted by 3.5 °F per 1,000 ft of height difference. Wind makes summits feel colder.</div>`:'<div class="small">— no weather station close enough for an estimate.</div>';return`${bs("peak",e)}<div class="kicker">⛰ Mountain peak${e.hp?" · "+o(t.name)+"'s highest point":i(e)?" · just over the border in "+o(e.st):""}</div><h2>${o(e.name)}</h2>\n      <div class="sub">${e.town?"Nearest town: "+o(e.town)+(null!=e.town_mi?` (${e.town_mi} mi)`:""):""}</div>\n      <div class="stats">${ps(null!=e.elev?a(e.elev)+" ft":"—","elevation")}${ps(null!=e.prom?a(e.prom)+" ft":"—","prominence")}${ps(r?a(r.inches)+" in":"—","snowfall nearby")}${ps(l?c(l.jul_hi):"—","July high (est.)")}${ps(l?c(l.jan_hi):"—","Jan high (est.)")}</div>\n      <div class="kicker">Activities</div>${(e.act||[]).length?`<div class="badges">${e.act.map((e=>`<span class="badge">${o(e)}</span>`)).join("")}</div>`:'<div class="small">—</div>'}\n      <div class="kicker">Weather at the top (estimate)</div>${d}\n      <table class="kv">${ds("Average snowfall",r?`${a(r.inches)} in at ${o(r.stn)} (${a(r.stn_ft)} ft, ${r.mi} mi away; NOAA 1991–2020). The summit usually gets more.`:"—")}\n      ${ds("Prominence",null!=e.prom?a(e.prom)+' ft <span class="small">(how far it rises above the saddle to any higher peak)</span>':"—")}\n      ${ds("Wikipedia",e.wp?cs(n(e.wp),e.wp+" ↗"):null)}${ds("Map data",e.osm?cs(`https://www.openstreetmap.org/?mlat=${e.lat}&mlon=${e.lon}#map=14/${e.lat}/${e.lon}`,"OpenStreetMap ↗"):e.qid?cs("https://www.wikidata.org/wiki/"+e.qid,"Wikidata ↗"):null)}</table>\n      <div class="small">Elevation and prominence from Wikipedia / Wikidata / OpenStreetMap; activities from the Wikipedia article (fire towers, trails, roads, cliffs). '—' = not found.</div>`},B&&os()}(),function(){if(!(e.targets||[]).length)return;Object.entries({AZ:"Arizona",CO:"Colorado",DE:"Delaware",ID:"Idaho",MT:"Montana",ND:"North Dakota",NE:"Nebraska",NM:"New Mexico",NV:"Nevada",OR:"Oregon",PA:"Pennsylvania",SD:"South Dakota",UT:"Utah",WA:"Washington",WY:"Wyoming",MD:"Maryland",NJ:"New Jersey",MI:"Michigan"}).forEach((([e,t])=>{to[e]||(to[e]=t)}));const a=e.meta&&e.meta.target||{};Object.assign(Us,{target:e=>e.name+(e.city?" — "+e.city+", "+e.st:"")}),Object.assign(Wn,{target:"Target store"});const s=["CVS pharmacy","Starbucks Cafe","Drive Up","Order Pickup","Target Optical","Wine, Beer & Spirits Available","Fresh Grocery","Ulta Beauty at Target","Apple Experience","Disney store at Target","Baby Boutique","Target Mobile","Target Beauty Studio"];fs.target=e=>{const n=[e.city,[e.st,e.zip].filter(Boolean).join(" ")].filter(Boolean).join(", "),i=(e.hrs||[]).map((e=>ds(e[0],o(e[1])))).join(""),l=(e.caps||[]).filter((e=>s.includes(e))).sort(((e,t)=>s.indexOf(e)-s.indexOf(t))),r=e.ph?`<a href="tel:${o(String(e.ph).replace(/[^0-9+]/g,""))}">${o(e.ph)}</a>`:null;return`<div class="kicker">🎯 Target store${e.bst?"":" · "+o(t.name)}</div><h2>${o(e.name)}</h2>\n      <div class="sub">${o(e.addr||"")}${e.addr?", ":""}${o(n)}</div>\n      <table class="kv">${ds("Address",o([e.addr,n].filter(Boolean).join(", ")))}${ds("Phone",r)}${!e.bst&&e.cty?ds("County",o(/County|Parish|Borough/.test(e.cty)?e.cty:e.cty+" County")):""}${ds("Store number",o(e.id))}</table>\n      <div class="kicker">Store hours</div>${i?`<table class="kv">${i}</table>`:'<div class="small">— not listed; check target.com.</div>'}\n      <div class="small">Regular hours as listed on target.com${a.checked?" (checked "+o(a.checked)+")":""}; holiday hours differ.</div>\n      ${l.length?`<div class="kicker">In this store</div><div class="badges">${l.map((e=>`<span class="badge">${o(e.replace(/ Available$/,""))}</span>`)).join("")}</div>`:""}\n      <table class="kv">${ds("Website",e.url?cs(e.url,"target.com store page ↗"):null)}</table>`}}();const ao=e.tops||{},so=[{k:"deals",hash:"deals",type:"property",src:"properties",ll:[35.95,-85.5],icon:P.starDot("#8e24aa"),cls:"tb-deals",row:1,col:2,bub:"Deals of the Week",label:e=>`⭐ Deals of the Week (${e})`,title:"⭐ Deals of the Week",h2:e=>`The ${e} best home values right now`,sub:"Every home listing (5-acre, 1-acre and near-hospital, ⭐ bargains and others) ranked by price per sq ft (per acre for 5-acre land) vs nearby Zillow listings, criteria fit and extras"},{k:"buildings",hash:"top-buildings",type:"building",src:"buildings",ll:[35.95,-87.98],icon:P.starDot("#2e7d32"),cls:"tb-bldg",row:1,col:1,bub:"Odd Buildings",label:e=>`Top ${e} Odd Buildings`,title:"Top 10 Odd Buildings",h2:e=>`Top ${e} odd buildings for sale`,sub:"Ranked by how interesting or historic it is, price per sq ft vs the other odd buildings listed, and condition"},{k:"businesses",hash:"top-businesses",type:"business",src:"businesses",ll:[35.95,-83.02],icon:'<span class="mk biz" style="width:22px;height:22px">$</span>',cls:"tb-biz",row:1,col:3,bub:"Businesses for Sale",label:e=>`Top ${e} Businesses for Sale`,title:"Top 10 Businesses for Sale",h2:e=>`Top ${e} businesses for sale`,sub:"Ranked by value (asking price vs stated revenue or cash flow), whether the real estate is included, and appeal (Red River Gorge cabins, RV parks, lake lodging…)"},{k:"er_jobs",hash:"top-er-jobs",type:"travel",job:!0,ll:[35,-86.74],icon:P.nurseCap("ER","#fff","#c62828","#fff"),cls:"tb-job tb-er",row:2,col:1,bub:"ER Travel Jobs",label:e=>`Top ${e} ER Travel Jobs`,title:"Top 10 ER Travel Jobs",h2:e=>`Top ${e} ER travel nurse jobs by weekly pay`,sub:"Emergency Department / ER / ED / Trauma ER travel RN jobs (no peds ED), highest posted weekly pay first (high end of any range)"},{k:"other_jobs",hash:"top-other-jobs",type:"travel",job:!0,ll:[35,-84.26],icon:P.nurseCap("RN","#fff","#c62828","#fff"),cls:"tb-job tb-oj",row:2,col:2,bub:"Non-ER Travel Jobs",label:e=>`Top ${e} Non-ER Travel Jobs`,title:"Top 10 Non-ER Travel Jobs",h2:e=>`Top ${e} non-ER travel nurse jobs by weekly pay`,sub:"Every other specialty (ICU, PCU, tele, PACU…; no OR, cardiac cath lab, mom-baby, women's or peds), highest posted weekly pay first (high end of any range)"},{k:"bonus",hash:"top-bonus",type:"perm",perm:"bonus",icon:P.nurseCap("$","#fff","#1565c0","#fff"),cls:"tb-pj tb-bon",row:2,col:3,bub:"Sign-on Bonuses",label:()=>"Top Sign-on Bonuses",title:"Top Sign-on Bonuses",h2:e=>`Top ${e} sign-on bonuses (permanent RN jobs)`,sub:"Every specialty that passes the filters (ER, ICU, step-down, med-surg…), ranked by the stated sign-on bonus"},{k:"perm_er",hash:"top-perm-er",type:"perm",perm:"er",icon:P.nurseCap("ER","#fff","#1565c0","#fff"),cls:"tb-pj tb-per",row:3,col:1,bub:"Perm ER",label:()=>"Top 10 Perm ER Jobs",title:"Top 10 Perm ER Jobs",h2:e=>`Top ${e} permanent ER RN jobs by listed pay`,sub:"Permanent staff ER / emergency RN jobs (no peds ED), highest listed hourly pay first (top of the range)"},{k:"perm_sdms",hash:"top-perm-sdms",type:"perm",perm:"sdms",icon:P.nurseCap("PCU","#fff","#1565c0","#fff"),cls:"tb-pj tb-psd",row:3,col:2,bub:"Perm Step-down + Med-surg",label:()=>"Top 10 Perm Step-down + Med-surg",title:"Top 10 Perm Step-down + Med-surg",h2:e=>`Top ${e} permanent step-down + med-surg RN jobs by listed pay`,sub:"Permanent staff step-down / PCU / IMC / telemetry and med-surg RN jobs, highest listed hourly pay first (top of the range)"},{k:"perm_icu",hash:"top-perm-icu",type:"perm",perm:"icu",icon:P.nurseCap("ICU","#fff","#1565c0","#fff"),cls:"tb-pj tb-picu",row:3,col:3,bub:"Perm ICU (general)",label:()=>"Top 10 Perm ICU (general)",title:"Top 10 Perm ICU (general)",h2:e=>`Top ${e} permanent general ICU RN jobs by listed pay`,sub:"Permanent staff general ICU / critical care RN jobs (CVICU, neuro ICU and other specialty ICUs are their own filter row), highest listed hourly pay first"}].filter((t=>t.perm?!(!e.meta||!e.meta.pj):(ao[t.k]||[]).length)),no={};so.forEach((e=>no[e.k]=e));const oo={};so.forEach((e=>oo[e.hash]=e));const io=e=>wi&&wi.tops?wi.tops(e,po(e)):po(e),lo=e=>_&&"property"===e.type?io(e).filter((([,e])=>!Xt(e))):io(e);function ro(e){return _?!!e.anna:!e.anna}const co=e=>e.perm?10:e.ext?e.cnt():(ao[e.k]||[]).length,po=e=>(ao[e.k]||[]).map((t=>[t,k[e.type]&&k[e.type][t.hid||t.id]])).filter((t=>t[1]&&(!e.job||t[1].jobs.some((e=>e.id===t[0].id))))),ho=e=>(+e).toLocaleString(void 0,{maximumFractionDigits:2})+" ac";const uo=e=>"file:"===location.protocol||e.anna?new URL("index.html"+(e.anna?"?anna=1":"")+"#"+e.hash,location.href).href:new URL("share/"+e.hash+".html",location.href).href;function mo(e,a={}){const s=no[e];if(!s)return p("List not found"),!1;if(s.perm&&(!Oo||!Oo.hasD())){const t={type:"top",id:e,loading:!0};return wn(t,"#"+s.hash,a,Qs()),Vs.classList.add("tall"),vo.hidden=!0,Do().then((()=>{bn===t&&mo(e,Object.assign({},a,{replace:!0}))})),!0}const i=Qs();bn={type:"top",id:e};const r=function(e){let t=[];try{t=e.ext?S.topPts(e):e.perm?Oo.topPts(e):lo(e).map((([,e])=>[e.lat,e.lon]))}catch(e){t=[]}const a=new Set(t.filter((e=>e&&null!=e[0])).map((e=>(+e[0]).toFixed(5)+","+(+e[1]).toFixed(5))));return a.size?{k:e.k,ty:e.perm?"perm":"ahome"===e.type?"property":e.type,ll:a}:null}(s);return(r&&r.k)!==(Oe&&Oe.k)&&(Oe=r,Me(!0)),fn&&(m.removeLayer(fn),fn=null),Zs.innerHTML=function(e){const t=`<nav class="gjump tnav" aria-label="Other top lists">${so.filter(ro).map((t=>`<a class="tchip${t.k===e.k?" on":""}" href="#${t.hash}">${o(t.title.replace(/^⭐ /,"⭐ "))}</a>`)).join("")}</nav>`;if(e.ext)return S.topHtml(e,t);if(e.perm)return Oo.topHtml(e,t);const a=lo(e),s=a.length,n=so.filter(ro).length>1?`<nav class="gjump tnav" aria-label="Other top lists">${so.filter(ro).map((t=>`<a class="tchip${t.k===e.k?" on":""}" href="#${t.hash}">${o(t.title.replace(/^⭐ /,"⭐ "))}</a>`)).join("")}</nav>`:"";return`<div class="gbar"><button type="button" class="gback" id="gBack" aria-label="Back to the map">‹ Map</button>\n        <button type="button" class="gshare" id="gShare" aria-label="Share this list">${navigator.share?"Share":"Copy link"}</button></div>\n      <div class="kicker">${o(e.title)} · <span class="tupd">Updated ${o(ao.updated||"")}</span></div><h2>${o(e.h2(s))}</h2>\n      <div class="sub">${o(e.sub)} · tap a row to open it on the map</div>${wi?wi.note(e.job?"jobs":"listings"):""}${n}\n      <div class="glist tlist">${a.map((([t,a])=>function(e,t,a){if(e.job){const s=a.jobs.find((e=>e.id===t.id)),n="top|"+e.k;return`<div class="trow">${Ms("travel",a.id,n,xs(a.th&&a.th.u,"💼"),`<b class="gpay">#${t.rank} ${_a(s)}/wk</b> · ${o(s.u||s.sp||"RN")}`,`<b>${o(js(a.name))}</b>${a.city?" · "+o(a.city):""}`,Cs([s.sh&&o(s.sh),s.ag&&o(s.ag)]),!0)}${s.url?`<a class="tapply" href="${o(s.url)}" target="_blank" rel="noopener" aria-label="Apply for this job (opens ${o(Rs(s.url))})">Apply ↗</a>`:""}</div>`}const s="top|"+e.k,n=xs(a.rt||a.th&&a.th.u||(a.photos||[])[0],"deals"===e.k?"🏠":"buildings"===e.k?"⛪":"$"),i=[a.sqft&&ha(a.sqft)+" sq ft",null!=a.acres&&""!==a.acres&&ho(a.acres)].filter(Boolean).join(" · "),r="deals"===e.k?Cs([`<b>#${t.rank} ${l(a.price)}</b>`,null!=a.beds&&`${o(a.beds)} bd / ${o(a.bath_detail?a.bath_detail.replace(/ full/,""):a.baths)} ba`,i]):Cs([`<b>#${t.rank} ${null!=a.price?l(a.price):"Price n/a"}</b>`,i||null]),c=Cs([a.town&&o(a.town),"deals"===e.k?t.bargain?`<span class="gstar"><span class="bstar">${P.starDot("#8e24aa")}</span> Bargain</span>`:null:o(a.title)]);return Ms(e.type,a.id,s,n,r,o(t.why),c,!0)}(e,t,a))).join("")||'<div class="gempty">Nothing qualifies right now.</div>'}</div>\n      <div class="actions"><button class="btn" id="shareBtn">${navigator.share?"Share…":"Share"}</button><button class="btn ghost" id="copyBtn">Copy link</button><button class="btn ghost" id="zoomBtn">Show all on map</button></div>\n      <div class="small" style="word-break:break-all">Link: <a href="#${e.hash}">#${e.hash}</a></div>`}(s),Vs.hidden=!1,Tn(!1),Vs.classList.add("tall"),Vs.scrollTop=nn(Ys&&Ys.key==="top|"+e?Ys.top:0),Ys=null,Va&&Ga(null),n("#gBack").onclick=()=>tn()?history.back():ln(),n("#gShare").onclick=n("#shareBtn").onclick=()=>async function(e){const a=pn(uo(e));if(navigator.share)try{return void await navigator.share({title:e.title+" — "+t.app,text:e.title,url:a})}catch(e){if(e&&"AbortError"===e.name)return}Js(a)}(s),n("#copyBtn").onclick=()=>Js(pn(uo(s))),s.perm&&Oo.wireTop(s),n("#zoomBtn").onclick=()=>{const e=s.ext?S.topPts(s):s.perm?Oo.topPts(s):lo(s).map((([,e])=>[e.lat,e.lon])).filter((e=>null!=e[0]));e.length&&m.flyToBounds(e,Object.assign({duration:.8,padding:[30,30]},h?{paddingBottomRight:[30,Math.round(.55*u)]}:{paddingBottomRight:[440,30]}))},an(dn("#"+s.hash),a.replace,i),document.title=s.title.replace(/^⭐ /,"")+" — "+t.app,vo.hidden=!0,!0}const bo={deals:"Deals",buildings:"Odd Bldgs",businesses:"Biz",er_jobs:"ER Travel",other_jobs:"Other Travel",bonus:"Bonuses",perm_er:"Perm ER",perm_sdms:"Perm SD/MS",perm_icu:"Perm ICU"},fo=["deals","buildings","businesses","er_jobs","other_jobs","bonus","perm_er","perm_sdms","perm_icu"],go=document.createElement("nav");function yo(){const e=so.filter(ro).sort(((e,t)=>fo.indexOf(e.k)-fo.indexOf(t.k)));go.innerHTML=e.map((e=>`<a class="topbub tpill ${e.cls}" href="#${e.hash}" data-top="${e.k}" role="button" aria-label="${o(e.label(co(e)))}: open the list"><span class="tbi">${e.icon}</span><span class="tbt">${o(bo[e.k]||e.bub)}</span></a>`)).join(""),e.length&&!go.isConnected&&(document.body.appendChild(go),document.documentElement.classList.add("haspills")),mi?requestAnimationFrame((()=>mi.measure())):e.length&&go.isConnected&&null===mi&&(mi=ui(go,(()=>[...go.querySelectorAll(".tpill:not([data-clone])")]),"x",((e,t)=>e[0]+t/2-60)))}go.id="topPills",go.className="tpills",go.setAttribute("aria-label","Top 10 lists"),go.addEventListener("click",(e=>{const t=e.target.closest("[data-top]");t&&(e.preventDefault(),mo(t.dataset.top))})),so.length&&yo();const $o=document.createElement("button"),vo=document.createElement("div");function ko(){const e=vo.querySelector(".tmx");vo.innerHTML=so.filter(ro).map((e=>`<a href="#${e.hash}" data-top="${e.k}"><span class="tbi">${e.icon}</span>${o(e.label(co(e)).replace(/^⭐ /,""))}</a>`)).join("")+`<div class="small">Updated ${o(ao.updated||"")}</div>`,e&&vo.appendChild(e)}$o.id="topBtn",$o.type="button",$o.className="topbtn",$o.innerHTML="🏆 Top 10s",$o.setAttribute("aria-expanded","false"),$o.setAttribute("aria-controls","topMenu"),vo.id="topMenu",vo.className="topmenu",vo.hidden=!0,ko(),so.length&&(document.body.appendChild($o),document.body.appendChild(vo)),$o.onclick=()=>{vo.hidden=!vo.hidden,$o.setAttribute("aria-expanded",!vo.hidden)},vo.insertAdjacentHTML("beforeend",`<div class="tmx"><a href="#favs"><span class="tbi">♥</span>Favorites</a><a href="#compare"><span class="tbi">⚖</span>Compare homes</a><a href="#new"><span class="tbi">🆕</span>New &amp; price cuts</a><a href="#near"><span class="tbi">📍</span>Near me</a><a href="#areas"><span class="tbi">🏙</span>${t.areas}</a>${!1!==t.other.live?t.others.filter((e=>!1!==e.live)).map((e=>`<a href="${e.url}" class="stsw"><span class="tbi">🗺</span>Switch to the ${e.name} map</a>`)).join(""):""}</div>`),vo.addEventListener("click",(e=>{if(e.target.closest(".tmx a"))return vo.hidden=!0,void $o.setAttribute("aria-expanded","false");const t=e.target.closest("[data-top]");t&&(e.preventDefault(),mo(t.dataset.top))})),document.addEventListener("click",(e=>{vo.hidden||e.target.closest("#topMenu,#topBtn")||(vo.hidden=!0,$o.setAttribute("aria-expanded","false"))}));const wo=(e,t)=>{try{const a=JSON.parse(localStorage.getItem(e)||"null");return null==a?t:a}catch(e){return t}},Lo=(e,t)=>{try{localStorage.setItem(e,JSON.stringify(t))}catch(e){}},So={property:1,travel:1,building:1,business:1},_o=()=>wo(t.ls+"favs",[]),Eo=e=>Lo(t.ls+"favs",e),xo=n("#cardFav");function Mo(){if(!xo)return;const e=bn,t=!(!e||e.loading||!So[e.type]||"all"===e.id||Vs.hidden);if(xo.hidden=!t,!t)return;const a=_o().includes(e.type+":"+e.id);xo.textContent=a?"♥":"♡",xo.classList.toggle("on",a),xo.setAttribute("aria-pressed",a),xo.setAttribute("aria-label",a?"Remove from favorites":"Save to favorites"),xo.title=a?"In your favorites":"Save to favorites"}xo&&(xo.onclick=()=>{const e=bn;if(!e||!So[e.type])return;const t=e.type+":"+e.id,a=_o(),s=a.indexOf(t);s>=0?a.splice(s,1):a.unshift(t),Eo(a),Mo(),p("",s>=0?"Removed from Favorites":`♥ Saved to Favorites · <a href="#favs">see all ${a.length}</a>`,3e3)});const Co=()=>wo(t.ls+"cmp",[]),jo=e=>Lo(t.ls+"cmp",e),To=e=>Co().includes(e)?`✓ Comparing (${Co().length})`:"⚖ Compare";function Ao(e,a){return null!=a.lat&&null!=a.lon?`https://www.google.com/maps/dir/?api=1&destination=${(+a.lat).toFixed(6)},${(+a.lon).toFixed(6)}`:"county"===e?`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(a.name+t.cus+", "+t.name)}`:""}const Po={};!function(){const a=Date.now(),s={};(e.properties||[]).forEach((e=>s["property:"+e.id]=e.price||0)),(e.businesses||[]).forEach((e=>s["business:"+e.id]=e.price||0)),(e.buildings||[]).forEach((e=>s["building:"+e.id]=e.price||0)),Ea.forEach((e=>s["job:"+e.id]=0));const n=wo(t.ls+"seen",null),o=n?a-(n.t||0)>18e5?n.items:n.base:null;o&&Object.keys(s).forEach((e=>{e in o?s[e]&&o[e]&&s[e]<o[e]&&(Po[e]={k:"cut",was:o[e]}):Po[e]={k:"new"}})),Ea.forEach((e=>{Po["job:"+e.id]&&(Po["travel:"+e.h.id]=Po["travel:"+e.h.id]||{k:"new",jobs:0},Po["travel:"+e.h.id].jobs=(Po["travel:"+e.h.id].jobs||0)+1)})),Lo(t.ls+"seen",{t:a,items:s,base:o||null})}();const No=(e,t)=>{const a=Po[e+":"+t];return a?"new"===a.k?'<span class="nbdg new">New</span>':'<span class="nbdg cut">↓ Price</span>':""},zo={},Io=t=>zo[t]||(zo[t]=new Promise((a=>{const s=document.createElement("script");s.src=t+(e.meta&&e.meta.stamp?"?v="+e.meta.stamp:""),s.async=!0,s.onload=a,s.onerror=a,document.head.appendChild(s)})));var Oo=null;let Bo=null,Ho=null;function Ro(){return e.meta&&e.meta.pj?Bo||(Bo=Promise.all([Io("perm.js"),Io("data/pjm.js")]).then((()=>{if(!window.KYXPJ||!window.KYXPJM_D)return Promise.reject(new Error("perm data missing"));Oo=KYXPJ.init({K:e,IDX:k,L:L,G:P,map:m,L_perm:Sa,LAYERS:Na,ent:Ct,sched:Me,link:rs,gRow:Ms,dot:Cs,host:Rs,TJ_ALL:Ea,PROF:()=>wi,renderKey:os,keyReady:()=>B,refreshCard:()=>{bn&&"profile"!==bn.type&&En()},reTop:e=>mo(e,{replace:!0})});const t=n("#pjFilter");return t&&Oo.panel(t),Oo}))):Bo||(Bo=new Promise((()=>{})))}const Do=()=>Ho||(Ho=Ro().then((()=>window.KYXPJD_D?1:Io("data/pjd.js"))).then((()=>(Oo.details(),Oo))));let qo=null;function Fo(){return qo||(qo=Promise.all([Io("extras.js"),window.KYXPF_D?0:Io("data/pf.js")]).then((()=>window.KYXE.init({K:e,IDX:k,MARK:w,map:m,TJ_ALL:Ea,BADGE:Po,PHONE:h,showPage:_n,gRow:Ms,gImg:xs,dot:Cs,money:l,esc:o,toast:p,copy:Js,stat:ps,link:rs,favGet:_o,favSet:Eo,cmpGet:Co,cmpSet:jo,isHome:Ut,isNH:Xt,isCab:Vt,isBig:Zt,isCF:Gt,isCFo:Qt,openItem:Ln,updFav:Mo,body:Zs,card:Vs,nav:an,current:()=>bn}))))}let Ko=null;const Yo=()=>Ko||(Ko=Io("areas.js").then((()=>window.KYXA?KYXA.init({K:e,IDX:k,esc:o,toast:p,showPage:_n,nav:an,current:()=>bn,loadPerm:Ro}):Promise.reject()))),Wo=document.createElement("button");Wo.type="button",Wo.id="areasBtn",Wo.className="gpsbtn areasbtn",Wo.innerHTML='<span aria-hidden="true">🏙</span> Areas',Wo.setAttribute("aria-label",t.areasAria),Wo.onclick=()=>{"#areas"!==location.hash&&(an("#areas",!1),Pn(!0))},document.body.appendChild(Wo);const Uo=document.createElement("button");Uo.type="button",Uo.id="gpsBtn",Uo.className="gpsbtn",Uo.innerHTML='<span aria-hidden="true">📍</span> Near me',Uo.setAttribute("aria-label","Show where I am and what is near me"),Uo.onclick=()=>{"#near"===location.hash&&window.KYXE?KYXE.route("#near",{replace:!0,again:!0}):(an("#near",!1),Pn(!0))},document.body.appendChild(Uo),window.addEventListener("load",(()=>setTimeout((()=>{"serviceWorker"in navigator&&("https:"===location.protocol||/^(localhost|127\.0\.0\.1)$/.test(location.hostname))&&navigator.serviceWorker.register("sw.js?v="+(e.meta&&e.meta.stamp||"0")).catch((()=>{}))}),2500)),{once:!0}),window.addEventListener("load",(()=>setTimeout((()=>{const e=Object.entries(Po).filter((([e,t])=>!e.startsWith("travel:")&&"new"===t.k)).length,t=Object.values(Po).filter((e=>"cut"===e.k)).length;!e&&!t||location.hash||p("",`🆕 Since your last visit: ${e?e+" new":""}${e&&t?" · ":""}${t?t+" price cut"+(t>1?"s":""):""} · <a href="#new">see them</a>`,5e3)}),1200)),{once:!0});var Xo=null,Jo=null,Vo=null;const Zo=new Set(["trauma","apt","city"]),Go=[{k:"jobs",ic:"💼",t:"Jobs",h:"Nursing jobs",keys:["travel","perm"]},{k:"hosp",ic:P.nurse(),t:"Hospitals",h:"all hospitals and trauma centers",keys:["hosp","trauma"],has:()=>(e.hospitals||[]).length>0},{k:"p5",ic:"🌳",t:"5+ ac",h:"Primary homes (5+ acres)",keys:["props"]},{k:"p1",ic:"🏠",t:"1+ ac",h:"Secondary homes (1+ acre)",keys:["homes"]},{k:"nh",ic:"🏥",t:"Near",h:"Near-hospital homes",keys:["nh"]},{k:"cave",ic:`<span class="cfic">${P.bat(24)}</span>`,t:"Cave",h:"properties with a cave on the property",keys:["cvf"],f:e=>ea(e.it),has:()=>sa.some(ea)},{k:"falls",ic:`<span class="cfic">${P.fall(19)}</span>`,t:"Falls",h:"properties with a waterfall on the property",keys:["cvf"],f:e=>ta(e.it),has:()=>sa.some(ta)},{k:"big",ic:`<span class="bkstar">${P.bigStar(18)}</span>`,t:"50+ ac",h:"50+ acre lots under $250k",keys:["big"],has:()=>la.length>0},...t.cabin?[{k:"cab",ic:P.cabin(18),t:t.cabin.label||"Cabin",h:`${t.cabin.label||"Cabin"}s (more than ${t.cabin.acres||25} acres)`,keys:["cab"]}]:[],{k:"barg",ic:`<span class="bstar">${P.starDot("#8e24aa")}</span>`,t:"Bargain",h:"Bargains",keys:["props","homes","nh","cab"],f:e=>!!e.it.bargain},{k:"biz",ic:"💲",t:"Biz",h:"Businesses for sale",keys:["biz"]},{k:"bldg",ic:"🔔",t:"Odd",h:"Odd buildings for sale",keys:["bldg"]},{k:"attr",ic:"🎡",t:"Sights",h:"Attractions",keys:()=>[...eo||[],"feat"]},{k:"sch",ic:"🎓",t:"School",h:"Schools & colleges",keys:["sch","col"]},{k:"ski",ic:P.skier(18),t:"Ski",h:"Ski areas",keys:["ski"],has:()=>(e.ski||[]).length>0},{k:"peak",ic:P.peak(18),t:"Peaks",h:"Mountain peaks",keys:["peak"],has:()=>(e.peaks||[]).length>0},{k:"tgt",ic:P.tgt(18),t:"Target",h:"Target stores",keys:["tgt"],has:()=>(e.targets||[]).length>0}].filter((e=>e.has?e.has():!t.solo||t.solo.includes(e.k)));function Qo(e){return _?!("jobs"===e.k||"nh"===e.k||"hosp"===e.k):!e.anna}Go.forEach((e=>{if("cave"===e.k||"falls"===e.k||"function"==typeof e.keys)return;const t=e.keys.filter((e=>["props","homes","nh","cab","big"].includes(e))),a=e.f;t.length&&(e.keys=e.keys.concat("cvf"),e.f=e=>{return e.cfl?t.includes((s=e.it,Xt(s)?"nh":Ut(s)?"homes":Vt(s)?"cab":Zt(s)?"big":Qt(s)?null:"props"))&&(!a||a(e)):!a||a(e);var s})}));const ei=e=>e.layer&&!e.group&&"cty"!==e.key&&"sweet"!==e.key,ti=e=>!(e.disabled||M(e)||(e.key in za?!za[e.key]:!e.on));function ai(){Jo&&Na.forEach((e=>{if(!ei(e))return;const t=!e.disabled&&(Jo.has(e.key)||Zo.has(e.key));m.hasLayer(e.layer)!==t&&Da(e,t)}))}function si(e){const t=e&&Go.find((t=>t.k===e));if(!t||Xo===e)return Xo&&(Xo=null,Jo=null,Vo=null,window.KYXP&&KYXP.relayer?KYXP.relayer():Na.forEach((e=>{ei(e)&&m.hasLayer(e.layer)!==ti(e)&&Da(e,ti(e))})),gt&&ri(),Me(!0),p("All: the normal map")),void oi();Xo=e,Jo=new Set("function"==typeof t.keys?t.keys():t.keys),Vo=t.f||null,ai(),oi(),Me(!0),p(`Only ${t.h} (+ ${_||Jo.has("trauma")?"":"trauma centers, "}airports, cities). Tap again or “All” for the normal map.`)}const ni=document.createElement("div");ni.id="layerStack",ni.className="lstack",ni.setAttribute("role","toolbar"),ni.setAttribute("aria-label","Show only one kind of pin");let oi=function(){ni.innerHTML=Go.filter(Qo).map((e=>`<button type="button" class="lsb${Xo===e.k?" on":""}" data-solo="${e.k}" aria-pressed="${Xo===e.k}" title="Show only: ${o(e.h)}" aria-label="Show only ${o(e.h)}"><span class="lsi">${e.ic}</span><span class="lst">${o(e.t)}</span></button>`)).join("")+`<button type="button" class="lsb lsall${Xo?"":" on"}" data-solo="" aria-pressed="${!Xo}" title="Show all (the normal map)" aria-label="Show all"><span class="lsi">◎</span><span class="lst">All</span></button>`};ni.addEventListener("click",(e=>{const t=e.target.closest("[data-solo]");t&&si(t.dataset.solo)}));const ii=document.createElement("div");ii.id="focusChip",ii.className="fchip",ii.hidden=!0,ii.innerHTML='<button type="button" id="fcBack" aria-label="Back to the county card">‹ <span></span></button><button type="button" id="fcX" aria-label="Leave the county view" title="Leave the county view">✕</button>',document.body.appendChild(ii),ii.querySelector("#fcBack").onclick=()=>{const e=history.state||{},t=gt&&gt.name;t&&(/^#cmap=/.test(location.hash)&&e.d>0&&e.fz===t?history.back():Ln("county",t,{fly:!1}))},ii.querySelector("#fcX").onclick=()=>pi();const li=()=>!!(window.KYXP&&KYXP.active&&KYXP.active());function ri(){Xo||li()||Na.forEach((e=>{!ei(e)||e.disabled||m.hasLayer(e.layer)||Da(e,!0)}))}function ci(){Xo?ai():window.KYXP&&KYXP.relayer?KYXP.relayer():Na.forEach((e=>{ei(e)&&m.hasLayer(e.layer)!==ti(e)&&Da(e,ti(e))}))}function di(e,a){const s=k.county[e];if(!s||!s.rings)return;const n=gt&&gt.name===e;gt={name:e,c:s,z:n&&!a?gt.z:null},n||ri(),Vs.hidden&&Cn("county",s),ii.querySelector("span").textContent=e+t.cus,ii.hidden=!1,Me(!0),a?gt.z=xn(s):null==gt.z&&setTimeout((()=>{gt&&gt.name===e&&null==gt.z&&(gt.z=m.getZoom())}),0)}function pi(e){if(gt&&(gt=null,ii.hidden=!0,fn&&Vs.hidden&&(m.removeLayer(fn),fn=null),ci(),Me(!0),!e)){const e=history.state||{};(e.fz||/^#cmap=/.test(location.hash))&&history.replaceState(Object.assign({},e,{fz:null}),"",/^#cmap=/.test(location.hash)?location.pathname+location.search:location.href)}}m.on("zoomend",(()=>{gt&&!yt&&null!=gt.z&&m.getZoom()<gt.z-1.5&&pi()})),oi(),document.body.appendChild(ni),ni.addEventListener("wheel",(e=>{ni.classList.contains("wheel")||(e.preventDefault(),e.stopPropagation(),ni.scrollTop+=e.deltaY*(1===e.deltaMode?32:2===e.deltaMode?ni.clientHeight:1))}),{passive:!1});const hi=()=>{if(ni.classList.contains("wheel"))return void(ni.style.maxHeight="");const e=Wo.isConnected&&"none"!==getComputedStyle(Wo).display?Wo.getBoundingClientRect().top:innerHeight-70,t=ni.getBoundingClientRect().top;ni.style.maxHeight=Math.max(110,Math.floor(e-t-10))+"px"};function ui(e,t,a,s){const n="x"===a,o=n?8:5;let i=[],l=[],r=[],c=0,d=0,p=0,h=!1,u=0,m=null,b=!1,f=!1,g=!0,y=-1e9;const $=e=>((e%=c)>c/2?e-=c:e<-c/2&&(e+=c),e);let v=0,k=!1;function w(){if(!g)return;if(!e.clientWidth||!e.clientHeight||!e.getClientRects().length)return;const a=k&&n&&h&&v&&l.length?_(p):null;e.querySelectorAll("[data-clone]").forEach((e=>e.remove()));let u=t();if(i=u,n){u.forEach((e=>{e.style.width="",e.style.transform="none",e.classList.remove("w3","cc")}));const t=Math.ceil(Math.max(60,...u.map((e=>e.getBoundingClientRect().width))))+2,a=document.documentElement.clientWidth||innerWidth;v=Math.max(t,Math.floor((Math.min(a,660)-12-2*o)/3)),3*v+2*o+12>a&&(v=Math.floor((a-12-2*o)/3));const s=3*v+2*o+12;e.style.width!==s+"px"&&(e.style.width=s+"px"),u.forEach((e=>{e.style.width=v+"px",e.classList.add("w3")}))}d=n?e.clientWidth:e.clientHeight;const m=()=>{l=[],r=[];let e=0;return i.forEach((t=>{t.style.transform="";const a=t.getBoundingClientRect(),s=n?a.width:a.height;r.push(s),l.push(e+s/2),e+=s+o})),e};c=m();const b=Math.max(0,...r);if(n&&c-o>d&&c<d+b){const t=u.map((t=>{const a=t.cloneNode(!0);return a.setAttribute("data-clone",""),a.setAttribute("aria-hidden","true"),a.tabIndex=-1,e.appendChild(a),a}));i=u.concat(t),c=m()}h=c>d+b,!k&&s?p=n&&h?E(1):s(l,d):h?n&&v&&(p=E(null!=a?a:_(p))):p=0,k=!0,L()}function L(){const e=d/2;i.forEach(((t,a)=>{const s=h?$(l[a]-p):l[a]-(c-o)/2,i=1+(n?.04:.1)*Math.max(0,1-Math.abs(s)/(r[a]+o));t.style.transform=(n?`translate3d(${(e+s-r[a]/2).toFixed(1)}px,0,0)`:`translate3d(0,${(e+s-r[a]/2).toFixed(1)}px,0)`)+` scale(${i.toFixed(3)})`,t.classList.toggle("cc",i>(n?1.02:1.05))}))}function S(e){cancelAnimationFrame(u);let t=performance.now();const a=s=>{const n=Math.min(40,s-t);t=s;const o=e-p;if(Math.abs(o)<.5)return p=e,void L();p+=o*Math.min(1,n/70),L(),u=requestAnimationFrame(a)};u=requestAnimationFrame(a)}const _=e=>{const t=v+o;return Math.round((e-l[0])/t)},E=e=>l[0]+e*(v+o);function x(e){cancelAnimationFrame(u);let t=performance.now();const a=s=>{const n=Math.min(40,s-t);if(t=s,Math.abs(e)>.04)return p+=e*n,e*=Math.pow(.94,n/16),L(),void(u=requestAnimationFrame(a));const o=(()=>{let e=0,t=1e9;return l.forEach(((a,s)=>{const n=$(a-p);Math.abs(n)<Math.abs(t)&&(t=n,e=s)})),t})();if(Math.abs(o)<.5)return p+=o,void L();p+=o*Math.min(1,n/90),L(),u=requestAnimationFrame(a)};u=requestAnimationFrame(a)}e.addEventListener("pointerdown",(e=>{!g||!h||"mouse"===e.pointerType&&e.button||(cancelAnimationFrame(u),m={id:e.pointerId,p:n?e.clientX:e.clientY,o:p,h:[[performance.now(),n?e.clientX:e.clientY]]},b=!1,e.stopPropagation())})),e.addEventListener("pointermove",(t=>{if(!m||t.pointerId!==m.id)return;const a=n?t.clientX:t.clientY;if(!b&&Math.abs(a-m.p)>6){b=!0;try{e.setPointerCapture(t.pointerId)}catch(e){}}b&&(p=m.o-(a-m.p),L(),m.h.push([performance.now(),a]),m.h.length>6&&m.h.shift(),t.preventDefault()),t.stopPropagation()}));const M=t=>{if(!m||t.pointerId!==m.id)return;const a=m.h,s=b,i=m.o;if(m=null,t.stopPropagation(),!s){const a=t.target&&t.target.closest&&t.target.closest("a,button");return void(a&&e.contains(a)&&"pointerup"===t.type&&(y=performance.now(),a.click()))}f=!0,setTimeout((()=>f=!1),60);const l=a[0],r=a[a.length-1],c=r[0]-l[0];if(n&&h){const e=v+o,t=_(i),a=p-i,s=c>0&&performance.now()-r[0]<80?-(r[1]-l[1])/c:0;let n=Math.abs(s)>1.1||Math.abs(a)>2.2*e?3*Math.sign(Math.abs(s)>1.1?s:a):Math.abs(a)>.6*e?Math.sign(a)*Math.round(Math.abs(a)/e):Math.abs(a)>.18*e||Math.abs(s)>.3?Math.sign(Math.abs(a)>.18*e?a:s):0;S(E(t+n))}else x(c>0&&performance.now()-r[0]<80?Math.max(-3,Math.min(3,-(r[1]-l[1])/c)):0)};e.addEventListener("pointerup",M),e.addEventListener("pointercancel",M),e.addEventListener("click",(e=>{f&&(e.preventDefault(),e.stopImmediatePropagation(),f=!1)}),!0),document.addEventListener("click",(e=>{e.isTrusted&&performance.now()-y<450&&(y=-1e9,e.preventDefault(),e.stopImmediatePropagation())}),!0);let C=0,j=0;e.addEventListener("wheel",(t=>{if(!g)return;if(t.preventDefault(),t.stopPropagation(),!h)return;const a=(n&&Math.abs(t.deltaX)>Math.abs(t.deltaY)?t.deltaX:t.deltaY)*(1===t.deltaMode?32:2===t.deltaMode?d:1);if(n){const e=performance.now();if(C+=a,e<j||Math.abs(C)<30)return;const t=Math.sign(C);return C=0,j=e+220,void S(E(_(p)+t))}cancelAnimationFrame(u),p+=a,L(),clearTimeout(e._wt),e._wt=setTimeout((()=>x(0)),120)}),{passive:!1}),["touchstart","touchmove","mousedown","dblclick"].forEach((t=>e.addEventListener(t,(e=>e.stopPropagation()),{passive:!0}))),w();let T=0,A=0;return window.ResizeObserver&&new ResizeObserver((()=>{const t=e.clientWidth,a=e.clientHeight;t===T&&a===A||(T=t,A=a,t&&a&&w())})).observe(e),document.fonts&&document.fonts.ready&&document.fonts.ready.then((()=>w())),{measure:w,next(e){n&&h&&S(E(_(p)+e))},stop(){g=!1,cancelAnimationFrame(u),e.querySelectorAll("[data-clone]").forEach((e=>e.remove())),i.forEach((e=>{e.style.transform="",e.classList.remove("cc"),n&&(e.style.width="",e.classList.remove("w3"))})),n&&(e.style.width="")},draw:L}}var mi;window.addEventListener("resize",(()=>setTimeout(hi,200))),requestAnimationFrame(hi),setTimeout(hi,1500),so.length?requestAnimationFrame((()=>{mi=ui(go,(()=>[...go.querySelectorAll(".tpill:not([data-clone])")]),"x",((e,t)=>e[0]+t/2-60))})):mi=null;const bi=window.matchMedia("(orientation: landscape) and (max-height: 500px)");let fi=null;const gi=()=>[...ni.querySelectorAll(".lsb"),Wo,Uo].concat(so.length?[$o]:[]);function yi(){if(fi)return[Wo,Uo].concat(so.length?[$o]:[]).forEach((e=>ni.appendChild(e))),void fi.measure();ni.classList.add("wheel"),[Wo,Uo].concat(so.length?[$o]:[]).forEach((e=>ni.appendChild(e))),fi=ui(ni,gi,"y")}const $i=()=>{bi.matches?yi():fi&&(fi.stop(),fi=null,ni.classList.remove("wheel"),[Wo,Uo].concat(so.length?[$o]:[]).forEach((e=>document.body.appendChild(e)))),mi&&mi.measure()};bi.addEventListener?bi.addEventListener("change",$i):bi.addListener($i);let vi=0;window.addEventListener("resize",(()=>{clearTimeout(vi),vi=setTimeout((()=>{fi&&fi.measure(),mi&&mi.measure()}),150)})),bi.matches&&requestAnimationFrame(yi);const ki=oi;oi=function(){ki(),fi&&yi()},new MutationObserver((()=>{document.documentElement.classList.toggle("cardon",!Vs.hidden),Vs.hidden&&mi&&requestAnimationFrame((()=>mi.measure())),requestAnimationFrame(hi)})).observe(Vs,{attributes:!0,attributeFilter:["hidden"]}),document.documentElement.classList.toggle("cardon",!Vs.hidden);{const e=(new(L.Control.extend({options:{position:"bottomleft"},onAdd(){const e=document.documentElement,t=L.DomUtil.create("a","fsbtn");t.href="#",t.setAttribute("role","button");const a=()=>document.fullscreenElement||document.webkitFullscreenElement,s=()=>{const e=!!a();t.innerHTML=e?'<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 3v6H3M15 3v6h6M9 21v-6H3M15 21v-6h6" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>':'<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>',t.title=e?"Leave full screen":"Full screen",t.setAttribute("aria-label",t.title),t.classList.toggle("on",e)};s();const n=()=>{s(),m.invalidateSize(),setTimeout((()=>{m.invalidateSize(),fi&&fi.measure(),mi&&mi.measure(),hi()}),350)};return document.addEventListener("fullscreenchange",n),document.addEventListener("webkitfullscreenchange",n),L.DomEvent.disableClickPropagation(t),L.DomEvent.on(t,"click",(t=>{if(L.DomEvent.preventDefault(t),a())return void(document.exitFullscreen||document.webkitExitFullscreen).call(document);const s=e.requestFullscreen||e.webkitRequestFullscreen;if(s){try{const t=s.call(e);t&&t.catch&&t.catch((()=>p("Full screen was blocked by the browser")))}catch(e){p("Full screen is not available here")}return}const n=navigator.standalone||window.matchMedia&&matchMedia("(display-mode: standalone)").matches;p("",n?"You are already in the full-screen app.":"For full screen on iPhone/iPad: tap <b>Share</b> → <b>Add to Home Screen</b>, then open ${ST.app} from the home screen.",6e3)})),t}}))).addTo(m).getContainer();e.parentNode.appendChild(e),e.classList.add("fsctl")}var wi=null;const Li=["P1","P2","P3","P4"],Si=e=>{try{return JSON.parse(localStorage.getItem("kyx_prof_"+e)||"null")}catch(e){return null}},_i=document.createElement("div");function Ei(){const t=_?"-":localStorage.getItem("kyx_prof_active")||"";_i.innerHTML=`<button type="button" class="pfb${t?"":" on"}" data-prof="" aria-pressed="${!t}" title="Default map, no profile filter">All</button>`+Li.map((e=>{const a=Si(e)||("P1"===e?{name:"Bill"}:null),s=a&&a.name?a.name:e;return`<button type="button" class="pfb${t===e?" on":""}${a?"":" unset"}" data-prof="${e}" aria-pressed="${t===e}" title="Profile ${e}${a?": "+o(s):" (not set up)"}">${o(s)}</button>`})).join("")+(e.meta&&e.meta.anna?`<button type="button" class="pfb pfa${_?" on":""}" data-anna="1" aria-pressed="${_}" title="${o(e.meta.anna.name)}: Shawn (engineer) + Anna (leasing / billing) household (Shawn's engineering jobs over $120k, 2bd/2ba homes, no hospitals)">${o(e.meta.anna.name)}</button>`:"")}_i.id="profBar",_i.className="profbar",_i.setAttribute("role","toolbar"),_i.setAttribute("aria-label","Profiles"),window.KYXPF=e=>{window.KYXPF_D=e};let xi=null;function Mi(){if(xi)return xi;const t=e.meta&&e.meta.stamp?"?v="+e.meta.stamp:"",a=e=>new Promise((a=>{const s=document.createElement("script");s.src=e+t,s.async=!0,s.onload=a,s.onerror=a,document.head.appendChild(s)})),s=e=>!(e.disabled||M(e)||(e.key in za?!za[e.key]:!e.on)),n=e=>{Ee.forEach((t=>{t.shown.has(e)&&t._hide(e)})),e.mk&&(e.mk.off(),e.mk=null)};return xi=Promise.all([a("profiles.js"),a("data/pf.js"),e.meta&&e.meta.pj?Ro().catch((()=>0)):0]).then((()=>window.KYXP.init({K:e,IDX:k,MARK:w,map:m,LAYERS:Na,setLayer:Da,layerDefault:s,PLS:Ee,sched:Me,remake:n,showPage:_n,refreshCard:En,renderPBar:Ei,toast:p,copy:Js,esc:o,money:l,stat:ps,gRow:Ms,gImg:xs,dot:Cs,TJ_ALL:Ea,isHome:Ut,isNH:Xt,isCab:Vt,isBig:Zt,isCF:Gt,isCFo:Qt,body:Zs,current:()=>bn,setProf:e=>{wi=e,Oo&&Oo.apply()},reSolo:ai,loadPerm:Ro,PJ:()=>Oo})))}_i.addEventListener("click",(e=>{const t=e.target.closest("[data-prof],[data-anna]");if(!t)return;if(t.dataset.anna)return t.classList.add("busy"),void ji(!_).then((()=>t.classList.remove("busy")));const a=t.dataset.prof;if(_&&(ji(!1,{noProf:!0,quiet:!0}),!a))return xi?KYXP.tap(""):(localStorage.removeItem("kyx_prof_active"),Ei()),void p("All: default map, no profile filter");a||xi?(t.classList.add("busy"),Mi().then((()=>{t.classList.remove("busy"),KYXP.tap(a)}))):p("All: default map, no profile filter")})),Ei(),document.body.appendChild(_i);let Ci=null;function ji(a,s={}){return e.meta&&e.meta.anna?a?(e.meta&&e.meta.anna?Ci||(Ci=Promise.all([Io("anna.js"),window.KYXAN_D?0:Io("data/anna.js")]).then((()=>!(!window.KYXAN||!window.KYXAN_D||(S=KYXAN.init({K:e,ST:t,IDX:k,MARK:w,map:m,L:L,G:P,LAYERS:Na,PL_:Tt,ent:Ct,icOnce:Ae,sicon:N,icon:C,ksv:z,krow:as,mk:ts,PIN_KEY:ss,FULL:ct,KEEP:ht,DOTC:ut,TLAB:Qe,TITLE:Us,LABEL:Wn,THUMB_TITLE:us,R:fs,SOLOS:Go,TOPS:so,TOPK:no,TOPH:oo,PILL_T:bo,PILL_O:fo,SHARDS:gn,all:Yn,metrics:I,msel:Se,scaleCache:W,mkRow:Oa,ll:Ia,sched:Me,renderKey:os,link:rs,ext:cs,row:ds,stat:ps,rbadge:d,money:l,esc:o,slug:i,fmt1:r,sign:c,fmtMetric:X,gRow:Ms,gImg:xs,dot:Cs,schoolBlock:hs,thumb:bs,sqft:ha,hav:ks,isNH:Xt,isHome:Ut,countyAt:rt,toast:p,RAMP:D,BANDS:q,info:is,infoBody:ls,MORE_LAYER_FOR:Gn,nearbyBlock:gs,openItem:Ln,refreshCard:En,current:()=>bn,setMetric:e=>{V=e,Se.value!==e&&(Se.value=e),we()},getMetric:()=>V,on:()=>_}),0)))).catch((()=>!1))):Promise.resolve(!1)).then((e=>{if(!e)return Ci=null,!1;if(_)return!0;const t=localStorage.getItem("kyx_prof_active");return window.KYXP&&KYXP.active&&KYXP.active()&&(KYXP.use("",!0),t&&localStorage.setItem("kyx_prof_active",t)),_=!0,Ti(s),!0})):_?(_=!1,Ti(s),!s.noProf&&localStorage.getItem("kyx_prof_active")&&Mi().then((()=>KYXP.boot())),Promise.resolve(!0)):Promise.resolve(!0):Promise.resolve(!1)}function Ti(a){try{localStorage.setItem(t.ls+"anna",_?"1":"0")}catch(e){}try{const e=new URL(location.href);_?e.searchParams.set("anna","1"):e.searchParams.delete("anna"),history.replaceState(history.state,"",e.pathname+e.search+e.hash)}catch(e){}document.documentElement.classList.toggle("annaon",_),Xo&&!Qo(Go.find((e=>e.k===Xo))||{})&&(Xo=null,Jo=null,Vo=null),S&&S.apply(_),ci(),gt&&ri(),yo(),ko(),oi(),Ei(),os(),Me(!0),requestAnimationFrame(hi);const s=bn,n=s&&k[s.type]&&k[s.type][s.id],o=s&&"top"===s.type&&no[s.id];!s||s.loading||Vs.hidden||(!_&&("eng"===s.type||"spj"===s.type||n&&n.anna||o&&o.anna)||_&&(E.has(s.type)||"hospital"===s.type||o&&!ro(o))?jn():En()),a.quiet||p(_?`${e.meta.anna.name} on: Shawn's engineering jobs, Anna's jobs, 2bd/2ba homes · no hospitals`:`${e.meta.anna.name} off`)}const Ai=()=>{const e=m.getZoom(),t=m.getContainer();t.classList.toggle("z-low",e<8),t.classList.toggle("z-vlow",e<7)};m.on("zoomend",Ai),history.state&&null!=history.state.d||history.replaceState(location.hash?{d:1,nob:1,L:Gs(location.hash)?1:void 0}:{d:0},"",location.href);const Pi=new URLSearchParams(location.search).get("anna"),Ni=!(!e.meta||!e.meta.anna)&&("1"===Pi||"0"!==Pi&&"1"===localStorage.getItem(t.ls+"anna"));if(Ni&&ji(!0,{quiet:!0}),location.hash&&Pn(!0),on(),!Ni&&localStorage.getItem("kyx_prof_active")){const e=()=>Mi().then((()=>KYXP.boot()));"complete"===document.readyState?setTimeout(e,30):window.addEventListener("load",(()=>setTimeout(e,30)),{once:!0})}if(Ai(),e.meta&&e.meta.pj){const e=()=>(window.requestIdleCallback||(e=>setTimeout(e,1)))((()=>Ro().catch((()=>0))),{timeout:4e3});"complete"===document.readyState?setTimeout(e,1200):window.addEventListener("load",(()=>setTimeout(e,1200)),{once:!0})}window.KYXApp={anna:()=>_,annaSet:ji,loadPerm:Ro,PJ:()=>Oo,focus:()=>gt&&{name:gt.name,z:gt.z},clearFocus:pi,focusStats:()=>{const e={shown:{},expect:{}};return Ee.forEach((t=>t.ents.forEach((a=>{gt&&!a.px&&vt(a)&&(Jo&&Jo.has(t.key)&&Vo&&!Vo(a)||(e.expect[a.type]=(e.expect[a.type]||0)+1,t.shown.has(a)&&a.mk&&a.mk._icon&&(e.shown[a.type]=(e.shown[a.type]||0)+1)))})))),e},BADGE:Po,favGet:_o,cmpGet:Co,loadExtras:Fo,homeTarget:lt,countyAt:rt,openItem:Ln,closeCard:jn,exitCard:ln,map:m,IDX:k,depth:en,loadProfiles:Mi,prof:()=>wi,setSolo:si,solo:()=>Xo,iconKinds:()=>{const e=m.getZoom(),t=[];return Ee.forEach((a=>{(Jo&&Jo.has(a.key)||!(a.key in ct)||e>=ct[a.key])&&t.push(a.key)})),t.sort()},clusters:()=>Et.filter((e=>e.mk._icon)).map((e=>{const t=m.latLngToContainerPoint(e.mk.getLatLng());return{g:e.g,n:e.n,type:e.xs[0][1].type,x:t.x,y:t.y}})),dots:()=>ne.length,fade:()=>+(re.style.opacity||1),FULL:ct,CL_OFF:kt,foc:()=>({on:He,top:Oe&&Oe.k,solo:Xo}),pins:()=>{const e=[];return Ee.forEach((t=>t.shown.forEach((t=>{if(t.mk&&t.mk._icon){const a=m.latLngToContainerPoint(t.mk.getLatLng());e.push({type:t.type,id:t.id,x:a.x,y:a.y})}})))),e}}}();
+/* State Explorer (Kentucky / Tennessee: the same app, configured by K.meta.state) — one map, many layers, deep links (#type=id), share cards. Static; no server needed. */
+(function () {
+  "use strict";
+  const K = window.KYX || {};
+  // per-state settings (build.py writes K.meta.state; the defaults below are Kentucky's)
+  const ST = Object.assign({ name: "Kentucky", ab: "KY", n: 120, app: "Kentucky Explorer", ls: "kyx_",
+    bp: [[36.49, -89.57], [39.15, -81.96]], bd: [[36.5, -89.55], [39.15, -81.95]], c0: [37.75, -85.7],
+    sch: "KDE", schLab: "KDE 2025 rating", schSrc: "KDE School Report Card, 2024-25 accountability", rlab: null,
+    traumaList: "Kentucky Trauma System list", licSrc: "KY hospital directory, Sep 2026",
+    jobHosp: "Kentucky's CMS acute-care hospitals (incl. the 2 VA medical centers), Norton Children's, and the 5 border Level I/II centers",
+    schoolScore: "county district reading+math vs. Kentucky and the U.S. (KDE 2024-25, SEDA 2025.1)",
+    cityNote: "(Census July 2025 estimate; Louisville = all of Jefferson County, Lexington = all of Fayette)", topCity: "795k",
+    apt: "✈ Airports (KY + nearby hubs)", aptOos: "Nearby out-of-state airport (BNA, TYS, HTS, EVV, TRI)",
+    feat: "★ Kentucky standouts (Red River Gorge, Mammoth Cave, Cumberland Gap…)", areas: "Compare areas (KY vs TN)", areasAria: "Compare areas: Kentucky cities vs Tennessee",
+    cu: "County", cus: " County", cup: "counties", cuP: "Counties",  // map block words (Massachusetts: Town / "" / towns / Towns)
+    other: { name: "Tennessee", ab: "TN", url: "https://unclebill-spec.github.io/tennessee-explorer/", live: true },
+    others: null,
+    caps: { p5: 500000, p1: 425000, nh: 325000 },  // home-search price caps (Massachusetts: $650k on all three; Maine: $550k on all four)
+    cabin: null }, (K.meta && K.meta.state) || {});  // optional 4th home category, per state: { acres: 25, label: "Cabin", cat: "cabin-home" } (Maine); off = null
+  // state switcher: this state + every other live state map, alphabetical (build.py STATE["others"]; Kentucky's list is here)
+  if (!ST.others) ST.others = ST.ab === "KY" ? [{ name: "Tennessee", ab: "TN", url: "https://unclebill-spec.github.io/tennessee-explorer/" }, { name: "Massachusetts", ab: "MA", url: "https://unclebill-spec.github.io/massachusetts-explorer/" }, { name: "Maine", ab: "ME", url: "https://unclebill-spec.github.io/maine-explorer/" }, { name: "Vermont", ab: "VT", url: "https://unclebill-spec.github.io/vermont-explorer/" }, { name: "Montana", ab: "MT", url: "https://unclebill-spec.github.io/montana-explorer/" }, { name: "Wyoming", ab: "WY", url: "https://unclebill-spec.github.io/wyoming-explorer/" }, { name: "Idaho", ab: "ID", url: "https://unclebill-spec.github.io/idaho-explorer/" }, { name: "Utah", ab: "UT", url: "https://unclebill-spec.github.io/utah-explorer/" }, { name: "New Hampshire", ab: "NH", url: "https://unclebill-spec.github.io/new-hampshire-explorer/" }, { name: "North Carolina", ab: "NC", url: "https://unclebill-spec.github.io/north-carolina-explorer/" }] : [ST.other];  // other.live: false would hide the state switcher
+  window.KYX_ST = ST;
+  const CAPK = k => "$" + Math.round(ST.caps[k] / 1000) + "k";
+  const CAPOPTS = (k, base) => { const o = base.filter(v => v < ST.caps[k]); for (let v = base[base.length - 1] + 50000; v < ST.caps[k]; v += 50000) o.push(v); return o; };  // Max price menu steps (above the old list: every $50k under the cap)
+  // state switcher (KY | TN) in the top bar, next to Layers
+  { const lb = document.getElementById("layersBtn"), sw = document.createElement("nav"); sw.className = "stsw2"; sw.setAttribute("aria-label", "Switch state map");
+    const all = [{ ab: ST.ab, me: 1 }].concat(ST.others.filter(o => o.live !== false)).sort((a, b) => a.ab < b.ab ? -1 : 1);
+    sw.innerHTML = all.map(o => o.me ? `<span class="on" aria-current="page">${ST.ab}</span>` : `<a href="${o.url}" title="Open the ${o.name} map" aria-label="Open the ${o.name} map">${o.ab}</a>`).join("");
+    if (lb && ST.other.live !== false && all.length > 1) lb.before(sw); }
+  const $ = (s, r = document) => r.querySelector(s);
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const slug = s => (String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80) || "x");
+  const money = v => v == null ? "—" : "$" + Math.round(v).toLocaleString();
+  const fmt1 = v => v == null ? "—" : (Math.round(v * 10) / 10).toLocaleString();
+  const sign = (v, d = 0) => v == null ? "—" : (v > 0 ? "+" : "") + v.toFixed(d);
+  const rbadge = r => r ? `<span class="r ${esc(r)}">${esc(ST.rlab && ST.rlab[r] || r)}</span>` : "—";
+  const toast = (msg, html, ms) => { const t = $("#toast"); if (html) t.innerHTML = html; else t.textContent = msg; t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => t.hidden = true, ms || 2200); };
+
+  // ------------------------------------------------------------------ map + base layers
+  // viewport size read once up front (and on resize): reading innerWidth later, after DOM changes, forces a synchronous layout
+  let PHONE = window.innerWidth < 800, VH = window.innerHeight;
+  window.addEventListener("resize", () => { PHONE = window.innerWidth < 800; VH = window.innerHeight; });
+  const map = L.map("map", { zoomControl: false, doubleClickZoom: false, preferCanvas: true, minZoom: 6, maxZoom: 18, zoomSnap: 0.25 });
+  // final start view before any layer is added (no second re-projection, no wasted zoom-7 tile requests)
+  function homeView(anim) {
+    if (PHONE) { map.options.zoomSnap = 0.05; map.fitBounds(ST.bp, { padding: [2, 2], animate: !!anim }); map.options.zoomSnap = 0.25; }  // phone: Kentucky fills the width
+    else map.fitBounds(ST.bd, { paddingTopLeft: [325, 50], paddingBottomRight: [8, 8], animate: !!anim });  // keep the map key from covering the Purchase
+  }
+  // ST.cityPage = { "<block name>": "city.html#<city>" }: tapping that mega-block opens the state's city sub-map (MA Boston; TN Davidson / Shelby).
+  // Leaving saves the view in sessionStorage; coming Back (browser or the city page's back link, a back_forward load when the page is not in the bfcache) restores it.
+  const CITYPG = ST.cityPage || {}, CRET = (() => { try { const n = performance.getEntriesByType && performance.getEntriesByType("navigation")[0], r = JSON.parse(sessionStorage.getItem(ST.ls + "cityret") || "null");
+    return Object.keys(CITYPG).length && n && n.type === "back_forward" && r && !location.hash && Date.now() - r.t < 864e5 ? r : null; } catch (e) { return null; } })();
+  if (CRET) map.setView([CRET.lat, CRET.lon], CRET.z, { animate: false }); else if (location.hash) map.setView(ST.c0, 7); else homeView(false);
+  L.control.zoom({ position: "bottomleft" }).addTo(map);
+  L.control.scale({ position: "bottomleft", imperial: true, metric: false }).addTo(map);
+  // map credit: no Leaflet link / flag; the tile credit (OSM license: visible + linked) is a tiny line above the scale, clear of the
+  // bottom pills and the right-side buttons (style.css .leaflet-control-attribution)
+  map.attributionControl.setPrefix(false); map.attributionControl.setPosition("bottomleft");
+  const bases = {
+    Streets: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors' }),
+    Topo: L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", { maxZoom: 17, attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>, SRTM | © <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)' }),
+    Satellite: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "Imagery © Esri, Maxar, Earthstar Geographics" }),
+  };
+  let curBase = localStorage.getItem(ST.ls + "base") || "Streets";
+  if (!bases[curBase]) curBase = "Streets";
+  bases[curBase].addTo(map);
+  const baseList = $("#baseList");
+  Object.keys(bases).forEach(n => {
+    const b = document.createElement("button"); b.textContent = n; b.className = n === curBase ? "on" : "";
+    b.onclick = () => { map.removeLayer(bases[curBase]); curBase = n; bases[n].addTo(map); bases[n].bringToBack(); localStorage.setItem(ST.ls + "base", n);
+      baseList.querySelectorAll("button").forEach(x => x.className = x.textContent === n ? "on" : ""); };
+    baseList.appendChild(b);
+  });
+
+  // ------------------------------------------------------------------ indexes
+  const IDX = { property: {}, hospital: {}, school: {}, college: {}, activity: {}, history: {}, county: {}, travel: {} };
+  const MARK = {};  // "type:id" -> marker/layer
+  (K.properties || []).forEach(x => IDX.property[x.id] = x);
+  (K.hospitals || []).forEach(x => IDX.hospital[x.id] = x);
+  (K.schools || []).forEach(x => IDX.school[x.id] = x);
+  (K.colleges || []).forEach(x => IDX.college[x.id] = x);
+  (K.activities || []).forEach(x => IDX.activity[x.id] = x);
+  (K.history || []).forEach(x => IDX.history[x.id] = x);
+  (K.counties || []).forEach(x => IDX.county[x.name] = x);
+  // ---- Anna profile (5th top button; anna.js + data/anna.js load only when it is turned on, and only on maps whose build wrote K.meta.anna).
+  // While it is on: no hospital / nurse layers, buttons, lists or card sections; engineering jobs, spouse jobs and 2bd/2ba homes instead.
+  var ANNAX = null, ANNA_ON = false;
+  const ANNA_HK = new Set(["trauma", "hosp", "travel", "perm", "nh"]);  // hospital / nurse layers: never on while Anna is on
+  const ANNA_RX = /^#(eng|spj)=|^#top-(eng-pay|eng-bonus|reloc|eng-best|ah-job|ah-school|ah-balance)$|^#property=[a-z]{2}-an-/;  // links that need the Anna data
+  function annaBlk(d) { return ANNA_ON ? ANNA_HK.has(d.key) : !!d.anna; }  // layer blocked in the current mode
+
+  const icon = (cls, html, size = 26) => L.divIcon({ className: "", html: `<div class="mk ${cls}" style="width:${size}px;height:${size}px">${html}</div>`, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
+  // ---- small SVG pin glyphs (phone-legible); G.* return <svg>, sicon() wraps one as a marker, ksv() as a map-key symbol
+  const SVGI = (w, h, body) => `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">${body}</svg>`;
+  const RED_HOUSE = "#d32f2f";
+  const DIPLOMA = `<path d="M3.5 5.5h13v8h-13z" fill="#f6ead0" stroke="#7a5a2b" stroke-width="1.1"/><ellipse cx="3.5" cy="9.5" rx="1.7" ry="4" fill="#e8d3a6" stroke="#7a5a2b" stroke-width="1"/><ellipse cx="16.5" cy="9.5" rx="1.7" ry="4" fill="#e8d3a6" stroke="#7a5a2b" stroke-width="1"/><path d="M9 5.5v8M11 5.5v8" stroke="#c62828" stroke-width="1.7"/><path d="M10 13.2l-2.2 4.3 2.2-1.1 2.2 1.1z" fill="#c62828"/>`;
+  const CAP = (fill, dx = 0) => `<g transform="translate(${dx},0)"><path d="M11 1.5 21.5 6 11 10.5.5 6z" fill="${fill}" stroke="#222" stroke-width="1.1" stroke-linejoin="round"/><path d="M5 8.2v4.3c0 1.6 2.7 2.9 6 2.9s6-1.3 6-2.9V8.2L11 10.8z" fill="${fill}" stroke="#222" stroke-width="1.1"/><path d="M19.5 6.9v5.4" stroke="#222" stroke-width="1.1"/><circle cx="19.5" cy="13" r="1.4" fill="#ffd600" stroke="#222" stroke-width=".7"/></g>`;
+  const G = {
+    skier: (sz = 22) => `<svg width="${sz}" height="${sz}" viewBox="0 0 22 22" aria-hidden="true"><rect x="1" y="1" width="20" height="20" rx="4.5" fill="#0277bd" stroke="#fff" stroke-width="1.5"/><circle cx="13.6" cy="4.9" r="1.85" fill="#fff"/><path d="M12.6 7.3 9.4 10.6l3.3 1.9-1.6 3.6M9.4 10.6 6.6 9.3M12.6 7.3l2.6 2.6 2.4-.4" fill="none" stroke="#fff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.6 15.4l13.6 3.9" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    peak: (sz = 22) => `<svg width="${sz}" height="${sz}" viewBox="0 0 22 22" aria-hidden="true"><path d="M.9 20.2 8.6 4.6l3.9 6.4 2.7-3.9 5.9 13.1z" fill="#546e7a" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/><path d="M8.6 4.6l2.75 4.5-1.45-.75-1.2 1.25-1.15-1.15-1.7.7z" fill="#fff"/><path d="M15.2 7.1l1.75 3.85-.95-.5-.8.7-.75-.6-1 .35z" fill="#fff"/></svg>`,
+    tgt: (sz = 18) => `<svg width="${sz}" height="${sz}" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="#cc0000" stroke="#fff" stroke-width="1.3"/><circle cx="10" cy="10" r="5.6" fill="#fff"/><circle cx="10" cy="10" r="3" fill="#cc0000"/></svg>`,
+    tower: () => SVGI(12, 16, `<path d="M1.5 15.5V6.5h3V2.2L7 .8l2.5 1.4v13.3z" fill="#37474f" stroke="#fff" stroke-width="1"/><path d="M5.9 4.2h2.2M5.9 6.4h2.2M5.9 8.6h2.2M5.9 10.8h2.2M2.6 8.6h1M2.6 10.8h1" stroke="#ffe082" stroke-width="1"/>`),
+    // log cabin (Maine 4th home category): same 24px outline, white stroke and size as the red house; brown logs, dark roof, chimney
+    cabin: (sz = 24) => `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" aria-hidden="true"><path d="M16.2 3.2h2.6v5.6h-2.6z" fill="#5d4037" stroke="#fff" stroke-width="1.2"/><path d="M12 1.8 23 11.6h-2.4V22.4H3.4V11.6H1z" fill="#8d5524" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 3.9 20.3 11.3H3.7z" fill="#4e342e"/><path d="M4.6 14h14.8M4.6 16.8h14.8M4.6 19.6h14.8" stroke="#e8c49a" stroke-width="1.1" stroke-linecap="round"/><rect x="10.2" y="15.6" width="3.6" height="6.8" fill="#3e2723" stroke="#e8c49a" stroke-width=".7"/></svg>`,
+    house: cross => SVGI(24, 24, `<path d="M12 1.8 23 11.6h-3V22.4H4V11.6H1z" fill="${RED_HOUSE}" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/>` + (cross
+      ? `<rect x="6.6" y="13.2" width="10.8" height="4" rx=".5" fill="#fff"/><rect x="10" y="9.8" width="4" height="10.8" rx=".5" fill="#fff"/>`
+      : `<rect x="10" y="15.4" width="4" height="7" fill="#fff" opacity=".9"/>`)),
+    // black star: 50+ acre lots under $250k (Bill, Oct 4 2026: "it can get a small black star")
+    // flying bat (wings spread) = a cave on the property; small waterfall = a waterfall on the property (Bill, Oct 4 2026 2:12 PM)
+    bat: (sz = 24) => `<svg width="${sz}" height="${Math.round(sz * 0.46)}" viewBox="-2 2 104 46" aria-hidden="true"><path d="M50 15L46.5 7.5 45 16C40 14 32 6 24 5C16 5 7 9 1 15Q8 15 11 22Q17 19 22 26Q29 23 34 32Q40 28 44 33Q47 40 50 42Q53 40 56 33Q60 28 66 32Q71 23 78 26Q83 19 89 22Q92 15 99 15C93 9 84 5 76 5C68 6 60 14 55 16L53.5 7.5Z" fill="#1d1d1f" stroke="#fff" stroke-width="4.5" stroke-linejoin="round"/></svg>`,
+    fall: (sz = 20) => `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="6" fill="#fff" stroke="#0d47a1" stroke-width="1.6"/><path d="M6.5 8.6C7.2 12.5 6.8 15.6 5.6 18.6h12.8c-1.2-3-1.6-6.1-.9-10z" fill="#4fa3f0"/><path d="M9.3 9.5c.4 3 .2 5.6-.6 8.2M12 9.5v8.6M14.7 9.5c-.4 3-.2 5.6.6 8.2" stroke="#0d5bb5" stroke-width="1.1" fill="none" stroke-linecap="round"/><path d="M2.8 5.4c3-1.2 5-.9 6.3-.3 1.8-1 4.3-1.1 6.2-.1 1.6-.7 3.8-.6 5.9.4v3.3c-1.8.5-3.3.2-4.4-.2-2.6.8-5.2.8-7.6.1-1.9.6-4 .6-6.4.2z" fill="#6d4c41"/><path d="M3.6 19.4c2.2-1.5 4.2.9 6.4-.1 1.7-.8 2.6-.9 4 0 2.2 1 4.2-1.4 6.4.1" stroke="#1e88e5" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="6.3" cy="17" r=".9" fill="#bbdefb"/><circle cx="17.8" cy="16.8" r=".9" fill="#bbdefb"/></svg>`,
+    bigStar: (sz = 18) => `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l3.2 6.6 7.3 1-5.3 5.1 1.3 7.2L12 17.9l-6.5 3.5 1.3-7.2-5.3-5.1 7.3-1z" fill="#111" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/></svg>`,
+    starDot: fill => SVGI(24, 24, `<circle cx="12" cy="12" r="10.6" fill="${fill}" stroke="#fff" stroke-width="1.8"/><path d="M12 4.4l2.3 4.7 5.2.7-3.8 3.6.9 5.1L12 16l-4.6 2.5.9-5.1-3.8-3.6 5.2-.7z" fill="#ffd600"/>`),
+    cap: fill => SVGI(22, 18, CAP(fill)),
+    diploma: () => SVGI(20, 18, DIPLOMA),
+    univ: () => SVGI(40, 18, DIPLOMA + CAP("#7b1fa2", 18)),
+    tree: () => SVGI(22, 22, `<path d="M11 1 3 12h4l-3 5h14l-3-5h4z" fill="#2e7d32" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/><rect x="9.6" y="17" width="2.8" height="4" fill="#5d4037"/>`),
+    mountain: () => SVGI(22, 22, `<path d="M1 20 8.5 5.5l4 6 3-4.5L21 20z" fill="#8d6e63" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/><path d="M8.5 5.5l2.4 3.6-1.5-.5-.9 1-1-1-1.4.4z" fill="#fff"/>`),
+    lake: () => SVGI(22, 22, `<circle cx="11" cy="11" r="9.8" fill="#1e88e5" stroke="#fff" stroke-width="1.6"/><path d="M4.8 9.3q1.55-1.5 3.1 0t3.1 0 3.1 0 3.1 0M4.8 13.7q1.55-1.5 3.1 0t3.1 0 3.1 0 3.1 0" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>`),
+    cave: () => SVGI(22, 22, `<path d="M1 20 9 5l3.5 5 2.5-3.5L21 20z" fill="#9e9e9e" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/><path d="M7.3 20v-3.4a3.7 3.7 0 0 1 7.4 0V20z" fill="#1b1b1b"/>`),
+    park: () => SVGI(22, 22, `<rect x="1" y="1" width="20" height="20" rx="4" fill="#5d4037" stroke="#fff" stroke-width="1.5"/><path d="M7 3.6 3.4 9.4h2.1l-1.7 2.7h6.4L8.5 9.4h2.1z" fill="#fff"/><rect x="6.4" y="12" width="1.3" height="2.6" fill="#fff"/><path d="M10.8 12.4h7.4M10.4 15.3h8.2M12.6 12.4l-1.7 5.7M16.4 12.4l1.7 5.7" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/>`),
+    tent: () => SVGI(22, 22, `<rect x="1" y="1" width="20" height="20" rx="4" fill="#558b2f" stroke="#fff" stroke-width="1.5"/><path d="M11 4.2 3.6 17.6h14.8z" fill="#fff"/><path d="M11 9.6 8.3 17.6h5.4z" fill="#558b2f"/>`),
+    nurse: () => SVGI(20, 20, `<rect x="1" y="1" width="18" height="18" rx="4.5" fill="#fff" stroke="#c62828" stroke-width="1.6"/><path d="M8 4.3h4v3.7h3.7v4H12v3.7H8V12H4.3V8H8z" fill="#d32f2f"/>`),
+    nurseCap: (txt, ring, fill = "#fff", tc = "#1a1a1a") => SVGI(36, 22, `<path d="M2.5 20 5.6 5.2Q18 .6 30.4 5.2L33.5 20z" fill="${fill}" stroke="${ring}" stroke-width="2.2" stroke-linejoin="round"/><text x="18" y="16.4" text-anchor="middle" font-size="${String(txt).length > 3 ? 9.5 : 11}" font-weight="800" fill="${tc}" font-family="system-ui,-apple-system,Segoe UI,sans-serif">${txt}</text>`),
+  };
+  const sicon = (cls, svg, w, h) => L.divIcon({ className: "", html: `<div class="mk sv ${cls}" style="width:${w}px;height:${h}px">${svg}</div>`, iconSize: [w, h], iconAnchor: [w / 2, h / 2] });
+  const ksv = svg => `<span class="mk sv">${svg}</span>`;
+  // outdoor glyph: campground > cave > park sign > lake / mountain / tree keyword heuristic; non-outdoor kinds keep their emoji
+  function outdoorGlyph(a) {
+    const n = a.name || "", k = a.kind || "";
+    if (k === "Distillery" || k === "Attraction") return null;
+    if (/campground|\brv\b|camp ?site/i.test(n)) return "tent";
+    if (k === "Cave" || /\bcaves?\b|cavern/i.test(n)) return "cave";
+    if (/^Park/.test(k) && /\bpark\b|recreation area/i.test(n) && !/wildlife management|forest/i.test(n)) return "park";
+    if (k === "Waterfall") return "lake";
+    if (k === "Natural arch") return "mountain";
+    if (/lake|river|falls|spring|creek|pond|reservoir|\bfork\b|branch|\bdam\b|marina|landing/i.test(n)) return "lake";
+    if (/gorge|peak|mountain|\bmtn\b|knob|overlook|ridge|bluff|\brock|cliff|arch|bridge|summit|pinnacle|\bgap\b|\btop\b|point|breaks|hollow/i.test(n)) return "mountain";
+    return "tree";
+  }
+
+  // ------------------------------------------------------------------ county choropleth
+  const metrics = (K.meta && K.meta.metrics) || [];
+  const sweetKey = K.meta && K.meta.sweet;
+  var keyReady = false;  // var (not let): drawCounties() runs before the key section below is initialised
+  const appealKey = K.meta && K.meta.appeal;
+  const AM = (K.meta && K.meta.appeal_method) || null;
+  // one ramp for every metric, best (top) -> worst (bottom); lower-is-better metrics are inverted so green is always the better choice
+  const RAMP = ["#1a7d3a", "#7cc46a", "#f3d64a", "#f08a3a", "#c62f2c"];
+  const BANDS = ["Most appealing", "Very good", "Good", "Fair", "Least appealing"];
+  // metrics with no better/worse direction (population, land area, farm size…) use a neutral blue ramp, highest -> lowest
+  const NEUTRAL = ["#0b3c78", "#2f73b8", "#6aaed6", "#b0d2ea", "#e4eff8"];
+  const NLABELS = ["Highest", "High", "Middle", "Low", "Lowest"];
+  const NODATA = "#c9c9c9";
+  const scaleCache = {};
+  function scaleFor(key) {
+    if (scaleCache[key]) return scaleCache[key];
+    const m = metrics.find(x => x.key === key); if (!m) return null;
+    const cs = (K.counties || []).filter(c => c.m[key] != null);
+    if (!cs.length) return null;
+    const n = cs.length;
+    const better = m.lower_better && !m.neutral ? (a, b) => a - b : (a, b) => b - a;
+    const sorted = cs.map(c => c.m[key]).sort(better);
+    const clsOf = {};
+    if (key === appealKey) cs.forEach(c => { clsOf[c.name] = Math.max(0, BANDS.indexOf(c.appeal && c.appeal.band)); });
+    else cs.forEach(c => { clsOf[c.name] = Math.min(4, Math.floor(sorted.indexOf(c.m[key]) * 5 / n)); });  // quintiles by rank; tied values share the better class
+    const pal = m.neutral ? NEUTRAL : RAMP, labels = m.neutral ? NLABELS : BANDS;
+    const classes = labels.map((label, k) => {
+      const v = cs.filter(c => clsOf[c.name] === k).map(c => c.m[key]);
+      return { label, color: pal[k], n: v.length, lo: v.length ? Math.min(...v) : null, hi: v.length ? Math.max(...v) : null };
+    });
+    const missing = (K.counties || []).length - n;
+    const cls = c => c.m[key] == null ? -1 : clsOf[c.name];
+    const sc = { m, classes, missing, cls, color: c => { const k = cls(c); return k < 0 ? NODATA : pal[k]; }, labelOf: c => { const k = cls(c); return k < 0 ? "no data" : labels[k]; } };
+    return (scaleCache[key] = sc);
+  }
+  function fmtMetric(m, v) {
+    if (v == null) return "—";
+    if (m.fmt === "pp") return sign(v, 1) + " pp";
+    if (m.fmt === "gl") return sign(v, 2) + " grade lvls";
+    if (m.fmt === "usd") return money(v);
+    if (m.fmt === "int") return Math.round(v).toString();
+    if (m.fmt === "score") return fmt1(v);
+    if (m.fmt === "min") return Math.round(v) + " min";
+    if (m.fmt === "mi") return fmt1(v) + " mi";
+    if (m.fmt === "pct") return fmt1(v) + "%";
+    return Math.abs(v) >= 100 ? Math.round(v).toLocaleString() : fmt1(v);
+  }
+  const defMetric = (K.meta && K.meta.default_metric) || (metrics[0] && metrics[0].key) || "";
+  let curMetric = localStorage.getItem(ST.ls + "metric2") || defMetric;  // new storage key so everyone starts on the Appeal score
+  if (!metrics.find(m => m.key === curMetric)) curMetric = defMetric;
+  const countyLayer = L.layerGroup(), sweetLayer = L.layerGroup();
+  const countyPolys = {};
+  // county outlines arrive delta-encoded (data/core.js "rz", 1e-4 degree steps) -> [[lon, lat], ...] rings
+  const MK = (K.meta && K.meta.mkeys) || [];  // county metric values arrive as arrays ("mv") in this key order
+  (K.counties || []).forEach(c => { if (c.mv && !c.m) { c.m = {}; c.mv.forEach((v, i) => { if (v != null) c.m[MK[i]] = v; }); } });
+  (K.counties || []).forEach(c => { if (c.rz && !c.rings) c.rings = c.rz.map(r => { const o = []; let x = 0, y = 0; for (let i = 0; i < r.length; i += 2) { x += r[i]; y += r[i + 1]; o.push([x / 1e4, y / 1e4]); } return o; }); });
+  const cLL = c => c._ll || (c._ll = c.rings.map(r => r.map(([x, y]) => [y, x])));
+  function countyStyle(c, sc) { return { renderer: R_FILL, stroke: false, fillColor: sc ? sc.color(c) : "#000", fillOpacity: sc ? 0.55 : 0.02 }; }  // borders: R_LINE (below)
+  function tipFor(c, sc) {
+    if (!sc) return esc(c.name);
+    if (ANNA_ON && ANNAX) { const t = ANNAX.tip(c, sc); if (t) return t; }
+    const v = c.m[sc.m.key];
+    const a = c.appeal;
+    if (sc.m.key === appealKey && a) return `<b>${esc(c.name)}</b> · Appeal ${esc(fmt1(a.score))} · #${a.rank} of ${ST.n}<br>${esc(a.band)}`;
+    return `<b>${esc(c.name)}</b>: ${esc(fmtMetric(sc.m, v))} <span class="small">(${esc(sc.labelOf(c))})</span>${a ? `<br>Appeal ${esc(fmt1(a.score))} · #${a.rank}` : ""}`;
+  }
+  let ctyMetric = null;  // metric the county polygons are styled for; null = not built yet (built the first time the layer is shown)
+  // ---- county colors fade as you zoom in (full at the statewide view -> about 0.1 at town zoom); the county lines stay.
+  // The fills (counties + sweet spots) sit on their own canvas in pane "ctyFill", whose CSS opacity follows the zoom: no redraw while
+  // pinching or flying. The borders are stroked from the same projected rings on a second canvas just above (pane "ctyLine", never
+  // faded, no pointer events), which also carries the faint pin dots and the orange selection outline. Taps and tooltips still go to
+  // the fill canvas.
+  // Load/zoom cost: until the first zoom-in (or idle time after load) there is only the fill canvas, and it draws the borders and
+  // dots itself (same pixels: at the start view the fills are at full strength). ensureLines() then moves them to their own canvas.
+  let DOTS = [], R_LINE = null, ptsOn = false;  // DOTS: faint dots of the last refreshPoints (KYXApp.dots); the canvas finds its own
+  const mkPane = (n, zi, pe) => { const el = map.createPane(n); el.style.zIndex = zi; if (pe === false) el.style.pointerEvents = "none"; return el; };
+  const fillPane = mkPane("ctyFill", 401); mkPane("ctyLine", 402, false);
+  function drawOvl(ctx, b) {  // county borders + faint dots, clipped to a partial redraw
+    ctx.save(); if (b) { const sz = b.getSize(); ctx.beginPath(); ctx.rect(b.min.x, b.min.y, sz.x, sz.y); ctx.clip(); }
+    if (ctyMetric !== null && map.hasLayer(countyLayer)) {
+      ctx.beginPath();
+      for (const n in countyPolys) { const ps = countyPolys[n]._parts; if (ps) ps.forEach(r => { if (!r.length) return; ctx.moveTo(r[0].x, r[0].y); for (let i = 1; i < r.length; i++) ctx.lineTo(r[i].x, r[i].y); ctx.closePath(); }); }
+      ctx.globalAlpha = 0.7; ctx.strokeStyle = "#123642"; ctx.lineWidth = 0.8; ctx.lineJoin = ctx.lineCap = "round"; ctx.stroke(); ctx.globalAlpha = 1;
+    }
+    if (ptsOn) drawDots(ctx);  // faint dots for pins below their zoom tier (same canvas: one less full-screen layer to clear and composite)
+    ctx.restore();
+  }
+  const DrawR = L.Canvas.extend({
+    _redraw() { if (this._full) { this._full = false; this._redrawBounds = null; } L.Canvas.prototype._redraw.call(this); },
+    _draw() {
+      const top = this === R_LINE;  // the line canvas: borders/dots under its own layers (selection outline); the fill canvas: over them
+      if (!top) L.Canvas.prototype._draw.call(this);
+      if (this._ovl) drawOvl(this._ctx, this._redrawBounds);
+      if (top) L.Canvas.prototype._draw.call(this);
+    } });
+  const R_FILL = new DrawR({ pane: "ctyFill" }); R_FILL._ovl = true; R_FILL.addTo(map);
+  const ovlR = () => R_LINE || R_FILL;
+  const fullDraw = r => { if (!r._map) return; r._full = true; if (!r._redrawRequest) r._redrawRequest = L.Util.requestAnimFrame(r._redraw, r); };  // one pass with any pending one
+  const lineDirty = () => fullDraw(ovlR());
+  function ensureLines() {
+    if (R_LINE) return R_LINE;
+    R_LINE = new DrawR({ pane: "ctyLine" }); R_LINE._ovl = true; R_LINE.addTo(map);  // after R_FILL: fills re-project first on moveend
+    R_FILL._ovl = false; fullDraw(R_FILL);
+    return R_LINE;
+  }
+  countyLayer.on("add remove", lineDirty);
+  let homeZ = null; window.addEventListener("resize", () => { homeZ = null; setFade(map.getZoom()); });
+  const FADE_LO = 0.1, FADE_Z1 = 12.5;  // fill opacity at town zoom (12.5+); full (0.55) at the start view
+  function fadeAt(z) {
+    if (homeZ == null) try { homeZ = homeTarget().zoom; } catch (e) { homeZ = 6.2; }
+    const z0 = homeZ + 0.2, t = Math.max(0, Math.min(1, (z - z0) / (FADE_Z1 - z0))), s = t * t * (3 - 2 * t);
+    return 1 - s * (1 - FADE_LO / 0.55);  // pane opacity; the fills are drawn at 0.55 (sweet spots 0.6)
+  }
+  // -1: never set (start view, full strength). Steps of 0.005 during a pinch: fewer layer restyles, no visible banding.
+  let fadeV = -1; function setFade(z) { const v = Math.round(fadeAt(z) * 200) / 200; if (v !== fadeV) { if (v < 1) ensureLines(); fadeV = v; fillPane.style.opacity = v; } }
+  let fadeQ = null, fadeZ = 0; const fadeSoon = z => { fadeZ = z; if (!fadeQ) fadeQ = L.Util.requestAnimFrame(() => { fadeQ = null; setFade(fadeZ); }); };  // once per frame
+  map.on("zoom", () => fadeSoon(map.getZoom())); map.on("zoomanim", e => setFade(e.zoom)); map.on("zoomend", () => setFade(map.getZoom()));
+  if (location.hash) setFade(map.getZoom());  // otherwise the start view: full strength, nothing to compute yet
+  { const go = () => setTimeout(() => (window.requestIdleCallback || (f => setTimeout(f, 1)))(() => ensureLines(), { timeout: 3000 }), 1500);  // idle time after load
+    if (document.readyState === "complete") go(); else window.addEventListener("load", go, { once: true }); }
+  function buildCounties() {
+    const sc = scaleFor(curMetric);
+    if (ctyMetric === null) (K.counties || []).forEach(c => {
+      const p = L.polygon(cLL(c), countyStyle(c, sc));
+      p.bindTooltip(() => tipFor(c, scaleFor(curMetric)), { sticky: true });
+      p.on("click", polyTap(c));
+      countyLayer.addLayer(p); countyPolys[c.name] = p;
+    });
+    else if (ctyMetric !== curMetric) (K.counties || []).forEach(c => countyPolys[c.name].setStyle(countyStyle(c, sc)));
+    ctyMetric = curMetric; lineDirty(); if (fadeV !== -1) setFade(map.getZoom());
+  }
+  function drawCounties() {
+    if (ctyMetric !== null) buildCounties();
+    legend(scaleFor(curMetric), "#legend");
+    if (keyReady) renderKey();
+  }
+  let sweetDrawn = false;
+  function drawSweet() {  // built the first time the Sweet-spot layer is turned on
+    if (sweetDrawn) return; sweetDrawn = true;
+    const sc = sweetKey && scaleFor(sweetKey);
+    if (!sc) return;
+    (K.counties || []).forEach(c => {
+      const p = L.polygon(cLL(c), { renderer: R_FILL, color: "#3d2a00", weight: sc.cls(c) === 0 ? 2.5 : 0.6, fillColor: sc.color(c), fillOpacity: 0.6 });
+      p.bindTooltip(`${esc(c.name)} — sweet spot: ${esc(fmtMetric(sc.m, c.m[sweetKey]))} (${esc(sc.labelOf(c))})`, { sticky: true });
+      p.on("click", polyTap(c));
+      sweetLayer.addLayer(p);
+    });
+  }
+  function legend(sc, sel) {
+    const el = $(sel); if (!sc) { el.innerHTML = metrics.length ? "" : '<span class="small">County metrics will appear when data CSVs are available.</span>'; return; }
+    el.innerHTML = `<div class="bar">${sc.classes.map(c => `<span style="background:${c.color}"></span>`).join("")}</div>
+      <div class="ends"><span>${sc.m.neutral ? "highest" : "best"}</span><span>${sc.m.neutral ? "lowest" : "worst"}</span></div>
+      <div class="small">${esc(sc.m.desc)}<br>Source: ${esc(sc.m.src)}</div>`;
+  }
+  const msel = $("#metricSel");
+  if (!metrics.length) msel.innerHTML = "<option>(no county metrics yet)</option>";
+  const groups = {};
+  metrics.forEach(m => (groups[m.group] = groups[m.group] || []).push(m));
+  Object.entries(groups).forEach(([g, ms]) => {
+    const og = document.createElement("optgroup"); og.label = g;
+    ms.forEach(m => { const o = document.createElement("option"); o.value = m.key; o.textContent = m.label; if (m.key === curMetric) o.selected = true; og.appendChild(o); });
+    msel.appendChild(og);
+  });
+  msel.onchange = () => { curMetric = msel.value; localStorage.setItem(ST.ls + "metric2", curMetric); drawCounties(); };
+  drawCounties();  // legend only; polygons are built when the layer is first shown (LAYERS prep)
+
+  // ------------------------------------------------------------------ point layers (lazy)
+  // Each layer is a PL holding cheap entries {type, id, it, lat, lon, ic(), z, tip}. A real L.marker is made only when its point is in
+  // the padded viewport AND the layer's zoom tier is reached (or the item is on the always-shown KEEP list); it is then cached and
+  // reused. One debounced refresh (after zoomend / moveend / layer or filter changes) adds and removes markers by diff.
+  const PLS = new Set();
+  let refreshT = null;
+  const sched = now => { if (refreshT) { if (!now) return; clearTimeout(refreshT); } refreshT = setTimeout(() => { refreshT = null; refreshPoints(); }, now ? 0 : 90); };
+  const PL = L.Layer.extend({
+    initialize(key) { this.key = key; this.ents = new Set(); this.shown = new Set(); },
+    addLayer(e) { this.ents.add(e); if (this._map) sched(); return this; },
+    removeLayer(e) { if (this.ents.delete(e) && this.shown.has(e)) this._hide(e); return this; },
+    hasLayer(e) { return this.ents.has(e); },
+    eachLayer(f) { this.ents.forEach(f); return this; },
+    getLayers() { return [...this.ents]; },
+    onAdd() { PLS.add(this); sched(true); },
+    onRemove() { PLS.delete(this); this.shown.forEach(e => this._hide(e)); sched(true); },  // sched: its groups and dots go too
+    _show(e) { e._lk = this.key; if (e.mk) syncF(e); map.addLayer(mkFor(e)); this.shown.add(e); },
+    _hide(e) { if (e.mk) map.removeLayer(e.mk); this.shown.delete(e); },
+  });
+  const ICN = {}, ICK = new Map(); const icOnce = (k, f) => ICN[k] || (ICN[k] = f(), ICK.set(ICN[k], k), ICN[k]);  // ICK: icon -> its key (cluster groups)
+  const STOUT = new Map();  // featured standouts: same icon + gold glow class
+  const stoutOf = ic => { if (!STOUT.has(ic)) STOUT.set(ic, L.divIcon(Object.assign({}, ic.options, { html: ic.options.html.replace('class="mk ', 'class="mk stout ') }))); return STOUT.get(ic); };
+  let lifted = null;  // zoomed out (< 10): always-icon pins sit above everything else
+  const zOf = e => lifted && e.zh ? e.zh : e.z || 0;
+  // ---- kyxFoc (Bill, Oct 7 2026): whatever filter is active (a right-side solo button, incl. Anna's, or an open Top 10 list) draws its
+  // pins / groups LARGEST (x1.4, groups x1.15) and TOPMOST (zIndexOffset +20000); every other pin still on the map (trauma centers,
+  // airports, cities, schools...) is drawn smaller (x0.72) and a bit faint underneath. No filter: icons exactly as before.
+  var TOPF = null;  // open Top 10 list: { k, ty (pin type), ll: Set of "lat,lon" }
+  let FOCK = "", FOC_ON = false;
+  const FOC_TR = 15000;  // kyxHosp: a filtered trauma center (Hospitals button) sits above every other filtered pin / group
+  const FOC_UP = 20000, FOC_BIG = 1.4, FOC_CL = 1.15, FOC_SM = 0.72;
+  const llk = e => e._llk || (e._llk = (+e.lat).toFixed(5) + "," + (+e.lon).toFixed(5));
+  const isFoc = e => !!((SOLO_ON && SOLO_ON.has(e._lk) && (!soloF || soloF(e))) || (TOPF && e.type === TOPF.ty && TOPF.ll.has(llk(e))));
+  const focM = e => FOC_ON ? (isFoc(e) ? 1 : -1) : 0;
+  const zOfF = e => zOf(e) + (e._fm === 1 ? FOC_UP + (e._lk === "trauma" ? FOC_TR : 0) : 0);
+  function focIc(ic, m, cl) {  // the same icon scaled around its anchor (inner wrapper: Leaflet owns the outer element's transform)
+    if (!m || !ic || !ic.options || ic.options.html == null) return ic;
+    const o = ic.options, sz = L.point(o.iconSize || [12, 12]), a = o.iconAnchor ? L.point(o.iconAnchor) : sz.divideBy(2), sc = m === 1 ? (cl ? FOC_CL : FOC_BIG) : FOC_SM;
+    return L.divIcon(Object.assign({}, o, { html: `<div class="${m === 1 ? "kfz" : "kdim"}" style="width:${sz.x}px;height:${sz.y}px;transform:scale(${sc});transform-origin:${a.x}px ${a.y}px">${o.html}</div>` }));
+  }
+  const iconOf = (e, ic) => { ic = ic || e.ic(); return focIc(e.stout ? stoutOf(ic) : ic, e._fm); };
+  function syncF(e) { const m = focM(e); if (e.mk && e._fm !== m) { e._fm = m; e.mk.setIcon(iconOf(e)); e.mk.setZIndexOffset(zOfF(e)); } }
+  function topFoc(t) {  // the pins of an open Top 10 list (by type + spot: hats, homes, buildings, Anna jobs / homes)
+    let pts = [];
+    try { pts = t.ext ? ANNAX.topPts(t) : t.perm ? PJX.topPts(t) : topRows(t).map(([, x]) => [x.lat, x.lon]); } catch (er) { pts = []; }
+    const ll = new Set(pts.filter(q => q && q[0] != null).map(q => (+q[0]).toFixed(5) + "," + (+q[1]).toFixed(5)));
+    return ll.size ? { k: t.k, ty: t.perm ? "perm" : t.type === "ahome" ? "property" : t.type, ll } : null;
+  }
+  const MADE = [];
+  function mkFor(e) {
+    if (e.mk) return e.mk;
+    const ic = e.ic(); e._fm = focM(e);
+    const m = e.mk = L.marker([e.lat, e.lon], { icon: iconOf(e, ic), zIndexOffset: zOfF(e), title: e.title || "", opacity: e.op || 1 });
+    if (e.tip) m.bindTooltip(e.tip);
+    m.on("click", ev => { const oe = ev.originalEvent; if (oe) { if (oe._kyxHandled) return; oe._kyxHandled = true; }
+      const real = oe && oe.detail > 0 && (oe.clientX || oe.clientY), pt = real ? map.mouseEventToContainerPoint(oe) : map.latLngToContainerPoint(m.getLatLng());
+      // tap landed in the invisible padding (not on the drawn icon): let the nearest-pin rule decide, so a neighbour that is closer wins
+      tapGate(pt, () => { if (real && pt.distanceTo(map.latLngToContainerPoint(m.getLatLng())) > 12 && tapAt(pt)) return; openPin(e); }, oe); });
+    MADE.push(e); return m;
+  }
+  // ---- forgiving taps (phones): a tap near a pin opens that pin instead of the county under it
+  // Nearest shown marker in screen pixels across every visible point layer (only markers that exist = in view and in the zoom tier).
+  // Within TAP_R and clearly nearest (second one >= 1.5x as far, or outside TAP_R) -> open it; two or more about equally close -> a small
+  // chooser list; nothing within TAP_R -> fallback (the county card).
+  const TAP_R = 30;
+  const TLAB = { cluster: "Group: tap to zoom in", property: "Property / home", hospital: "Hospital", school: "School", college: "College", activity: "Activity", history: "History", travel: "Travel RN jobs", perm: "Permanent RN jobs", airport: "Airport", business: "Business for sale", building: "Building for sale", attraction: "Attraction", city: "City", ski: "Ski area", peak: "Mountain peak", target: "Target store" };
+  function nearPins(pt) {
+    const out = [];
+    PLS.forEach(pl => pl.shown.forEach(e => { const m = e.mk; if (!m || !m._icon) return;
+      const d = map.latLngToContainerPoint(m.getLatLng()).distanceTo(pt); if (d <= TAP_R) out.push({ e, d }); }));
+    CLS.forEach(c => { if (!c.mk._icon) return; const d = map.latLngToContainerPoint(c.mk.getLatLng()).distanceTo(pt) - 6; if (d <= TAP_R) out.push({ e: c, d: Math.max(0, d) }); });  // groups are bigger
+    return out.sort((a, b) => a.d - b.d);
+  }
+  const openPin = e => e.cl ? zoomCl(e) : openItem(e.type, e.id, { fly: false, peek: true });
+  function tapAt(pt, fallback) {
+    const near = nearPins(pt);
+    if (!near.length) { if (fallback) fallback(); return false; }
+    if (near.length === 1 || near[1].d >= near[0].d * 1.5) { openPin(near[0].e); return true; }
+    chooser(pt, near.filter(x => x.d < near[0].d * 1.5 + 8).slice(0, 6));
+    return true;
+  }
+  function chooser(pt, list) {
+    const html = `<div class="tapch"><div class="tapch-h">${list.length} places here</div>${list.map((x, i) => { const ic = x.e.ic().options.html.replace(/<b class="plab[^]*?<\/b>/, "");
+      return `<button type="button" data-tc="${i}"><span class="tcico">${ic}</span><span class="tct">${esc(x.e.title || x.e.id)}<small>${esc(TLAB[x.e.type] || x.e.type)}</small></span></button>`; }).join("")}</div>`;
+    const pop = L.popup({ className: "tappop", closeButton: true, autoPan: true, maxWidth: 270, minWidth: 200, offset: [0, -6] }).setLatLng(map.containerPointToLatLng(pt)).setContent(html).openOn(map);
+    pop.getElement().addEventListener("click", ev => { const b = ev.target.closest("[data-tc]"); if (!b) return; map.closePopup(pop); openPin(list[+b.dataset.tc].e); });
+  }
+  map.on("click", e => { const oe = e.originalEvent; if (!oe || oe._kyxHandled || oe._kyxTap) return; oe._kyxTap = true; const pt = e.containerPoint; tapGate(pt, () => tapAt(pt), oe); });
+  const goCity = u => { try { const c = map.getCenter(); sessionStorage.setItem(ST.ls + "cityret", JSON.stringify({ lat: c.lat, lon: c.lng, z: map.getZoom(), t: Date.now() })); } catch (e) { /* private mode: Back still works, at the start view */ } location.href = u; };
+  const blockTap = c => CITYPG[c.name] && !(FOCUS && FOCUS.name === c.name) ? goCity(CITYPG[c.name]) : openItem("county", c.name, { peek: true });  // pins on top still open first (tapAt); a focused mega-block keeps its card
+  const polyTap = c => e => { const oe = e.originalEvent; if (oe && (oe._kyxHandled || oe._kyxTap)) return; if (oe) oe._kyxTap = true; const pt = e.containerPoint; tapGate(pt, () => tapAt(pt, () => blockTap(c)), oe); };
+  // ---- double tap / double click toggles the zoom (Leaflet's own double-click zoom is off): zoomed in -> all the way out to the
+  // statewide start view; at or near the start view -> in on the tapped spot (fits the county under it, else zoom 10). It is its own
+  // Back step. Single taps wait DT_MS for a possible second tap, so a double tap never opens a pin or county card.
+  const DT_MS = 250; let tapT = null, tapP = null;
+  function tapGate(pt, fn, oe) {
+    if (oe && oe.detail === 0 && !oe.clientX && !oe.clientY) { fn(); return; }  // keyboard (Enter on a focused pin): no wait
+    if (tapT && tapP && pt.distanceTo(tapP.pt) < 40) { clearTimeout(tapT); tapT = null; const p0 = tapP.pt; tapP = null; dblTap(p0); return; }
+    if (tapT) { clearTimeout(tapT); tapT = null; const f = tapP.fn; tapP = null; f(); }  // a tap somewhere else: the first one runs now
+    const fn0 = fn; fn = () => { if (FOCUS) { const ll = map.containerPointToLatLng(pt); if (!pipC(FOCUS.c, ll.lng, ll.lat)) clearFocus(); } fn0(); };
+    tapP = { pt, fn }; tapT = setTimeout(() => { tapT = null; const f = tapP && tapP.fn; tapP = null; if (f) f(); }, DT_MS);
+  }
+  function homeTarget() {
+    const so = map.options.zoomSnap; if (PHONE) map.options.zoomSnap = 0.05;
+    const r = PHONE ? map._getBoundsCenterZoom(L.latLngBounds(ST.bp), { padding: [2, 2] })
+      : map._getBoundsCenterZoom(L.latLngBounds(ST.bd), { paddingTopLeft: [325, 50], paddingBottomRight: [8, 8] });
+    map.options.zoomSnap = so; return r;
+  }
+  function countyAt(ll) {  // even-odd test over every ring of the county outlines
+    const x = ll.lng, y = ll.lat;
+    return (K.counties || []).find(c => { const b = c.bbox; if (b && (x < b[0] || x > b[2] || y < b[1] || y > b[3])) return false;
+      let inside = false; (c.rings || []).forEach(r => { for (let i = 0, j = r.length - 1; i < r.length; j = i++) { const xi = r[i][0], yi = r[i][1], xj = r[j][0], yj = r[j][1];
+        if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside; } }); return inside; }) || null;
+  }
+  function dblTap(pt) {
+    map.closePopup();
+    const H = homeTarget(), out = map.getZoom() > H.zoom + 0.75;
+    nav(location.hash, false, snap(), { kyxZoom: 1 });  // Back returns to the view from before the double tap
+    if (out) { clearFocus(); const so = map.options.zoomSnap; map.options.zoomSnap = 0.05; map.flyTo(H.center, H.zoom, { duration: 0.9 }); map.options.zoomSnap = so; return; }
+    const ll = map.containerPointToLatLng(pt), c = countyAt(ll);
+    if (c && c.bbox) fitCounty(c); else map.flyTo(ll, 10, { duration: 0.8 });
+  }
+  // zoom tiers: full icons from this zoom (layers not listed: every zoom); KEEP = always icons even when zoomed out.
+  // Statewide (the start view is z 6.2 on a phone in portrait, about 7.3 in landscape) only the always-shown pins are icons: Level I/II
+  // trauma centers, airports, businesses and odd buildings for sale, bargain homes and the 5 cities; every other pin of a layer that is
+  // on is a faint dot (drawDots, on the county-line canvas). Each zoom step then turns a few more kinds of dots into icons, from the standouts at 7.5 to
+  // coal camps, ghost towns and mines at 11 (it used to be nearly everything at once at 10).
+  const FULL = { feat: 7.5, trauma: 8, hosp: 8, props: 8.5, nh: 8.5, cab: 8.5, big: 8, cvf: 8, homes: 9, travel: 9, perm: 9, a_museum: 9.5, a_aqua: 9.5, col: 9.5,
+    a_park: 10, a_water: 10, act: 10, a_camp: 10, h_hist: 10.5, sch: 10.5, h_coal: 11, h_ghost: 11, h_mine: 11, ski: 8, peak: 9.5, tgt: 9 };
+  const FULLE = { peak: e => e.it.tier === 1 ? 8 : 9.5 };  // per-pin tier inside a layer: the best-known peaks (tier 1) from zoom 8
+  const top12 = h => /^Level (I|II)(\s|$)/.test(h.trauma || ""), barg = p => !!p.bargain;
+  const KEEP = { trauma: top12, props: barg, homes: barg, nh: barg, cab: barg, big: () => true, cvf: () => true };  // cvf: cave / waterfall pins show at every zoom (grouped statewide)  // big: 50+ ac black stars show at every zoom (grouped statewide)
+  // ---- faint dots: one small canvas, redrawn in a single pass (no Leaflet object per dot); colors by kind
+  const DOTC = { props: "#c62828", homes: "#c62828", nh: "#c62828", cab: "#6d4c41", big: "#111", cvf: "#1d1d1f", trauma: "#8b0000", hosp: "#d32f2f", travel: "#c62828", perm: "#1565c0", sch: "#5e35b1", col: "#6a1b9a",
+    act: "#2e7d32", feat: "#b8860b", h_hist: "#b8860b", h_coal: "#37474f", h_ghost: "#7e57c2", h_mine: "#5d4037", a_park: "#ef6c00", a_water: "#0288d1", a_aqua: "#0288d1", a_museum: "#8d6e63", a_camp: "#2e7d32", ski: "#0277bd", peak: "#546e7a", tgt: "#cc0000" };
+  ptsOn = true;  // the dot tables above exist now (a canvas may draw before this line)
+  const hk = e => { let h = e._hk; if (h === undefined) { h = 0; const t = String(e.id); for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; e._hk = h; } return h; };
+  const isDot = (pl, e, full, keep, solo, s, n, w, ea) => !(e.px || !(e.lat >= s && e.lat <= n && e.lon >= w && e.lon <= ea) || (solo && soloF && !soloF(e)))
+    && !(full || (FOCUS && inFocus(e)) || (keep && keep(e.it)) || (TOPF && isFoc(e)));
+  function scanDots(z) {  // the dots for the current view (same test as refreshPoints), with a content key
+    const b = map.getBounds().pad(0.3), s = b.getSouth(), n = b.getNorth(), w = b.getWest(), ea = b.getEast(), ds = []; let h = 0;
+    PLS.forEach(pl => {
+      const solo = SOLO_ON && SOLO_ON.has(pl.key), full = solo || !(pl.key in FULL) || z >= FULL[pl.key], keep = KEEP[pl.key];
+      if (full) return;
+      const dc = DOTC[pl.key] || "#546e7a", fe = FULLE[pl.key];
+      pl.ents.forEach(e => { e._lk = pl.key; if (isDot(pl, e, !!(fe && z >= fe(e)), keep, solo, s, n, w, ea)) { ds.push({ lat: e.lat, lon: e.lon, c: dc, id: e.id }); h = (h * 33 + hk(e)) | 0; } });
+    });
+    return { ds, k: ds.length + ":" + h };
+  }
+  let drawnKey = "";
+  function drawDots(ctx) {  // the canvas works out the dots itself, so its own moveend redraw is already right (no second pass after refreshPoints)
+    const z = map.getZoom(), sd = scanDots(z); drawnKey = sd.k;
+    if (!sd.ds.length) return;
+    const r = Math.max(1.8, Math.min(3.4, 1.8 + (z - 6.2) * 0.4)), by = new Map();
+    sd.ds.forEach(d => { const q = map.latLngToLayerPoint([d.lat, d.lon]); let a = by.get(d.c); if (!a) by.set(d.c, a = []); a.push(q); });
+    ctx.save(); ctx.lineWidth = 0.8; ctx.strokeStyle = "rgba(255,255,255,.75)";
+    by.forEach((qs, c) => { ctx.beginPath(); qs.forEach(q => { ctx.moveTo(q.x + r, q.y); ctx.arc(q.x, q.y, r, 0, 6.2832); }); ctx.globalAlpha = 0.6; ctx.fillStyle = c; ctx.fill(); ctx.globalAlpha = 0.5; ctx.stroke(); });
+    ctx.restore();
+  }
+  function setDots(ds, k) { DOTS = ds; if (k !== drawnKey) lineDirty(); }  // usually the canvas already drew these
+  function refreshPoints() {
+    const z = map.getZoom(), b = map.getBounds().pad(0.3), s = b.getSouth(), n = b.getNorth(), w = b.getWest(), ea = b.getEast();
+    const low = z < 10, clOn = z < CL_OFF;
+    if (low !== lifted) { lifted = low; MADE.forEach(e => { if (e.zh && e.mk) e.mk.setZIndexOffset(zOfF(e)); }); }
+    const fk = (SOLO || "") + "|" + (TOPF ? TOPF.k : "");  // kyxFoc: the filter changed -> resize / restack the pins already on the map
+    if (fk !== FOCK) { FOCK = fk; FOC_ON = !!(SOLO_ON || TOPF); PLS.forEach(pl => pl.shown.forEach(syncF)); document.documentElement.classList.toggle("kfoc", FOC_ON); }
+    const dots = [], cand = new Map(); let dh = 0;  // cand: cluster group -> [[pl, e], ...] (pins that may be grouped)
+    PLS.forEach(pl => {
+      const solo = SOLO_ON && SOLO_ON.has(pl.key);
+      const full0 = solo || !(pl.key in FULL) || z >= FULL[pl.key], keep = KEEP[pl.key], dc = DOTC[pl.key] || "#546e7a", nocl = NOCL.has(pl.key), fe = !full0 && FULLE[pl.key];
+      pl.ents.forEach(e => {
+        e._lk = pl.key; const full = full0 || !!(fe && z >= fe(e));
+        const inv = e.lat >= s && e.lat <= n && e.lon >= w && e.lon <= ea;
+        if (e.px || !inv || (solo && soloF && !soloF(e))) { if (pl.shown.has(e)) pl._hide(e); return; }
+        const inF = FOCUS && inFocus(e);
+        if (!(full || inF || (keep && keep(e.it)) || (TOPF && isFoc(e)))) { if (pl.shown.has(e)) pl._hide(e); dots.push({ lat: e.lat, lon: e.lon, c: dc, id: e.id }); dh = (dh * 33 + hk(e)) | 0; return; }
+        if (inF || nocl || !clOn) { if (!pl.shown.has(e)) pl._show(e); return; }  // county focus: every pin, never grouped
+        const g = grpOf(pl, e) + (FOC_ON && isFoc(e) ? "*" : "");  /* kyxFoc: filtered pins group only with filtered pins */ let a = cand.get(g); if (!a) cand.set(g, a = []); a.push([pl, e]);
+      });
+    });
+    clusterize(cand, z);
+    setDots(dots, dots.length + ":" + dh);
+  }
+  // ---- county focus (closing a county card): the map stays on the county and shows every pin inside it as a full icon
+  var FOCUS = null, POPPING = false;  // { name, c (county), z (zoom after the fit) }
+  function pipC(c, x, y) { const b = c.bbox; if (b && (x < b[0] || x > b[2] || y < b[1] || y > b[3])) return false;
+    let inside = false; (c.rings || []).forEach(r => { for (let i = 0, j = r.length - 1; i < r.length; j = i++) { const xi = r[i][0], yi = r[i][1], xj = r[j][0], yj = r[j][1];
+      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside; } }); return inside; }
+  // inside the county line, or listed in the county (a pin just over the border)
+  const inFocus = e => { if (e._fz !== FOCUS.name) { e._fz = FOCUS.name; e._fin = pipC(FOCUS.c, e.lon, e.lat) || (!!e.it && typeof e.it.county === "string" && e.it.county.replace(/ County$/i, "").toLowerCase() === FOCUS.name.toLowerCase()); } return e._fin; };
+  // ---- grouping (clusters), one kind at a time: pins with the SAME icon type (red houses, ⭐ bargains, blue hats, tents, caves, …) closer
+  // than CL_R px merge into one bigger copy of that icon with a count badge; never mixed kinds. Tap = zoom in until it splits (a Back
+  // step, like a double tap). Below zoom CL_OFF only; from CL_OFF up every pin is its own icon. Cities and airports never group.
+  const CL_OFF = 13, NOCL = new Set(["city", "apt"]), CLC = { biz: "#1b5e20", bldg: "#2e7d32", trauma: "#8b0000" };  // CLC: count badge colors (else DOTC)
+  const GRP_ALIAS = k => /^hosp/.test(k) ? "hosp" : /^sch/.test(k) ? "sch" : /^col_/.test(k) ? "col" : k;  // near-identical icons: one group
+  const grpOf = (pl, e) => e._g || (e._g = (() => { const k = ICK.get(e.ic()); return k ? "i:" + GRP_ALIAS(k) : "l:" + pl.key; })());
+  const CLMK = new Map(); let CLS = [];  // key -> cluster {mk, ll, n, xs, g}; CLS = the ones on the map now
+  function clIcon(c) {
+    const top = c.xs[0][1], ic = top.stout ? stoutOf(top.ic()) : top.ic(), o = ic.options, w = o.iconSize[0], h = o.iconSize[1], n = c.n;
+    const sc = n >= 50 ? 1.75 : n >= 10 ? 1.6 : 1.45, W = Math.round(w * sc), H = Math.round(h * sc), col = /^i:barg\*?$/.test(c.g) ? "#8e24aa" : CLC[c.xs[0][0].key] || DOTC[c.xs[0][0].key] || "#37474f";
+    const html = o.html.replace(/<b class="plab[^]*?<\/b>/g, "");
+    return L.divIcon({ className: "kclw", html: `<div class="kcg" style="width:${W}px;height:${H}px"><div class="kcgi" style="width:${w}px;height:${h}px;transform:scale(${sc})">${html}</div><b class="kcn" style="background:${col}">${n}</b></div>`,
+      iconSize: [W, H], iconAnchor: [W / 2, H / 2] });
+  }
+  function zoomCl(c) {
+    map.closePopup();
+    const bb = L.latLngBounds(c.xs.map(([, e]) => [e.lat, e.lon])), z = map.getZoom();
+    const so = map.options.zoomSnap; map.options.zoomSnap = 0.25;
+    let tz = bb.getNorthEast().equals(bb.getSouthWest()) ? CL_OFF : map.getBoundsZoom(bb, false, L.point(110, 160));
+    map.options.zoomSnap = so;
+    tz = Math.min(Math.max(tz, z + 1), Math.max(CL_OFF, z + 1), map.getMaxZoom());
+    nav(location.hash, false, snap(), { kyxZoom: 1 });  // Back returns to the view from before the tap
+    map.flyTo(bb.getCenter(), tz, { duration: 0.6 });
+  }
+  function clusterize(cand, z) {
+    const CL_R = z < 7 ? 44 : z < 9 ? 40 : 36;  // px; a little wider statewide
+    const show = ([pl, e]) => { if (!pl.shown.has(e)) pl._show(e); };
+    const live = new Map();
+    cand.forEach((xs, g) => {
+      if (xs.length === 1) { show(xs[0]); return; }
+      const pts = xs.map(x => { const q = map.project([x[1].lat, x[1].lon], z); return { x, px: q.x, py: q.y, k: zOf(x[1]), t: false }; });
+      pts.sort((a, b) => b.k - a.k || a.py - b.py || a.px - b.px);  // the most important pin of the kind (bargain, top pay, standout) seeds its group and shows on it; ties: north first (same groups every time)
+      const grid = new Map(), cell = (i, j) => i + ":" + j;
+      pts.forEach(p => { const k = cell(Math.floor(p.px / CL_R), Math.floor(p.py / CL_R)); let a = grid.get(k); if (!a) grid.set(k, a = []); a.push(p); });
+      pts.forEach(p => {
+        if (p.t) return; p.t = true;
+        const ms = [p], ci = Math.floor(p.px / CL_R), cj = Math.floor(p.py / CL_R);
+        for (let i = ci - 1; i <= ci + 1; i++) for (let j = cj - 1; j <= cj + 1; j++) (grid.get(cell(i, j)) || []).forEach(q => {
+          if (!q.t && (q.px - p.px) ** 2 + (q.py - p.py) ** 2 <= CL_R * CL_R) { q.t = true; ms.push(q); } });
+        if (ms.length === 1) { show(p.x); return; }
+        ms.forEach(m => { const [pl, e] = m.x; if (pl.shown.has(e)) pl._hide(e); });
+        const top = ms[0].x[1], key = g + "|" + ms.map(m => m.x[1].type + ":" + m.x[1].id).sort().join(",") + "|" + (lifted ? 1 : 0) + (FOC_ON ? "f" : "") + (top._txt || top.it && top.it.ptop || "");
+        let c = CLMK.get(key);
+        if (!c) {
+          let la = 0, lo = 0; ms.forEach(m => { la += m.x[1].lat; lo += m.x[1].lon; });
+          c = { cl: true, type: "cluster", g, n: ms.length, xs: ms.map(m => m.x), ll: L.latLng(la / ms.length, lo / ms.length), key };
+          const lab = TLAB[c.xs[0][1].type] || c.xs[0][1].type; c.id = key; c.title = `${c.n} × ${lab}`; c.ic = () => clIcon(c);
+          c.f = FOC_ON ? (g.endsWith("*") ? 1 : -1) : 0;
+          c.mk = L.marker(c.ll, { icon: focIc(clIcon(c), c.f, true), zIndexOffset: Math.min(9900, ms[0].k + 300) + (c.f === 1 ? FOC_UP + (ms[0].x[0].key === "trauma" ? FOC_TR : 0) : 0), title: c.title + " (tap to zoom in)", keyboard: true });
+          c.mk.on("click", ev => { const oe = ev.originalEvent; if (oe) { if (oe._kyxHandled) return; oe._kyxHandled = true; }
+            const real = oe && oe.detail > 0 && (oe.clientX || oe.clientY);
+            tapGate(real ? map.mouseEventToContainerPoint(oe) : map.latLngToContainerPoint(c.mk.getLatLng()), () => zoomCl(c), oe); });
+          CLMK.set(key, c);
+        }
+        live.set(key, c);
+      });
+    });
+    CLS.forEach(c => { if (!live.has(c.key)) map.removeLayer(c.mk); });
+    CLS = [...live.values()];
+    // groups of different kinds in one town would pile up on the same spot: the bigger / more important group keeps its place, the
+    // next one moves to the first free slot on a ring around it (screen space, this zoom only; the tap still zooms to its own pins)
+    const placed = [], D = 30, RING = [[0, 0]];
+    [24, 32].forEach((r, i) => { for (let a = 0; a < 8; a++) { const t = (a + i / 2) * Math.PI / 4 - Math.PI / 2; RING.push([r * Math.cos(t), r * Math.sin(t)]); } });  // small nudges only (no slot free: stays put)
+    CLS.map(c => ({ c, q: map.project(c.ll, z), k: (c.mk.options.zIndexOffset || 0) + Math.min(c.n, 99) }))
+      .sort((a, b) => b.k - a.k).forEach(({ c, q }) => {
+        let at = q; for (const [dx, dy] of RING) { const t = L.point(q.x + dx, q.y + dy); if (placed.every(o => (o.x - t.x) ** 2 + (o.y - t.y) ** 2 >= D * D)) { at = t; break; } }
+        placed.push(at); const ll = at === q ? c.ll : map.unproject(at, z); if (!c.mk.getLatLng().equals(ll)) c.mk.setLatLng(ll);
+      });
+    CLS.forEach(c => { if (!c.mk._map) map.addLayer(c.mk); });
+    if (CLMK.size > 600) CLMK.forEach((c, k) => { if (!live.has(k)) CLMK.delete(k); });  // keep the cache small
+  }
+  map.on("zoomend moveend", () => sched());
+  const ent = (type, it, ic, o = {}) => { const e = Object.assign({ type, id: it.id, it, lat: it.lat, lon: it.lon, ic, title: it.title || it.name }, o); MARK[type + ":" + it.id] = e; return e; };
+  const FEAT = [];  // featured standouts (activities, history, attractions) -> their own always-on layer (filled in kyxMoreLayers)
+  const PL_ = k => new PL(k);
+  const L_props = PL_("props"), L_homes = PL_("homes"), L_nh = PL_("nh"), L_cab = PL_("cab"), L_big = PL_("big"), L_cvf = PL_("cvf"), L_hosp = PL_("hosp"), L_trauma = PL_("trauma"), L_sch = PL_("sch"), L_col = PL_("col"), L_act = PL_("act");
+  const L_hist = { mine: PL_("h_mine"), coal_camp: PL_("h_coal"), ghost_town: PL_("h_ghost"), historic: PL_("h_hist") };
+  const HIST = { mine: ["⛏", "Old mine (USGS MRDS)"], coal_camp: ["🏚", "Historic coal camp"], ghost_town: ["👻", "Ghost town"], historic: ["🏛", "Historic site"] };
+  const SCOLOR = { Blue: "#1e5bd8", Green: "#2e9a4b", Yellow: "#e6c229", Orange: "#ef7d1a", Red: "#d33a2c" };
+  const ACTI = { "Park": "🌲", "Park / public land": "🏞", "Waterfall": "💧", "Cave": "🕳", "Distillery": "🥃", "Natural arch": "🌉", "Attraction": "🎡", "Hiking trail": "🥾" };
+
+  const isHome = p => p.cat === "1-acre-home";
+  const isNH = p => p.cat === "near-hospital-home";  // near-hospital homes (blue pins)
+  const CABC = ST.cabin ? ST.cabin.cat || "cabin-home" : null, isCab = p => !!CABC && p.cat === CABC;  // optional cabin category (ST.cabin; Maine)
+  const BIGC = "big-land", isBig = p => p.cat === BIGC, BIGL = "50+ acres under $250k (land or home)";  // 50+ acre lots / homes under $250k, every map (Bill, Oct 4 2026)
+  // caves / waterfalls ON the property (all maps, Bill Oct 4 2026): p.cf = ["cave"] / ["falls"] / both; a listing of another category keeps
+  // its category (lists, counts, profiles) but its pin is the bat / waterfall (one pin; a cave + waterfall = the bat); cat "cave" / "falls" = only this
+  const isCF = p => !!(p.cf && p.cf.length), isCFo = p => p.cat === "cave" || p.cat === "falls", hasCave = p => isCF(p) && p.cf.includes("cave"), hasFalls = p => isCF(p) && p.cf.includes("falls");
+  const cfLab = p => hasCave(p) && hasFalls(p) ? "🦇 Cave + waterfall on the property" : hasCave(p) ? "🦇 Cave on the property" : "💧 Waterfall on the property";
+  const CFS = (K.properties || []).filter(isCF);
+  const HOMES = (K.properties || []).filter(isHome), NHOMES = (K.properties || []).filter(isNH), CABS = (K.properties || []).filter(isCab), BIGS = (K.properties || []).filter(isBig), LANDS = (K.properties || []).filter(p => !isHome(p) && !isNH(p) && !isCab(p) && !isBig(p) && !isCFo(p));
+  const CABL = ST.cabin ? `${ST.cabin.label || "Cabin"}s (more than ${ST.cabin.acres || 25} acres, 1+ bd / 1+ ba, under ${CAPK("cab")})` : "";
+  const nhMk = {};
+  let nf = { maxp: 0, maxm: 0, typ: "" }; try { nf = Object.assign(nf, JSON.parse(localStorage.getItem(ST.ls + "nhfilter") || "{}")); } catch (e) { }
+  const sqft = v => v ? Math.round(v).toLocaleString() : "—";
+  const IC_BARG = () => icOnce("barg", () => sicon("barg", G.starDot("#8e24aa"), 24, 24)), IC_HS = () => icOnce("hs", () => sicon("hs", G.house(false), 22, 22));
+  NHOMES.forEach(p => {
+    if (p.lat == null || p.lon == null) return; if (isCF(p)) return;
+    const e = ent("property", p, p.bargain ? IC_BARG : () => icOnce("nhh", () => sicon("hs nhh", G.house(true), 24, 24)), { z: p.bargain ? 3500 : 1600, zh: p.bargain ? 6500 : 0,
+      tip: () => `🏥 ${esc(p.title)}${p.price ? " · " + money(p.price) : ""} · ${sqft(p.sqft)} sq ft · ${esc(p.beds)} bd/${esc(p.baths)} ba${p.nh ? ` · ~${esc(p.nh.minutes_free_flow)} min to ${esc(p.nh.name)}` : ""}` });
+    nhMk[p.id] = e; L_nh.addLayer(e);
+  });
+  const homeMk = {};
+  let hf = { maxp: 0, mina: 0 }; try { hf = Object.assign(hf, JSON.parse(localStorage.getItem(ST.ls + "homefilter") || "{}")); } catch (e) { }
+  HOMES.forEach(p => {
+    if (p.lat == null || p.lon == null) return; if (isCF(p)) return;
+    const e = ent("property", p, p.bargain ? IC_BARG : IC_HS, { z: p.bargain ? 3500 : 1500, zh: p.bargain ? 6500 : 0,
+      tip: () => `🏠 ${esc(p.title)}${p.price ? " · " + money(p.price) : ""}${p.acres ? " · " + p.acres + " ac" : ""}${p.beds ? " · " + esc(p.beds) + " bd/" + esc(p.baths) + " ba" : ""}` });
+    homeMk[p.id] = e; L_homes.addLayer(e);
+  });
+  CABS.forEach(p => {
+    if (p.lat == null || p.lon == null) return; if (isCF(p)) return;
+    L_cab.addLayer(ent("property", p, p.bargain ? IC_BARG : () => icOnce("cab", () => sicon("hs cab", G.cabin(24), 24, 24)), { z: p.bargain ? 3500 : 1400, zh: p.bargain ? 6500 : 0,
+      tip: () => `${esc(ST.cabin.label || "Cabin")} · ${esc(p.title)}${p.price ? " · " + money(p.price) : ""}${p.acres ? " · " + p.acres + " ac" : ""}${p.beds ? " · " + esc(p.beds) + " bd/" + esc(p.baths) + " ba" : ""}` }));
+  });
+  const IC_BIG = () => icOnce("big", () => sicon("big", G.bigStar(18), 18, 18));
+  BIGS.forEach(p => {  // never the purple bargain star: a 50+ ac listing always shows as a black star
+    if (p.lat == null || p.lon == null) return; if (isCF(p)) return;
+    L_big.addLayer(ent("property", p, IC_BIG, { z: 3000, zh: 6000,
+      tip: () => `★ 50+ ac · ${esc(p.title)}${p.price ? " · " + money(p.price) : ""}${p.acres ? " · " + Math.round(p.acres) + " ac" : ""}${p.price && p.acres ? " · " + money(p.price / p.acres) + "/ac" : ""}` }));
+  });
+  const IC_CAVE = () => icOnce("cave", () => sicon("cvf", G.bat(24), 24, 11)), IC_FALL = () => icOnce("fall", () => sicon("cvf", G.fall(19), 19, 19));
+  CFS.forEach(p => {  // one pin per listing: the bat if it has a cave (cave + waterfall too), else the waterfall
+    if (p.lat == null || p.lon == null) return;
+    L_cvf.addLayer(ent("property", p, hasCave(p) ? IC_CAVE : IC_FALL, { cfl: true, z: 3200, zh: 6200,
+      tip: () => `${hasCave(p) ? "🦇 Cave" : ""}${hasCave(p) && hasFalls(p) ? " + " : ""}${hasFalls(p) ? "💧 Waterfall" : ""} · ${esc(p.title)}${p.price ? " · " + money(p.price) : ""}${p.acres ? " · " + (+p.acres).toLocaleString(undefined, { maximumFractionDigits: 1 }) + " ac" : ""}` }));
+  });
+  LANDS.forEach(p => {
+    if (p.lat == null || p.lon == null) return; if (isCF(p)) return;
+    const star = p.standout && p.standout.length;
+    L_props.addLayer(ent("property", p, p.bargain ? IC_BARG : IC_HS, { z: p.bargain ? 3500 : star ? 2000 : 1000, zh: p.bargain ? 6500 : 0,
+      tip: () => `${esc(p.title)}${p.price ? " · " + money(p.price) : ""}${p.acres ? " · " + p.acres + " ac" : ""}${star ? " ★ " + esc(p.standout.join(", ")) : ""}` }));
+  });
+  (K.hospitals || []).forEach(h => {
+    const tr = h.trauma, gen = h.kind === "general";
+    const lv = tr ? (tr.match(/Level (I{1,3}V?|IV)/) || [0, ""])[1] + (/Pediatric/.test(tr) ? "P" : "") : "";
+    const ic = tr ? () => icOnce("tr" + lv, () => icon("trauma", lv, 28)) : gen ? () => icOnce("hosp", () => sicon("hosp", G.nurse(), 20, 20)) : () => icOnce("hosp_s", () => sicon("hosp spec", G.nurse(), 17, 17));
+    (tr ? L_trauma : L_hosp).addLayer(ent("hospital", h, ic, { z: tr ? 500 : 0, zh: tr ? 9000 : 8000, op: gen ? 1 : 0.75,
+      tip: () => esc(h.name) + (tr ? " — Trauma " + esc(tr) : !gen ? " (specialty)" : "") }));
+  });
+  (K.schools || []).forEach(s => L_sch.addLayer(ent("school", s, () => icOnce("sch" + s.rating, () => sicon("sch", G.cap(SCOLOR[s.rating] || "#9e9e9e"), 22, 18)), { tip: () => `${esc(s.name)}${s.rating ? " — " + esc(s.rating) : ""}` })));
+  (K.colleges || []).forEach(c => {
+    const cc = /community|technical|trade|beauty/i.test(c.kind || "");
+    L_col.addLayer(ent("college", c, cc ? () => icOnce("col_c", () => sicon("col", G.diploma(), 20, 18)) : () => icOnce("col_u", () => sicon("col", G.univ(), 40, 18)), { tip: () => esc(c.name) }));
+  });
+  (K.activities || []).forEach(a => {
+    const og = outdoorGlyph(a);
+    const e = ent("activity", a, og ? () => icOnce("og" + og, () => sicon("act og-" + og, G[og](), 22, 22)) : () => icOnce("act" + a.kind, () => icon("act", ACTI[a.kind] || "★", 24)), { tip: () => `${esc(a.name)} (${esc(a.kind)})` });
+    if (a.featured) { e.stout = true; e.z = 2500; e.zh = 6000; FEAT.push(e); } else L_act.addLayer(e);
+  });
+  (K.history || []).forEach(h => {
+    const t = HIST[h.type] || ["•", h.type];
+    const e = ent("history", h, () => icOnce("h" + h.type, () => icon("hist h-" + h.type, t[0], h.type === "mine" ? 22 : 26)), { tip: () => `${esc(h.name)} — ${esc(t[1])}` });
+    if (h.featured) { e.stout = true; e.z = 2500; e.zh = 6000; FEAT.push(e); } else (L_hist[h.type] || L_hist.historic).addLayer(e);
+  });
+
+  // ------------------------------------------------------------------ travel-nurse assignments (../data/travel_jobs.json -> build.py -> K.travel)
+  const TJ = K.travel || { meta: {}, hospitals: [] }, TJM = TJ.meta || {};
+  const TJB = TJM.bands || [];
+  const L_travel = PL_("travel"), L_perm = PL_("perm");  // perm: permanent RN jobs (blue hats, filled by perm.js after the first paint)
+  window.KYXPJM = d => { window.KYXPJM_D = d; }; window.KYXPJD = d => { window.KYXPJD_D = d; };
+  const tjPay = j => j.lo != null && j.lo !== j.hi ? `${money(j.lo)}–${money(j.hi).slice(1)}` : money(j.hi);
+  const tjK = v => "$" + (v / 1000).toFixed(1) + "k";
+  const capK = v => (Math.round(v / 100) / 10).toFixed(1);  // $1,180 -> 1.2 (thousands, nearest $100)
+  const tjIcon = h => L.divIcon({ className: "", html: `<div class="mk sv tjc" style="width:36px;height:22px">${G.nurseCap(capK(h.ptop != null ? h.ptop : h.top), "#fff", "#c62828", "#fff")}</div>`, iconSize: [36, 22], iconAnchor: [18, 11] });
+  TJ.hospitals.forEach(h => {
+    IDX.travel[h.id] = h;
+    L_travel.addLayer(ent("travel", h, () => tjIcon(h), { z: 2500 + Math.round(h.top / 10), tip: () => `💼 ${esc(h.name)} · top ${money(h.top)}/wk · ${h.n} travel RN job${h.n > 1 ? "s" : ""}` }));
+  });
+  const TJ_ALL = TJ.hospitals.flatMap(h => h.jobs.map(j => Object.assign({ h }, j))).sort((a, b) => b.hi - a.hi || (b.lo || 0) - (a.lo || 0));
+  if (TJ.hospitals.length) IDX.travel.all = { id: "all", name: "All travel nurse assignments (ranked by weekly pay)", city: `${TJ_ALL.length} jobs` };
+  const TJ_NOTE = () => `<div class="small tjnote">💵 Pay is <b>gross weekly pay as posted</b> by the agency (taxable wage + stipends, before taxes); a range is shown when the posting gives one, and the high end is used for ranking. Travel postings change often (seen ${esc(TJM.date_seen || "")}); confirm on the source.</div>`;
+  const tjJob = (j, withHosp) => `<div class="tjrow"><div class="tjtop">${bChip("job", j.id)}<b class="tjpay">${tjPay(j)}/wk</b> <span>${esc(j.u || j.sp)}</span>${withHosp ? ` · ${link("travel", j.h.id, j.h.name)}<span class="small"> (${esc(j.h.city || "")})</span>` : ""}</div>
+      <div class="small">${esc(j.sh || "—")} · ${esc(j.len || "length n/a")} · start ${esc(j.st || "n/a")} · ${esc(j.ag || "")}${j.na > 1 ? ` <span title="${esc(j.pn || "")}">(+${j.na - 1} more agenc${j.na > 2 ? "ies" : "y"})</span>` : ""}</div>
+      <div class="small">${j.fac ? `Posted as “${esc(j.fac)}” · ` : ""}${esc(j.src || "")}${j.po ? " · posted " + esc(j.po) : ""} · <a href="${esc(j.url)}" target="_blank" rel="noopener">Apply / view ↗</a></div></div>`;
+  const pJobs = (js, h) => PROF ? PROF.jobs(js, h) : js;
+  function travelCard(h) {
+    if (h.id === "all") return `<div class="kicker">💼 Travel nurse assignments</div><h2>All ${TJ_ALL.length} jobs, ranked by weekly pay</h2>
+      <div class="sub">${TJ.hospitals.length} ${ST.name} hospitals · tap a hospital name for its card</div>${TJ_NOTE()}${PROF ? PROF.note("jobs") : ""}${pJobs(TJ_ALL).map(j => tjJob(j, true)).join("")}${travelExcl()}`;
+    const b = TJB[h.band] || {};
+    return `${thumb("travel", h)}<div class="kicker">💼 Travel nurse assignments</div><h2>${esc(h.name)}</h2>
+      <div class="sub">${esc([h.city, h.county && h.county + ST.cus].filter(Boolean).join(", "))}</div>
+      <div class="badges"><span class="badge" style="background:${RAMP[h.band]};color:${h.band === 2 ? "#222" : "#fff"}">Top pay ${money(h.top)}/wk · ${esc(b.label || "")}</span></div>
+      <div class="stats">${stat(money(h.top), "top weekly pay")}${stat(h.n, "travel RN jobs")}${stat(money(h.jobs[h.jobs.length - 1].hi), "lowest (high end)")}</div>
+      ${TJ_NOTE()}${PROF ? PROF.note("jobs") : ""}<div class="kicker">Jobs, highest weekly pay first</div>${pJobs(h.jobs, h).map(j => tjJob(j, false)).join("")}
+      <table class="kv">${row("Hospital", h.hospital_id ? link("hospital", h.hospital_id, "Hospital details (trauma level, ER, website)") : null)}${row(ST.cu, h.county ? link("county", h.county, h.county + ST.cus) : null)}${row("All jobs", '<a href="#travel=all">Every Kentucky travel job, ranked by pay</a>')}</table>${nearbyProps(h)}`;
+  }
+  function travelExcl() {
+    const ex = TJM.excluded || {}; const n = Object.values(ex).reduce((a, b) => a + b, 0);
+    return n ? `<details class="small"><summary>Left out: ${n} postings</summary>${Object.entries(ex).map(([k, v]) => `${v} · ${esc(k)}`).join("<br>")}${TJM.dups ? `<br>${TJM.dups} · duplicate postings` : ""}<br>Sources: ${Object.entries(TJM.sources || {}).map(([k, v]) => `${esc(k)} — ${esc(v)}`).join("; ")}</details>` : "";
+  }
+
+  // ------------------------------------------------------------------ Kentucky's 5 largest cities (tiny skyscraper + population label, every zoom)
+  // U.S. Census Bureau, Vintage 2025 population estimates (July 1, 2025). Louisville = Louisville/Jefferson County consolidated
+  // city-county (all of Jefferson County); Lexington = Lexington-Fayette urban county (all of Fayette County); the rest = city proper.
+  // z-order: zoomed in, under every other pin; zoomed out (< 10), above the lifted $ / star pins but still under airports and hospitals.
+  const CITIES = ST.cities || [
+    { id: "louisville", name: "Louisville", full: "Louisville/Jefferson County", county: "Jefferson", pop: 795222, lat: 38.2527, lon: -85.7585, rank: 1,
+      note: "Louisville/Jefferson County Metro: the consolidated city-county (all of Jefferson County)" },
+    { id: "lexington", name: "Lexington", full: "Lexington-Fayette", county: "Fayette", pop: 329751, lat: 38.0406, lon: -84.5037, rank: 2,
+      note: "Lexington-Fayette Urban County: the merged city-county (all of Fayette County)" },
+    { id: "bowling-green", name: "Bowling Green", county: "Warren", pop: 78505, lat: 36.9685, lon: -86.4808, rank: 3, note: "City limits" },
+    { id: "owensboro", name: "Owensboro", county: "Daviess", pop: 60892, lat: 37.7719, lon: -87.1112, rank: 4, note: "City limits" },
+    { id: "covington", name: "Covington", county: "Kenton", pop: 41847, lat: 39.0837, lon: -84.5086, rank: 5, note: "City limits (Northern Kentucky, across the Ohio River from Cincinnati)" },
+  ];
+  const popK = n => n >= 1e6 ? (Math.round(n / 1e5) / 10) + "m" : Math.round(n / 1000) + "k";
+  IDX.city = {}; CITIES.forEach(c => IDX.city[c.id] = c);
+  const L_city = PL_("city");
+  CITIES.forEach(c => L_city.addLayer(ent("city", c, () => L.divIcon({ className: "", html: `<div class="mk sv city">${G.tower()}</div><b class="plab city">${popK(c.pop)}</b>`, iconSize: [12, 16], iconAnchor: [6, 9] }),
+    { z: -3000, zh: 6600, tip: () => `🏙 ${esc(c.full || c.name)} · ${c.pop.toLocaleString()} people (2025 est.)` })));
+
+  // ------------------------------------------------------------------ layer panel
+  const nHist = t => (K.history || []).filter(h => h.type === t).length;
+  const LAYERS = [
+    { key: "props", label: "★ Notable Properties (5+ acres)", layer: L_props, on: true, n: LANDS.length },
+    { key: "homes", label: "🏠 Homes (1+ acre, 3bd/2ba, under " + CAPK("p1") + ")", layer: L_homes, on: true, n: HOMES.length, filter: true },
+    { key: "nh", label: "🏥 Near-hospital homes (1,600+ sq ft, 3bd/2ba, under " + CAPK("nh") + ")", layer: L_nh, on: true, n: NHOMES.length, nfilter: true },
+    ...(ST.cabin ? [{ key: "cab", ic: G.cabin(16), label: CABL, layer: L_cab, on: true, n: CABS.length }] : []),
+    ...(BIGS.length ? [{ key: "big", ic: G.bigStar(16), label: BIGL, layer: L_big, on: true, n: BIGS.length }] : []),
+    ...(CFS.length ? [{ key: "cvf", ic: `<span class="cfic">${G.bat(18)}${G.fall(14)}</span>`, label: "Caves & waterfalls on the property", layer: L_cvf, on: true, n: CFS.length }] : []),
+    { key: "city", label: "🏙 5 largest cities (population)", layer: L_city, on: true, n: CITIES.length },
+    { key: "trauma", label: "Trauma centers", layer: L_trauma, on: true, n: (K.hospitals || []).filter(h => h.trauma).length },
+    { key: "hosp", label: "Other hospitals", layer: L_hosp, on: true, n: (K.hospitals || []).filter(h => !h.trauma).length },
+    { key: "travel", label: "💼 Travel nurse assignments (by weekly pay)", layer: L_travel, on: false, n: TJ_ALL.length || null, disabled: !TJ.hospitals.length, note: TJ.hospitals.length ? "" : " (no data)" },
+    { key: "perm", label: "🩺 Permanent RN jobs (staff, at each hospital)", layer: L_perm, on: true, n: null, pfilter: true, disabled: !(K.meta && K.meta.pj), note: K.meta && K.meta.pj ? "" : " (no data)" },
+    { key: "sch", label: `Schools (${ST.sch} ${ST.rlab ? "A–F grade" : "color rating"})`, layer: L_sch, on: false, n: (K.schools || []).length },
+    { key: "col", label: "Colleges & universities", layer: L_col, on: true, n: (K.colleges || []).length },
+    { key: "act", label: "Activities & outdoors", layer: L_act, on: false, n: (K.activities || []).length },
+    { key: "hist", label: "History", group: true },
+    { key: "h_hist", label: "🏛 Historic sites & landmarks", layer: L_hist.historic, on: false, n: nHist("historic"), sub: true },
+    { key: "h_coal", label: "🏚 Coal camps", layer: L_hist.coal_camp, on: false, n: nHist("coal_camp"), sub: true },
+    { key: "h_ghost", label: "👻 Ghost towns", layer: L_hist.ghost_town, on: false, n: nHist("ghost_town"), sub: true },
+    { key: "h_mine", label: "⛏ Old mines (USGS MRDS)", layer: L_hist.mine, on: false, n: nHist("mine"), sub: true },
+    { key: "cty", label: `${ST.cuP} (colored by metric below)`, layer: countyLayer, on: true, prep: buildCounties },
+    { key: "sweet", label: `Sweet-spot ${ST.cup}`, layer: sweetLayer, prep: drawSweet, on: false, disabled: !sweetKey, note: sweetKey ? "" : " (data pending)" },
+  ];
+  kyxMoreLayers(LAYERS);
+  kyxMtn(LAYERS);
+  kyxTarget(LAYERS);  // Target stores (K.targets from target_build.py; see the "Target stores" block near the end)  // ski areas + notable peaks (K.ski / K.peaks from mtn_build.py; see the "ski areas & peaks" block near the end)  // airports, businesses/buildings for sale, attractions (see "more layers" block near the end)
+  let saved = {}; try { saved = JSON.parse(localStorage.getItem(ST.ls + "layers") || "{}"); } catch (e) { }
+  const ll = $("#layerList");
+  function mkRow(d, put) {  // one Layers-panel row (anna.js adds its rows with this too)
+    if (d.group) { const g = document.createElement("div"); g.innerHTML = `<b>${esc(d.label)}</b>`; g.style.marginTop = "6px"; d.lab = g; put(g); return; }
+    const on = d.disabled || annaBlk(d) ? false : (d.key in saved ? saved[d.key] : d.on);
+    const lab = document.createElement("label"); if (d.sub) lab.className = "sub"; if (d.disabled) lab.classList.add("dis");
+    lab.innerHTML = `<input type="checkbox" ${on ? "checked" : ""} ${d.disabled ? "disabled" : ""}> ${d.ic ? `<span class="lic">${d.ic}</span> ` : ""}${esc(d.label)}${esc(d.note || "")}<span class="cnt">${d.n != null ? d.n : ""}</span>`;
+    const cb = lab.querySelector("input");
+    cb.onchange = () => { setLayer(d, cb.checked); saved[d.key] = cb.checked; localStorage.setItem(ST.ls + "layers", JSON.stringify(saved)); };
+    d.cb = cb; d.lab = lab; put(lab);
+    if (d.filter) { d.cnt = lab.querySelector(".cnt"); put(homeFilterEl()); }
+    if (d.nfilter) { d.cnt = lab.querySelector(".cnt"); put(nhFilterEl()); }
+    if (d.pfilter && !d.disabled) { const w = document.createElement("div"); w.className = "hfilter sub pjfilter"; w.id = "pjFilter"; w.innerHTML = '<span class="small">Filters load in a moment…</span>'; put(w); }
+    if (on) { if (d.prep) d.prep(); d.layer.addTo(map); }
+  }
+  LAYERS.forEach(d => mkRow(d, x => ll.appendChild(x)));
+  applyHomeFilter(); applyNHFilter();
+  // filter for the Near-hospital homes layer (max price, max drive minutes, house vs townhome/condo); remembered in localStorage
+  function nhFilterEl() {
+    const w = document.createElement("div"); w.className = "hfilter sub"; w.id = "nhFilter";
+    const opt = (vals, cur, f) => vals.map(v => `<option value="${v}" ${String(cur) === String(v) ? "selected" : ""}>${f(v)}</option>`).join("");
+    w.innerHTML = `<label class="hf">Max price <select id="nfPrice">${opt([0].concat(CAPOPTS("nh", [200000, 250000, 275000, 300000])), nf.maxp, v => v ? "$" + v / 1000 + "k" : "Any (<" + CAPK("nh") + ")")}</select></label>
+      <label class="hf">Drive ≤ <select id="nfMin">${opt([0, 5, 7], nf.maxm, v => v ? v + " min" : "10 min")}</select></label>
+      <label class="hf">Type <select id="nfType">${opt(["", "House", "Townhome"], nf.typ, v => v === "Townhome" ? "Townhome/condo" : v || "Any")}</select></label>`;
+    w.querySelectorAll("select").forEach(s => s.onchange = () => { nf = { maxp: +$("#nfPrice").value, maxm: +$("#nfMin").value, typ: $("#nfType").value }; localStorage.setItem(ST.ls + "nhfilter", JSON.stringify(nf)); applyNHFilter(); });
+    return w;
+  }
+  function nhPass(p) { return (!nf.maxp || (p.price != null && p.price <= nf.maxp)) && (!nf.maxm || (p.nh && p.nh.minutes_free_flow <= nf.maxm)) && (!nf.typ || (nf.typ === "House" ? p.ptype === "House" : p.ptype !== "House")); }
+  function applyNHFilter() {
+    let n = 0;
+    NHOMES.forEach(p => { const mk = nhMk[p.id]; if (!mk) return; const ok = nhPass(p) || (current && current.id === p.id); if (ok) { n++; if (!L_nh.hasLayer(mk)) L_nh.addLayer(mk); } else if (L_nh.hasLayer(mk)) L_nh.removeLayer(mk); });
+    const d = LAYERS.find(x => x.key === "nh"); if (d && d.cnt) d.cnt.textContent = n === NHOMES.length ? String(n) : `${n} of ${NHOMES.length}`;
+    if (keyReady) renderKey();
+  }
+  function nfText() { return [nf.maxp && "≤ " + money(nf.maxp), nf.maxm && "≤ " + nf.maxm + " min drive", nf.typ && (nf.typ === "House" ? "houses only" : "townhomes/condos only")].filter(Boolean).join(", "); }
+  // simple filter for the Homes layer (max price, min acres); remembered in localStorage
+  function homeFilterEl() {
+    const w = document.createElement("div"); w.className = "hfilter sub"; w.id = "homeFilter";
+    const opt = (vals, cur, f) => vals.map(v => `<option value="${v}" ${+cur === v ? "selected" : ""}>${f(v)}</option>`).join("");
+    w.innerHTML = `<label class="hf">Max price <select id="hfPrice">${opt([0].concat(CAPOPTS("p1", [200000, 250000, 300000, 350000, 400000])), hf.maxp, v => v ? "$" + v / 1000 + "k" : "Any (≤" + CAPK("p1") + ")")}</select></label>
+      <label class="hf">Min acres <select id="hfAcres">${opt([0, 2, 5, 10, 20], hf.mina, v => v ? v + "+ ac" : "Any (1+)")}</select></label>`;
+    w.querySelectorAll("select").forEach(s => s.onchange = () => { hf = { maxp: +$("#hfPrice").value, mina: +$("#hfAcres").value }; localStorage.setItem(ST.ls + "homefilter", JSON.stringify(hf)); applyHomeFilter(); });
+    return w;
+  }
+  function homePass(p) { return (!hf.maxp || (p.price != null && p.price <= hf.maxp)) && (!hf.mina || (p.acres != null && p.acres >= hf.mina)); }
+  function applyHomeFilter() {
+    let n = 0;
+    HOMES.forEach(p => { const mk = homeMk[p.id]; if (!mk) return; const ok = homePass(p) || (current && current.id === p.id); if (ok) { n++; if (!L_homes.hasLayer(mk)) L_homes.addLayer(mk); } else if (L_homes.hasLayer(mk)) L_homes.removeLayer(mk); });
+    const d = LAYERS.find(x => x.key === "homes"); if (d && d.cnt) d.cnt.textContent = n === HOMES.length ? String(n) : `${n} of ${HOMES.length}`;
+    if (keyReady) renderKey();
+  }
+  function setLayer(d, on) { if (on && annaBlk(d)) on = false; if (on && d.key === "perm") try { loadPerm(); } catch (e) { } if (on) { if (d.prep) d.prep(); d.layer.addTo(map); if (d.key === "cty" || d.key === "sweet") d.layer.eachLayer(l => l.bringToBack && l.bringToBack()); } else map.removeLayer(d.layer); if (d.cb) d.cb.checked = on; renderKey(); }
+  function ensureLayerFor(type, item) {
+    const k = (type === "property" && item && item.anna ? "ahome" : null) || (MORE_LAYER_FOR && MORE_LAYER_FOR._feat(item)) || { property: isCF(item) ? "cvf" : isNH(item) ? "nh" : isHome(item) ? "homes" : isCab(item) ? "cab" : isBig(item) ? "big" : "props", school: "sch", college: "col", activity: "act", travel: "travel", perm: "perm", city: "city" }[type]
+      || (type === "hospital" ? (item.trauma ? "trauma" : "hosp") : null)
+      || (type === "history" ? { mine: "h_mine", coal_camp: "h_coal", ghost_town: "h_ghost", historic: "h_hist" }[item.type] : null)
+      || (MORE_LAYER_FOR && MORE_LAYER_FOR[type] ? MORE_LAYER_FOR[type](item) : null);
+    const d = LAYERS.find(x => x.key === k); if (d && !map.hasLayer(d.layer)) setLayer(d, true);
+  }
+  const lb = $("#layersBtn"), lp = $("#layersPanel");
+  lb.onclick = () => { lp.hidden = !lp.hidden; lb.setAttribute("aria-expanded", !lp.hidden); };
+  document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => { $("#" + b.dataset.close).hidden = true; });
+  const S = K.meta && K.meta.sources || {};
+  $("#srcNote").innerHTML = "Sources: " + Object.entries(S).map(([k, v]) => `<b>${esc(k)}</b>: ${esc(v)}`).join("; ") + (K.meta ? `<br>Built ${esc(K.meta.built)}` : "");
+
+  // ------------------------------------------------------------------ map key (always visible; collapsible on phones)
+  const keyEl = $("#mapKey"), keyBody = $("#keyBody"), keyTog = $("#keyToggle");
+  const isPhone = () => PHONE;
+  // top pills: "Map key" (top left) and "Search" (top right) start collapsed and expand into the key panel / the search bar + Layers.
+  // Tap the pill again, tap outside, Esc or the phone's Back collapses them (an open panel is one history step: Back closes it first).
+  const tBar = $("#topbar"), sPill = document.createElement("button");
+  sPill.type = "button"; sPill.id = "srchPill"; sPill.className = "tpill2"; sPill.setAttribute("aria-controls", "search");
+  tBar.appendChild(sPill);
+  var PNL = null; let pnlEat = 0;  // var: nav() reads it
+  function showPnl(name) {
+    PNL = name || null;
+    keyEl.classList.toggle("collapsed", PNL !== "key"); keyTog.setAttribute("aria-expanded", PNL === "key");
+    const so = PNL === "search"; tBar.classList.toggle("collapsed", !so); sPill.setAttribute("aria-expanded", so);
+    sPill.innerHTML = so ? '<span aria-hidden="true">✕</span>' : '<span aria-hidden="true">🔍</span> Search';
+    sPill.setAttribute("aria-label", so ? "Close search and layers" : "Open search and layers"); sPill.title = so ? "Close search & layers" : "Search & layers";
+    if (!so) { lp.hidden = true; lb.setAttribute("aria-expanded", false); const r = $("#results"), si = $("#search"); if (r) r.hidden = true; if (si && document.activeElement === si) si.blur(); }
+    document.documentElement.classList.toggle("pnlopen", !!PNL); document.documentElement.classList.toggle("srchopen", so);
+  }
+  function setPanel(name) {  // "key" | "search" | null
+    name = name || null; if (name === PNL) return;
+    const st = history.state || {};
+    if (name) {
+      if (PNL && st.pnl) history.replaceState(Object.assign({}, st, { pnl: name }), "", location.href);  // switching panels: still one Back step
+      else { history.replaceState(Object.assign({}, st, { v: snap() }), "", location.href); history.pushState(Object.assign({}, st, { pnl: name }), "", location.href); }
+      showPnl(name);
+    } else if (st.pnl) history.back();  // the popstate handler below collapses
+    else showPnl(null);
+  }
+  window.addEventListener("popstate", e => {  // registered before the router's handler: a panel step never re-routes
+    const st = history.state || {}, want = st.pnl || null;
+    if (want === PNL) return;
+    showPnl(want); e.stopImmediatePropagation();
+  });
+  const inPnl = (el, n) => n === "key" ? !!el.closest("#mapKey, #infoPop") : !!el.closest("#topbar, #layersPanel");
+  document.addEventListener("pointerdown", e => {  // tap outside collapses; a tap on the map that only closed a panel doesn't also open a card
+    if (!PNL || !e.target.closest || inPnl(e.target, PNL) || e.target.closest("#srchPill, #keyToggle")) return;
+    pnlEat = e.target.closest("#map") ? Date.now() : 0; setPanel(null);
+  }, true);
+  document.addEventListener("click", e => { if (pnlEat && Date.now() - pnlEat < 900 && e.target.closest && e.target.closest("#map")) { pnlEat = 0; e.stopPropagation(); e.preventDefault(); } }, true);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && PNL && !(e.target && e.target.id === "search" && $("#results") && !$("#results").hidden)) setPanel(null); });
+  showPnl(null);
+  keyTog.onclick = () => setPanel(PNL === "key" ? null : "key");
+  sPill.onclick = () => setPanel(PNL === "search" ? null : "search");
+  const openLayersPanel = () => { setPanel("search"); lp.hidden = false; lb.setAttribute("aria-expanded", true); };
+  const mk = (cls, html, size, extra = "") => `<span class="mk ${cls}" style="width:${size}px;height:${size}px;${extra}">${html}</span>`;
+  const krow = (sym, label, note) => `<div class="krow"><span class="ksym">${sym}</span><span>${label}${note ? `<span class="small"> ${note}</span>` : ""}</span></div>`;
+  const PIN_KEY = {
+    props: () => `<div class="ksec"><b>Home + 5 acres or more</b> <span class="small">(5+ acres, 2+ bd / 2+ ba, up to ${CAPK("p5")})</span>${krow(ksv(G.house(false)), "Red house = home on land", "(5-acre and 1-acre searches)")}</div>`,
+    cab: () => `<div class="ksec"><b>${esc(ST.cabin.label || "Cabin")}s</b> <span class="small">(remote cabins and homes on more than ${ST.cabin.acres || 25} acres, 1+ bd / 1+ ba, under ${CAPK("cab")}, active)</span>${krow(ksv(G.cabin(24)), "Log cabin = cabin / home on " + (ST.cabin.acres || 25) + "+ acres", "(25+ acre homes with 1–2 bedrooms are always listed here)")}</div>`,
+    cvf: () => `<div class="ksec"><b><span class="cfic">${G.bat(18)}${G.fall(15)}</span> Caves & waterfalls on the property</b> <span class="small">(the listing says so; land or homes, any size, up to this map's highest home cap; active)</span>${krow(ksv(G.bat(24)), "Flying bat = a cave on the property", "· a cave + waterfall shows as the bat (and under both buttons)")}${krow(ksv(G.fall(19)), "Small waterfall = a waterfall on the property", "· shown at every zoom; close ones group with a count")}</div>`,
+    big: () => `<div class="ksec"><b><span class="bkstar">${G.bigStar(16)}</span> 50+ acres under $250k</b> <span class="small">(raw land or with a home, any size; same cap on every map; active)</span>${krow(ksv(G.bigStar(18)), "Black star = 50+ acre lot or home under $250k", "· shown at every zoom; close ones group into a bigger star with a count")}</div>`,
+    bargain: () => `<div class="ksec"><b><span class="bstar">${G.starDot("#8e24aa")}</span> Bargain homes</b>${krow(ksv(G.starDot("#8e24aa")), "Meets every criterion and is priced well below nearby listings", "· shown at every zoom; the card says why")}</div>`,
+    homes: () => `<div class="ksec"><b>🏠 Homes</b> <span class="small">(1+ acre, 3+ bd, 2+ full ba, ≤ ${CAPK("p1")}, active)</span>
+      ${krow(ksv(G.house(false)), "Home on 1+ acre", "(red house)")}
+      ${hf.maxp || hf.mina ? `<div class="small">Filter on: ${hf.maxp ? "≤ " + money(hf.maxp) : ""}${hf.maxp && hf.mina ? ", " : ""}${hf.mina ? hf.mina + "+ acres" : ""} · <button type="button" class="linkbtn" data-openlayers="1">change</button></div>` : ""}</div>`,
+    nh: () => `<div class="ksec"><b>🏥 Near-hospital homes</b> <span class="small">(1,600+ sq ft, 3+ bd, 2+ full ba, under ${CAPK("nh")}, active, good condition, ≤ 10 min free-flow to a hospital with a 24/7 ER of 10+ beds)</span>
+      ${krow(ksv(G.house(true)), "Near-hospital home", "(red house with a white nursing cross; houses, townhomes, condos)")}
+      ${nfText() ? `<div class="small">Filter on: ${esc(nfText())} · <button type="button" class="linkbtn" data-openlayers="1">change</button></div>` : ""}</div>`,
+    trauma: () => `<div class="ksec"><b>Trauma centers</b> <span class="small">(KYHA Jan 2026 + border centers)</span>
+      ${krow(mk("trauma", "I", 22), "Level I", "(highest: UK, UofL, Cincinnati, Vanderbilt, Knoxville)")}${krow(mk("trauma", "II", 22), "Level II", "(Pikeville, Evansville, Huntington)")}
+      ${krow(mk("trauma", "III", 22), "Level III")}${krow(mk("trauma", "IV", 22), "Level IV", "(stabilize & transfer)")}${krow(mk("trauma", "IP", 22), "Pediatric Level I", "(Norton Children's)")}</div>`,
+    travel: () => `<div class="ksec"><b>💼 Travel nurse assignments</b> <span class="small">(red nurse's hat at the hospital = its top weekly pay in $1,000s, e.g. 2.4 = $2,400/wk)</span>${krow(ksv(G.nurseCap("2.4", "#fff", "#c62828", "#fff")), "Top pay $2,400/week")}
+      ${TJ_NOTE()}<div class="kbtns"><a class="linkbtn" href="#travel=all">📋 All ${TJ_ALL.length} jobs ranked by pay</a></div></div>`,
+    perm: () => `<div class="ksec"><b>🩺 Permanent RN jobs</b> <span class="small">(blue nurse's hat at the hospital = top listed hourly pay, e.g. $45; a plain number = how many jobs pass your filters when none lists pay)</span>${krow(ksv(G.nurseCap("$45", "#fff", "#1565c0", "#fff")), "Top listed pay $45/hr")}${krow(ksv(G.nurseCap("12", "#fff", "#1565c0", "#fff")), "12 jobs, pay not listed")}
+      <div class="small">Only about 19% of postings list pay. Filters (specialty, FT/PT/PRN, shift, pay, roles, bonus): Layers → Permanent RN jobs. · <button type="button" class="linkbtn" data-pjedit="1">change</button></div>
+      <div class="kbtns"><a class="linkbtn" href="#top-perm-er">🏆 Perm ER</a> <a class="linkbtn" href="#top-perm-sdms">🏆 Step-down + Med-surg</a> <a class="linkbtn" href="#top-perm-icu">🏆 ICU</a> <a class="linkbtn" href="#top-bonus">💰 Sign-on bonuses</a></div></div>`,
+    city: () => `<div class="ksec"><b>🏙 Largest cities</b>${krow(`<span class="kcity">${ksv(G.tower())}<b class="plab city">${ST.topCity}</b></span>`, `${ST.name}'s 5 largest cities, with population`, ST.cityNote)}</div>`,
+    hosp: () => `<div class="ksec"><b>Other hospitals</b>${krow(ksv(G.nurse()), "Hospital (not a trauma center)", `· nursing cross; icon from zoom ${FULL.hosp}`)}</div>`,
+    sch: () => `<div class="ksec"><b>Schools</b> <span class="small">(${ST.schLab}, best → lowest)</span>
+      <div class="kgrid">${["Blue", "Green", "Yellow", "Orange", "Red"].map(r => krow(ksv(G.cap(SCOLOR[r])), ST.rlab ? ST.rlab[r] : r)).join("")}${krow(ksv(G.cap("#9e9e9e")), "Not rated")}</div></div>`,
+    col: () => `<div class="ksec"><b>Colleges</b> <span class="small">(NCES)</span>${krow(ksv(G.univ()), "College or university")}${krow(ksv(G.diploma()), "Community / technical college or trade school", "(KCTCS etc.)")}</div>`,
+    act: () => `<div class="ksec"><b>Activities & outdoors</b><div class="kgrid">${krow(ksv(G.park()), "Park (state, national, city, county)")}${krow(ksv(G.tent()), "Campground")}${krow(ksv(G.cave()), "Cave")}${krow(ksv(G.mountain()), "Gorge, peak, arch, overlook")}${krow(ksv(G.lake()), "Lake, river, waterfall, spring")}${krow(ksv(G.tree()), "Forest, trail, wildlife area")}${krow(mk("act", ACTI.Distillery, 20), "Distillery")}${krow(mk("act", ACTI.Attraction, 20), "Zoo / attraction")}</div></div>`,
+    h_hist: () => krow(mk("hist h-historic", HIST.historic[0], 20), "Historic site / National Historic Landmark"),
+    h_coal: () => krow(mk("hist h-coal_camp", HIST.coal_camp[0], 20), "Historic coal camp"),
+    h_ghost: () => krow(mk("hist h-ghost_town", HIST.ghost_town[0], 20), "Ghost town"),
+    h_mine: () => krow(mk("hist h-mine", HIST.mine[0], 20), "Old mine (USGS MRDS)"),
+  };
+  kyxMorePinKey(PIN_KEY);
+  kyxMtnPinKey(PIN_KEY); kyxTargetPinKey(PIN_KEY);
+  function countyKey(sc, title) {
+    if (!sc) return "";
+    const m = sc.m, ap = m.key === appealKey;
+    const rng = c => c.n ? (c.lo === c.hi ? esc(fmtMetric(m, c.lo)) : `${esc(fmtMetric(m, c.lo))} – ${esc(fmtMetric(m, c.hi))}`) : "—";
+    const dir = m.neutral ? "No better/worse direction: blue = highest → lowest." : m.lower_better ? "Lower is better here, so the lowest values are green." : "Higher is better here.";
+    return `<div class="ksec"><div class="ktitle">${esc(title)}</div><div class="kmetric">${esc(m.label)}</div>
+      ${sc.classes.map(c => `<div class="kband"><span class="sw" style="background:${c.color}"></span><span class="kl">${esc(c.label)}</span><span class="kr">${rng(c)}</span><span class="kn">${c.n}</span></div>`).join("")}
+      ${sc.missing ? `<div class="kband"><span class="sw" style="background:${NODATA}"></span><span class="kl">No data</span><span class="kr"></span><span class="kn">${sc.missing}</span></div>` : ""}
+      <div class="small">${ap ? `Bands are fifths of the ${ST.n} ${ST.cup} by rank (${Math.round(ST.n / 5)} each). ` : `Fifths of the ${ST.cup} by rank; last column = number of ${ST.cup}. `}${dir}</div>
+      <div class="kbtns">${AM && /appeal/.test(m.key) ? '<button type="button" class="linkbtn" data-info="appeal">ⓘ How this score works</button>' : ""}${ANNAX && /^anna-/.test(m.key) ? '<button type="button" class="linkbtn" data-annainfo="1">ⓘ How the Anna score works</button>' : ""}<button type="button" class="linkbtn" data-openlayers="1">Change metric</button></div></div>`;
+  }
+  function renderKey() {
+    const on = k => { const d = LAYERS.find(x => x.key === k); return d && d.layer && map.hasLayer(d.layer); };
+    let h = "";
+    if (on("cty")) h += countyKey(scaleFor(curMetric), "Counties colored by");
+    if (on("sweet")) h += countyKey(scaleFor(sweetKey), "Sweet-spot layer");
+    if (!on("cty") && !on("sweet")) h += `<div class="ksec small">${ST.cu} coloring is off. Turn on “${ST.cuP}” in Layers to color by the ${ANNA_ON ? "Anna" : "Appeal"} score.</div>`;
+    const pinKeys = ["eng", "spj", "ahome", "props", "homes", "nh", "cab", "big", "cvf", "bargain", "biz", "bldg", "travel", "perm", "trauma", "hosp", "apt", "city", "feat", "ski", "peak", "tgt", "sch", "col", "act"].filter(k => !annaBlk({ key: k, anna: /^(eng|spj|ahome)$/.test(k) }) && (k === "cab" ? !!ST.cabin : k === "big" ? BIGS.length > 0 : k === "cvf" ? CFS.length > 0 : k === "bargain" ? (K.properties || []).some(p => p.bargain) : PIN_KEY[k])), histKeys = ["h_hist", "h_coal", "h_ghost", "h_mine"];
+    const atKeys = (MORE_ATT_KEYS || []).filter(k => PIN_KEY[k]), aOn = atKeys.filter(on), aOff = atKeys.filter(k => !on(k));
+    const onK = k => k === "bargain" ? on("homes") || on("nh") || on("props") || (ST.cabin && on("cab")) : k === "cab" ? !!ST.cabin && on(k) : on(k);
+    const active = pinKeys.filter(onK), off = pinKeys.filter(k => !onK(k));
+    h += active.map(k => PIN_KEY[k]()).join("");
+    const hOn = histKeys.filter(on), hOff = histKeys.filter(k => !on(k));
+    if (hOn.length) h += `<div class="ksec"><b>History</b>${hOn.map(k => PIN_KEY[k]()).join("")}</div>`;
+    if (aOn.length) h += `<div class="ksec"><b>Attractions</b>${aOn.map(k => PIN_KEY[k]()).join("")}</div>`;
+    h += krow('<span class="ksel"></span>', "Selected item", "(orange ring)");
+    if (PIN_KEY._lod) h += PIN_KEY._lod();
+    if (PIN_KEY._border) h += PIN_KEY._border();
+    if (off.length || hOff.length || aOff.length) h += `<details class="ksec koff"><summary>Symbols for layers that are off</summary>${off.map(k => PIN_KEY[k]()).join("")}${hOff.length ? `<div class="ksec"><b>History</b>${hOff.map(k => PIN_KEY[k]()).join("")}</div>` : ""}${aOff.length ? `<div class="ksec"><b>Attractions</b>${aOff.map(k => PIN_KEY[k]()).join("")}</div>` : ""}</details>`;
+    const wasOpen = keyBody.querySelector("details.koff[open]");
+    keyBody.innerHTML = h;
+    if (wasOpen) { const d = keyBody.querySelector("details.koff"); if (d) d.open = true; }
+    const sc = on("cty") ? scaleFor(curMetric) : on("sweet") ? scaleFor(sweetKey) : null;
+    $("#keyMini").innerHTML = sc ? sc.classes.map(c => `<span style="background:${c.color}"></span>`).join("") : "";
+    $("#keyMetric").textContent = sc ? sc.m.label.replace(/^★\s*/, "") : "";
+  }
+  keyEl.addEventListener("click", e => {
+    if (e.target.closest("[data-pjedit]")) { openLayersPanel();
+      loadPerm().then(() => { const b = $("#pjEdit"), f = $("#pjForm"); if (b && f && f.hidden) b.click(); const w = $("#pjFilter"); if (w) w.scrollIntoView({ block: "start" }); }); return; }
+    if (e.target.closest("[data-openlayers]")) { openLayersPanel(); msel.focus(); }
+  });
+  keyReady = true; renderKey();
+
+  // ------------------------------------------------------------------ "How this score works" popover
+  const info = $("#infoPop"), infoBody = $("#infoBody");
+  function appealInfoHtml() {
+    if (!AM) return "<p>The Appeal score method file (ky_county_appeal_method.json) was not available when this map was built.</p>";
+    const w = AM.weights, br = AM.band_ranges || [];
+    const r = (pts, name, how) => `<tr><td class="n"><b>${pts}</b></td><td><b>${name}</b><br><span class="small">${how}</span></td></tr>`;
+    return `<h2>How the Appeal score works</h2>
+      <p>A 0–100 score built for a <b>two-nurse household</b>: most of the weight is on what a nurse's pay buys, given where the jobs are. Every input is a published data set; every county is scored against ${ST.name}'s other ${ST.n - 1}.</p>
+      <div class="kicker">Nurse financial value · ${w.afford + w.hosp + w.l12} points</div>
+      <table class="tbl wtbl">
+      ${r(w.afford, "RN pay vs. home price", `Area RN median annual wage (BLS OEWS, May 2025) ÷ county median home value (ACS 2020–24). Scored as a percentile: 100 = the wage buys the most house in ${ST.ab}. Two RN incomes double the ratio but don't change the ranking.`)}
+      ${r(w.hosp, "Drive to the nearest acute-care hospital", `Where the nurse jobs are: ${AM.job_hospitals} hospitals = ${ST.jobHosp}. Critical-access (≤25 beds), rural emergency, psychiatric and military hospitals are left out. 100 at ≤${AM.hosp_min[0]} min, falling to 0 at ${AM.hosp_min[1]} min.`)}
+      ${r(w.l12, "Drive to the nearest Level I/II trauma center", `The big teaching/tertiary employers (${esc(AM.l12_centers.join("; "))}). 100 at ≤${AM.l12_min[0]} min, 0 at ${AM.l12_min[1]} min.`)}
+      </table>
+      <div class="kicker">Everything else · ${w.land + w.school + w.trauma} points</div>
+      <table class="tbl wtbl">
+      ${r(w.land, "Land suitability", "Existing land score: % of land in farms, rainfall, number of farms, cropland share, dry-summer risk, surface water (NASS 2022, NOAA).")}
+      ${r(w.school, "Schools", `Existing school score: ${ST.schoolScore}.`)}
+      ${r(w.trauma, "Trauma access for the family", `Drive to the nearest adult trauma center of any level (I–IV, ${AM.trauma_centers} centers). 100 at ≤${AM.trauma_min[0]} min, 0 at ${AM.trauma_min[1]} min.`)}
+      </table>
+      <p class="small"><b>Score</b> = Σ (component 0–100 × points) ÷ 100. The county card shows each county's breakdown.</p>
+      <div class="kicker">Bands on the map</div>
+      <table class="tbl">${AM.bands.map((b, i) => `<tr><td><span class="sw" style="background:${RAMP[i]}"></span> ${esc(b)}</td><td class="n">${br[i] ? fmt1(br[i][0]) + " – " + fmt1(br[i][1]) : ""}</td><td class="n small">ranks ${i * 24 + 1}–${i * 24 + 24}</td></tr>`).join("")}</table>
+      <div class="kicker">Caveats</div>
+      <ul class="small">
+        <li>Drive times: ${esc(AM.drive_source)}, from each county's 2020 Census population centroid, fetched ${esc(AM.drive_fetched)}. No traffic: real rush-hour times are longer.</li>
+        <li>RN wages are BLS area medians (all settings), shared by every county in an area. ${esc(AM.owensboro_note)}</li>
+        <li>Out-of-state hospitals are included only if they are Level I/II trauma centers, so border counties (e.g. near Clarksville, Union City, Huntington's other hospitals) may be under-credited.</li>
+        <li>Hospital size beyond the critical-access cut-off isn't in the data; a few "acute-care" hospitals are small.</li>
+      </ul>
+      <p class="small">Data: <code>data/statewide/ky_county_appeal.csv</code> · method: <code>maps/statewide/notes.md</code> · code: <code>scripts/appeal_build.py</code></p>`;
+  }
+  function openInfo() { infoBody.innerHTML = appealInfoHtml(); info.hidden = false; $("#infoClose").focus(); }
+  $("#infoClose").onclick = () => { info.hidden = true; };
+  info.addEventListener("click", e => { if (e.target === info) info.hidden = true; });
+  document.addEventListener("click", e => { if (e.target.closest("[data-info]")) { e.preventDefault(); openInfo(); } });
+
+  // ------------------------------------------------------------------ card rendering
+  const link = (type, id, text) => `<a class="inl" data-go="${esc(type)}" data-id="${esc(id)}">${esc(text)}</a>`;
+  const ext = (url, text) => url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(text || url)}</a>` : "—";
+  const row = (k, v) => v == null || v === "" ? "" : `<tr><td>${esc(k)}</td><td>${v}</td></tr>`;
+  const stat = (v, l) => `<div class="stat"><b>${v}</b><span>${esc(l)}</span></div>`;
+
+  function schoolBlock(c) {
+    if (!c) return "";
+    const cs = IDX.county[c] && IDX.county[c].school; const m = IDX.county[c] ? IDX.county[c].m : {};
+    if (!cs && m.sch_pp_ky == null) return "";
+    const rat = cs && cs.letters ? esc(cs.letters).replace(/([ABCDF])(\d+)/g, "<b>$1</b>&nbsp;$2").replace(/ (?=<b>)/g, " · ") : cs && cs.ratings ? cs.ratings.split("/").map(r => rbadge(r)).join(" ") : "—";
+    return `<table class="kv">${row(ST.cu === "County" ? "County district" : "Districts", esc(cs && cs.district || c + ST.cus))}
+      ${row(`Schools vs ${ST.ab}`, `${esc(sign(m.sch_pp_ky, 1))} pp ${cs && cs.band_ky ? "(" + esc(cs.band_ky) + ")" : ""}`)}
+      ${row("Schools vs US", `${esc(sign(m.sch_gl_us, 2))} grade levels ${cs && cs.band_us ? "(" + esc(cs.band_us) + ")" : ""}`)}
+      ${row(ST.rlab ? "Schools graded A–F" : "KDE rating ES/MS/HS", rat)}${row(`Rank in ${ST.ab}`, m.sch_rank != null ? "#" + Math.round(m.sch_rank) + " of " + ST.n : null)}
+      ${cs && cs.independents ? row(ST.rlab ? "Other districts here" : "Independent districts", esc(cs.independents)) : ""}</table>`;
+  }
+  // thumbnail at the top of each card (data/thumbs.json via build.py -> item.th)
+  const THUMB_TITLE = { travel: h => h.name, hospital: h => h.name, school: s => s.name, college: c => c.name, activity: a => a.name, history: h => h.name, county: c => c.name + ST.cus + ", " + ST.name, property: p => p.title };
+  const SAT = { c: "Imagery: Esri, Maxar, Earthstar Geographics", s: "https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9" };
+  function thumb(type, it) {
+    let t = it.th; if (!t || !t.u) return "";
+    const sat = t.k === "satellite";
+    if (sat) t = Object.assign({}, SAT, t);
+    const name = THUMB_TITLE[type] ? THUMB_TITLE[type](it) : "";
+    const alt = sat ? `Satellite view of ${name}` : `Photo of ${name}`;
+    const src = t.s ? ` · <a href="${esc(t.s)}" target="_blank" rel="noopener">${sat ? "about" : "source"}</a>` : "";
+    return `<figure class="thumb${sat ? " sat" : ""}"><button type="button" class="thumbbtn" data-thumb="1" aria-label="Enlarge ${esc(alt)}">
+      <img src="${esc(t.u)}" alt="${esc(alt)}" loading="lazy" decoding="async" width="400" height="260">${sat ? '<span class="thtag">🛰 Satellite view</span>' : ""}</button>
+      <figcaption class="attr">${sat ? "Satellite view · " : ""}${esc(t.c || "")}${src}</figcaption></figure>`;
+  }
+  const R = {};
+  function nearbyBlock(nb) {
+    if (!nb) return "";
+    const H = h => h ? `${link("hospital", h.id, h.n)} · ${h.min != null ? `<b>~${esc(h.min)} min</b> <span class="small">drive (${esc(h.src || "OSRM")})</span>` : `<b>~${fmt1(h.rd)} road mi</b> <span class="small">approx (${fmt1(h.mi)} mi straight-line × 1.3)</span>`}${h.tr ? " · " + esc(h.tr) : ""}${h.er ? ` · ${esc(h.er)} ER beds` : h.erl ? ` · ER ${esc(h.erl)}` : ""}` : null;
+    const TGN = t => `${link("target", t.id, t.n)}${t.st ? ` <span class="small">(${esc(t.st)})</span>` : ""} · ${t.min != null ? `<b>~${esc(t.min)} min</b> <span class="small">drive (OSRM, free-flow)</span>` : `<b>~${fmt1(t.rd)} road mi</b> <span class="small">approx (${fmt1(t.mi)} mi straight-line × 1.3)</span>`}`;
+    const P = (nb.poi || []).map(q => `${link(q.t, q.id, q.n)} <span class="small">${fmt1(q.mi)} mi</span>`).join("<br>");
+    const S = lv => { const x = (nb.s || {})[lv]; return x ? `${link("school", x.id, x.n)} ${rbadge(x.r)}${x.d != null ? ` <span class="small">${x.d >= 0 ? "+" : ""}${fmt1(x.d)} pts vs ${ST.ab} avg</span>` : ""} <span class="small">· ${fmt1(x.mi)} mi</span>` : null; };
+    return `<div class="kicker">Nearby</div><table class="kv nb">${row("🏥 Hospital", H(nb.h))}${nb.t && (!nb.h || nb.t.id !== nb.h.id) ? row("🚑 Level I/II", H(nb.t)) : ""}${nb.tg ? row("🎯 Target", TGN(nb.tg)) : ""}${row("📍 Places", P || null)}${row("🎓 Elementary", S("ES"))}${row("🎓 Middle", S("MS"))}${row("🎓 High", S("HS"))}</table>`;
+  }
+  const dealNote = p => p.bargain ? `<div class="note deal"><span class="bstar">${G.starDot("#8e24aa")}</span> <b>Bargain:</b> ${esc(p.deal || "")}</div>` : "";
+  R.property = p => {
+    const photos = p.photos || [];
+    const gal = photos.length ? `<div class="gal" id="gal">${photos.map((u, i) => `<img src="${esc(u)}" data-i="${i}" loading="${i < 2 ? "eager" : "lazy"}" alt="Photo ${i + 1} of ${esc(p.title)}">`).join("")}</div><div class="galcount">${photos.length} photo${photos.length > 1 ? "s" : ""} · swipe or tap to enlarge</div>` : "";
+    const ppa = p.price && p.acres ? money(p.price / p.acres) + "/ac" : null;
+    const drives = (p.drives || []).length ? `<div class="kicker">Hospital drive times</div>
+      <table class="tbl"><tr><th>Hospital</th><th class="n">Miles</th><th class="n">7 AM</th><th class="n">7 PM</th></tr>
+      ${p.drives.map(d => `<tr><td>${esc(d.hospital)}${d.role ? `<br><span class="small"><b>${esc(d.role)}</b></span>` : ""}${d.traffic_aware ? "" : (d.source && /free-flow/.test(d.source) ? "" : '<br><span class="small">free-flow, no traffic data</span>')}${d.source ? `<br><span class="small">${esc(d.source)}</span>` : ""}</td>
+        <td class="n">${fmt1(d.miles)}</td>${d.min_7am == null && d.min_7pm == null && !d.range_7am && d.minutes_free_flow != null ? `<td class="n" colspan="2">~${Math.round(d.minutes_free_flow)} min<br><span class="small">no traffic</span></td></tr>` : `<td class="n">${d.range_7am ? esc(d.range_7am) + " min" : (d.min_7am != null ? Math.round(d.min_7am) + " min" : "—")}</td><td class="n">${d.range_7pm ? esc(d.range_7pm) + " min" : (d.min_7pm != null ? Math.round(d.min_7pm) + " min" : "—")}</td></tr>`}`).join("")}</table>` : "";
+    const ns = p.near_schools || {};
+    if (isCF(p)) return cfCard(p, gal, ns);
+    if (isNH(p)) return nhCard(p, gal, drives, ns);
+    if (isBig(p)) return bigCard(p, gal, ns);
+    const home = isHome(p);
+    return `<div class="kicker">${isCab(p) ? `<span class="lic">${G.cabin(16)}</span> ${esc(ST.cabin.label || "Cabin")} · over ${ST.cabin.acres || 25} ac · under ${CAPK("cab")}` : home ? "🏠 Home · 1+ acre, 3bd/2ba, under " + CAPK("p1") + (p.standout && p.standout.length ? " · ★ standout" : "") : p.standout && p.standout.length ? "★ Standout property" : "Property"}</div><h2>${esc(p.title)}</h2>
+      <div class="sub">${esc([p.town, p.county && p.county + ST.cus].filter(Boolean).join(", "))}</div>
+      ${gal || thumb("property", p)}
+      ${p.standout && p.standout.length ? `<div class="badges">${p.standout.map(s => `<span class="badge gold">★ ${esc(s)}</span>`).join("")}</div>` : ""}
+      ${p.precision === "town" ? `<div class="note">📍 Approximate pin: placed at the town center (${esc(p.town || "town")}); the exact parcel location wasn't published.</div>` : ""}
+      ${p.pending ? '<div class="note">Listing details are still being collected (listings.json not ready when this map was built). Re-run build.py to fill in price, acreage and the exact location.</div>' : ""}
+      <div class="stats">${stat(money(p.price), "price")}${stat(p.acres != null ? fmt1(p.acres) : "—", "acres")}${stat(ppa || "—", "per acre")}
+        ${stat(`${p.beds != null ? esc(p.beds) : "—"} / ${p.baths != null ? esc(p.baths) : "—"}`, "bed / bath")}${home ? stat(p.sqft ? Math.round(p.sqft).toLocaleString() : "—", "sq ft") + stat(p.year_built ? esc(p.year_built) : "—", "built") : stat(p.dwellings != null ? esc(p.dwellings) : "—", "dwellings")}${stat(esc(p.seen || "—"), "date seen")}</div>
+      ${dealNote(p)}${nearbyBlock(p.nearby)}
+      ${home ? `<table class="kv">${row("Address", p.address ? esc(p.address) : null)}${row("Baths", p.bath_detail ? esc(p.bath_detail) : null)}${row("Dwellings", p.dwellings ? esc(p.dwellings) : null)}</table>` : ""}
+      ${p.notes ? `<div class="note">⚠️ ${esc(p.notes)}</div>` : ""}
+      ${p.water && p.water.length ? `<div class="kicker">Water & cave features</div><div class="badges">${p.water.map(w => `<span class="badge">💧 ${esc(w)}</span>`).join("")}</div>` : ""}
+      ${p.features && p.features.length ? `<div class="kicker">Features</div><div class="badges">${p.features.map(w => `<span class="badge">${esc(w)}</span>`).join("")}</div>` : ""}
+      <div class="kicker">Health care</div><table class="kv">
+        ${row("Nearest hospital", p.near_hosp ? `${link("hospital", p.near_hosp.id, p.near_hosp.name)} · ${p.near_hosp.miles} mi straight-line${p.near_hosp.trauma ? " · " + esc(p.near_hosp.trauma) : ""}` : null)}
+        ${row("Nearest trauma center", p.near_trauma ? `${link("hospital", p.near_trauma.id, p.near_trauma.name)} · ${esc(p.near_trauma.trauma)} · ${p.near_trauma.miles} mi straight-line` : null)}</table>
+      ${drives}
+      <div class="kicker">Schools</div>${schoolBlock(p.county)}
+      ${p.school_ind ? `<table class="kv">${row(p.school_ind.name, `${esc(sign(p.school_ind.pp_vs_ky, 1))} pp vs ${ST.ab} · ${esc(sign(p.school_ind.gl_vs_us, 2))} GL vs US · ${rbadge(p.school_ind.es)} ${rbadge(p.school_ind.ms)} ${rbadge(p.school_ind.hs)}`)}</table>` : ""}
+      <table class="kv">${row("Nearest elementary", ns.ES ? `${link("school", ns.ES.id, ns.ES.name)} ${rbadge(ns.ES.rating)} · ${ns.ES.miles} mi` : null)}
+        ${row("Nearest high school", ns.HS ? `${link("school", ns.HS.id, ns.HS.name)} ${rbadge(ns.HS.rating)} · ${ns.HS.miles} mi` : null)}</table>
+      <table class="kv">${row(ST.cu, p.county ? link("county", p.county, p.county + ST.cus) : null)}${row("Listing", ext(p.url, "Open original listing ↗"))}${row("Date seen", esc(p.seen))}${row("Listing updated", p.updated ? esc(p.updated) : null)}${row("Status", p.status ? esc(p.status) : null)}</table>
+      ${p.desc ? `<div class="kicker">Description</div><div class="desc">${esc(p.desc)}</div>` : ""}`;
+  };
+  function cfCard(p, gal, ns) {  // cave / waterfall on the property: what the listing says (short quote), price, acres, Nearby
+    const q = p.cfq || {}, also = isBig(p) ? "50+ acres under $250k" : isNH(p) ? "near-hospital home" : isHome(p) ? "1-acre home" : isCab(p) ? (ST.cabin.label || "Cabin").toLowerCase() : isCFo(p) ? "" : "5+ acre land";
+    const ppa = p.price && p.acres >= 1 ? money(p.price / p.acres) : null, home = p.dwell ? p.dwell === "yes" : p.beds != null;
+    return `<div class="kicker"><span class="cfic">${hasCave(p) ? G.bat(20) : ""}${hasFalls(p) ? G.fall(15) : ""}</span> ${hasCave(p) && hasFalls(p) ? "Cave + waterfall" : hasCave(p) ? "Cave" : "Waterfall"} on the property${also ? " · also " + esc(also) : ""}</div><h2>${esc(p.title)}</h2>
+      <div class="sub">${esc(p.address || [p.town, p.county && p.county + ST.cus].filter(Boolean).join(", "))}</div>
+      ${gal || thumb("property", p)}
+      ${["cave", "falls"].filter(k => q[k]).map(k => `<div class="note good cfq">${k === "cave" ? "🦇" : "💧"} <b>The listing says:</b> “${esc(q[k])}”</div>`).join("")}
+      <div class="stats">${stat(money(p.price), "price")}${stat(p.acres != null ? (+p.acres).toLocaleString(undefined, { maximumFractionDigits: p.acres < 10 ? 2 : 0 }) : "—", "acres")}${ppa ? stat(ppa, "per acre") : ""}
+        ${home ? stat(`${p.beds != null ? esc(p.beds) : "—"} / ${p.baths != null ? esc(p.baths) : "—"}`, "bed / bath") + stat(p.sqft ? Math.round(p.sqft).toLocaleString() : "—", "sq ft") : stat(p.dwell === "maybe" ? "Maybe" : "No", "dwelling")}${stat(esc(p.seen || "—"), "date seen")}</div>
+      ${p.bargain ? `<div class="note">⭐ Also flagged as a bargain on this map.</div>` : ""}
+      ${p.dwn ? `<div class="note">${p.dwell === "yes" ? "🏠" : p.dwell === "maybe" ? "❔" : "🌲"} <b>Dwelling:</b> ${esc(p.dwn)}</div>` : ""}
+      ${nearbyBlock(p.nearby)}
+      ${p.features && p.features.length ? `<div class="kicker">Features</div><div class="badges">${p.features.map(w => `<span class="badge">${esc(w)}</span>`).join("")}</div>` : ""}
+      <div class="kicker">Health care</div><table class="kv">
+        ${row("Nearest hospital", p.near_hosp ? `${link("hospital", p.near_hosp.id, p.near_hosp.name)} · ${p.near_hosp.miles} mi straight-line${p.near_hosp.trauma ? " · " + esc(p.near_hosp.trauma) : ""}` : null)}
+        ${row("Nearest trauma center", p.near_trauma ? `${link("hospital", p.near_trauma.id, p.near_trauma.name)} · ${esc(p.near_trauma.trauma)} · ${p.near_trauma.miles} mi straight-line` : null)}</table>
+      <div class="kicker">Schools</div>${schoolBlock(p.county)}
+      <table class="kv">${row("Nearest elementary", ns.ES ? `${link("school", ns.ES.id, ns.ES.name)} ${rbadge(ns.ES.rating)} · ${ns.ES.miles} mi` : null)}
+        ${row("Nearest high school", ns.HS ? `${link("school", ns.HS.id, ns.HS.name)} ${rbadge(ns.HS.rating)} · ${ns.HS.miles} mi` : null)}</table>
+      <table class="kv">${row(ST.cu, p.county ? link("county", p.county, p.county + ST.cus) : null)}${row("Listing", ext(p.url, "Open original listing ↗"))}${row("Source", p.source ? esc(p.source) : null)}${row("Date seen", esc(p.seen))}${row("Status", p.status ? esc(p.status) : null)}</table>
+      <div class="note">Cave / waterfall: from the listing text (checked so place names like “Cave City” or “Falls Rd” don't count). Confirm with the seller or agent before you go.</div>
+      ${p.desc ? `<div class="kicker">Description</div><div class="desc">${esc(p.desc)}</div>` : ""}`;
+  }
+  function bigCard(p, gal, ns) {  // 50+ acres under $250k: acreage, $/acre, dwelling yes / no, Nearby
+    const ppa = p.price && p.acres ? money(p.price / p.acres) : "—", dw = p.dwell === "yes" ? "Yes" : p.dwell === "maybe" ? "Maybe" : "No";
+    return `<div class="kicker"><span class="bkstar">${G.bigStar(16)}</span> 50+ acres under $250k · ${p.dwell === "yes" ? "with a home" : "land"}</div><h2>${esc(p.title)}</h2>
+      <div class="sub">${esc(p.address || [p.town, p.county && p.county + ST.cus].filter(Boolean).join(", "))}</div>
+      ${gal || thumb("property", p)}
+      <div class="stats">${stat(money(p.price), "price")}${stat(p.acres != null ? Math.round(p.acres).toLocaleString() : "—", "acres")}${stat(ppa, "per acre")}${stat(dw, "dwelling")}
+        ${p.dwell === "yes" ? stat(`${p.beds != null ? esc(p.beds) : "—"} / ${p.baths != null ? esc(p.baths) : "—"}`, "bed / bath") + stat(p.sqft ? Math.round(p.sqft).toLocaleString() : "—", "sq ft") : ""}${stat(esc(p.seen || "—"), "date seen")}</div>
+      ${p.dwn ? `<div class="note${p.dwell === "yes" ? " good" : ""}">${p.dwell === "yes" ? "🏠" : p.dwell === "maybe" ? "❔" : "🌲"} <b>Dwelling:</b> ${esc(p.dwn)}</div>` : ""}
+      ${nearbyBlock(p.nearby)}
+      ${p.features && p.features.length ? `<div class="kicker">Features</div><div class="badges">${p.features.map(w => `<span class="badge">${esc(w)}</span>`).join("")}</div>` : ""}
+      ${p.water && p.water.length ? `<div class="kicker">Water features</div><div class="badges">${p.water.map(w => `<span class="badge">💧 ${esc(w)}</span>`).join("")}</div>` : ""}
+      <div class="kicker">Health care</div><table class="kv">
+        ${row("Nearest hospital", p.near_hosp ? `${link("hospital", p.near_hosp.id, p.near_hosp.name)} · ${p.near_hosp.miles} mi straight-line${p.near_hosp.trauma ? " · " + esc(p.near_hosp.trauma) : ""}` : null)}
+        ${row("Nearest trauma center", p.near_trauma ? `${link("hospital", p.near_trauma.id, p.near_trauma.name)} · ${esc(p.near_trauma.trauma)} · ${p.near_trauma.miles} mi straight-line` : null)}</table>
+      <div class="kicker">Schools</div>${schoolBlock(p.county)}
+      <table class="kv">${row("Nearest elementary", ns.ES ? `${link("school", ns.ES.id, ns.ES.name)} ${rbadge(ns.ES.rating)} · ${ns.ES.miles} mi` : null)}
+        ${row("Nearest high school", ns.HS ? `${link("school", ns.HS.id, ns.HS.name)} ${rbadge(ns.HS.rating)} · ${ns.HS.miles} mi` : null)}</table>
+      <table class="kv">${row(ST.cu, p.county ? link("county", p.county, p.county + ST.cus) : null)}${row("Listing", ext(p.url, "Open original listing ↗"))}${row("Source", p.source ? esc(p.source) : null)}${row("Date seen", esc(p.seen))}${row("Status", p.status ? esc(p.status) : null)}</table>
+      ${p.notes ? `<div class="note">${esc(p.notes)}</div>` : ""}
+      ${p.desc ? `<div class="kicker">Description</div><div class="desc">${esc(p.desc)}</div>` : ""}`;
+  }
+  function nhCard(p, gal, drives, ns) {
+    const nh = p.nh || {};
+    const er = nh.er_beds ? `${esc(nh.er_beds)} ER beds/bays${nh.er_beds_label ? ` <span class="small">(${esc(nh.er_beds_label)})</span>` : ""}` : nh.estimate ? "Likely 10+ ER beds <b>(estimate</b>: 100+ licensed beds, 24/7 ER; no published count)" : esc(nh.er_beds_label || "—");
+    return `<div class="kicker">🏥 Near-hospital home · ${esc(p.ptype || "House")} · 1,600+ sq ft, 3bd/2ba, under ${CAPK("nh")}</div><h2>${esc(p.title)}</h2>
+      <div class="sub">${esc(p.address || [p.town, p.county && p.county + ST.cus].filter(Boolean).join(", "))}</div>
+      ${gal || thumb("property", p)}
+      ${nh.name ? `<div class="nhbox"><div class="nhmin"><b>~${esc(Math.round(nh.minutes_free_flow))}</b><span>min</span></div><div><b>${nh.hospital_id ? link("hospital", nh.hospital_id, nh.name) : esc(nh.name)}</b>${nh.city ? ` <span class="small">(${esc(nh.city)})</span>` : ""}
+        <br><span class="small">${esc(fmt1(nh.miles))} mi · free-flow drive, no traffic (OSRM)${nh.gmaps_check ? " · " + esc(nh.gmaps_check) : ""}</span><br>🚑 ${er}${nh.source_url ? ` · <a href="${esc(nh.source_url)}" target="_blank" rel="noopener">ER source ↗</a>` : ""}</div></div>` : ""}
+      <div class="stats">${stat(money(p.price), "price")}${stat(sqft(p.sqft), "sq ft")}${stat(`${p.beds != null ? esc(p.beds) : "—"} / ${p.baths != null ? esc(p.baths) : "—"}`, "bed / bath")}
+        ${stat(esc(p.ptype || "—"), "type")}${stat(p.year_built ? esc(p.year_built) : "—", "built")}${stat(esc(p.seen || "—"), "date seen")}</div>
+      ${dealNote(p)}${p.condition ? `<div class="note good">✅ <b>Condition:</b> ${esc(p.condition)}</div>` : ""}${nearbyBlock(p.nearby)}
+      ${p.notes ? `<div class="note">⚠️ ${esc(p.notes)}</div>` : ""}
+      <table class="kv">${row("Address", p.address ? esc(p.address) : null)}${row("Type", esc(p.ptype || "House"))}${row("Baths", p.bath_detail ? esc(p.bath_detail) : null)}${row("Lot", p.acres ? fmt1(p.acres) + " acres" : null)}${row("MLS #", p.mls ? esc(p.mls) : null)}</table>
+      ${p.features && p.features.length ? `<div class="kicker">Features</div><div class="badges">${p.features.map(w => `<span class="badge">${esc(w)}</span>`).join("")}</div>` : ""}
+      ${drives}
+      <div class="kicker">Schools</div>${schoolBlock(p.county)}
+      <table class="kv">${row("Nearest elementary", ns.ES ? `${link("school", ns.ES.id, ns.ES.name)} ${rbadge(ns.ES.rating)} · ${ns.ES.miles} mi` : null)}
+        ${row("Nearest high school", ns.HS ? `${link("school", ns.HS.id, ns.HS.name)} ${rbadge(ns.HS.rating)} · ${ns.HS.miles} mi` : null)}</table>
+      <table class="kv">${row(ST.cu, p.county ? link("county", p.county, p.county + ST.cus) : null)}${row("Listing", ext(p.url, "Open original listing ↗"))}${row("Source", p.source ? esc(p.source) : null)}${row("Date seen", esc(p.seen))}${row("Status", p.status ? esc(p.status) : null)}</table>
+      ${p.desc ? `<div class="kicker">Description</div><div class="desc">${esc(p.desc)}</div>` : ""}`;
+  }
+  R.hospital = h => `${thumb("hospital", h)}<div class="kicker">${h.trauma ? "Trauma center" : h.kind === "general" ? "Hospital" : "Specialty hospital"}</div><h2>${esc(h.name)}</h2>
+    <div class="sub">${esc([h.addr, h.city, h.state].filter(Boolean).join(", "))}</div>
+    ${h.trauma ? `<div class="badges"><span class="badge gold">🚑 Trauma ${esc(h.trauma)}</span></div>` : ""}
+    <table class="kv">${row("Trauma designation", h.trauma ? `${esc(h.trauma)}${h.trauma_name ? " — listed as “" + esc(h.trauma_name) + "”" : ""}<br><span class="small">${esc(h.trauma_src)}</span>` : `Not on the ${ST.traumaList}`)}
+    ${row("Emergency dept.", h.emergency === "yes" ? "Yes (per OpenStreetMap)" : h.emergency === "no" ? "No (per OpenStreetMap)" : null)}
+    ${row("Type", h.kind === "general" ? "General / acute care" : "Specialty (psychiatric, rehab, long-term, etc.)")}
+    ${row("ER beds", h.er ? (h.er.beds ? `${esc(h.er.beds)} <span class="small">(${esc(h.er.label || "")})</span>` : h.er.ok ? 'Likely 10+ <span class="small">(estimate: 100+ licensed beds, 24/7 ER)</span>' : 'Unknown <span class="small">(no published count; not used for near-hospital homes)</span>') + (h.er.src ? ` · <a href="${esc(h.er.src)}" target="_blank" rel="noopener">source</a>` : "") : null)}
+    ${row("Licensed beds", h.lic_beds ? `${esc(h.lic_beds)}${h.lic_type ? " · " + esc(h.lic_type) : ""}<br><span class="small">${ST.licSrc}${h.lic_name ? ` · licensed as “${esc(h.lic_name)}”` : ""}</span>` : h.beds ? `${esc(h.beds)} <span class="small">(OpenStreetMap)</span>` : null)}
+    ${row("CMS star rating", h.cms_rating ? `${"★".repeat(Math.round(h.cms_rating))}${"☆".repeat(5 - Math.round(h.cms_rating))} ${esc(h.cms_rating)}/5 <span class="small">(CMS overall rating)</span>` : null)}
+    ${row(ST.cu, h.county ? link("county", h.county, h.county + ST.cus) : esc(h.state || "out of state"))}
+    ${row("Phone", h.phone ? `<a href="tel:${esc(h.phone)}">${esc(h.phone)}</a>` : null)}${row("Website", h.web ? ext(h.web, "Website ↗") : null)}
+    ${row("Map data", h.osm ? ext(h.osm, "OpenStreetMap ↗") : esc(h.note || ""))}</table>${nearbyProps(h)}`;
+  R.travel = travelCard;
+  R.perm = h => PJX ? PJX.card(h) : "";  // permanent RN jobs at one hospital (perm.js)
+  R.city = c => `<div class="kicker">🏙 ${ST.name}'s #${c.rank} largest city</div><h2>${esc(c.full || c.name)}</h2><div class="sub">${esc(c.county)}${ST.cus}, ${ST.name}</div>
+    <div class="stats">${stat(c.pop.toLocaleString(), "people (July 1, 2025 estimate)")}${stat(popK(c.pop), "on the map")}</div>
+    <table class="kv">${row("Counted as", esc(c.note))}${row(ST.cu, link("county", c.county, c.county + ST.cus))}${row("Source", "U.S. Census Bureau, Vintage 2025 population estimates")}</table>`;
+  const _hospCard = R.hospital;  // hospital card: link to its travel jobs
+  R.hospital = h => { const t = TJ.hospitals.find(x => x.hospital_id === h.id); return _hospCard(h) + (t ? `<div class="kicker">💼 Travel nurse assignments</div><table class="kv">${row("Travel RN jobs", `${link("travel", t.id, t.n + " job" + (t.n > 1 ? "s" : "") + ", top " + money(t.top) + "/wk")}`)}</table>` : ""); };
+  R.school = s => {
+    const lv = Object.entries(s.levels || {});
+    const dr = s.drank || {};
+    return `${thumb("school", s)}<div class="kicker">School</div><h2>${esc(s.name)}</h2><div class="sub">${esc(s.district)} · grades ${esc(s.grades)}</div>
+    ${s.letter ? `<table class="kv">${row(ST.schLab, `${rbadge(s.rating)}${s.lg_score != null ? ` &nbsp;<b>${fmt1(s.lg_score)}</b>${ST.schOf || " of 5"}` : ""}`)}
+      ${row("Success rate (TCAP/EOC on track + mastered)", s.success != null ? esc(fmt1(s.success)) + "%" : null)}
+      ${row("Achievement · growth · college & career", [["Ach", s.ach], ["Growth", s.growth], ["CCR", s.ccr]].filter(x => x[1]).map(x => `${x[0]} <b>${esc(x[1])}</b>`).join(" · ") || null)}</table>`
+    : lv.length ? `<table class="tbl"><tr><th>Level</th><th>${ST.schLab}</th><th class="n">Score</th></tr>${lv.map(([L, v]) => `<tr><td>${esc(L)}</td><td>${rbadge(v.rating)}${v.fed ? `<br><span class="small">${esc(v.fed)}</span>` : ""}</td><td class="n">${v.score != null ? fmt1(v.score) : "—"}</td></tr>`).join("")}</table>` : `<div class="note">${ST.schNone || (ST.rlab ? "No 2024-25 TDOE letter grade for this school/program" : "No 2025 accountability rating for this school/program")}.</div>`}
+    <table class="kv">${row("ACT composite (2024-25)", s.act != null ? esc(s.act) : null)}
+    ${Object.entries(dr).map(([L, r]) => row(`District rank (${L})`, `#${esc(r.rank)} of ${esc(r.of)} districts`)).join("")}
+    ${row("Address", esc([s.addr, s.city].filter(Boolean).join(", ")))}${row("Phone", s.phone ? `<a href="tel:${esc(s.phone)}">${esc(s.phone)}</a>` : null)}
+    ${row(ST.cu, link("county", s.county, s.county + ST.cus))}</table>
+    <div class="kicker">${ST.cu === "County" ? "County district" : ST.cu + " school"} context</div>${schoolBlock(s.county)}
+    <div class="small">${ST.rlab ? "Letter grades F &lt; D &lt; C &lt; B &lt; A" : "KDE colors: Red &lt; Orange &lt; Yellow &lt; Green &lt; Blue"} (${ST.schSrc}).</div>`;
+  };
+  R.college = c => `${thumb("college", c)}<div class="kicker">${esc(c.kind)}</div><h2>${esc(c.name)}</h2><div class="sub">${esc([c.addr, c.city].join(", "))}</div>
+    <table class="kv">${row(ST.cu, link("county", c.county, c.county + ST.cus))}${row("Details", ext(c.src, "NCES College Navigator ↗"))}</table>`;
+  R.activity = a => `${thumb("activity", a)}<div class="kicker">${esc(a.kind)}</div><h2>${esc(a.name)}</h2>
+    ${a.desc ? `<div class="desc">${esc(a.desc)}</div>` : ""}
+    <table class="kv">${row(ST.cu, link("county", a.county, a.county + ST.cus))}${row("Website", a.web ? ext(a.web, "Website ↗") : null)}
+    ${row("Wikipedia", a.wiki ? ext("https://en.wikipedia.org/wiki/" + encodeURIComponent((a.wiki.split(":")[1] || a.wiki).replace(/ /g, "_")), (a.wiki.split(":")[1] || a.wiki) + " ↗") : null)}
+    ${row("Map data", ext(a.src, "OpenStreetMap ↗"))}</table>${nearbyProps(a)}`;
+  R.history = h => {
+    const t = HIST[h.type] || ["", h.type];
+    return `${h.th ? thumb("history", h) : ""}<div class="kicker">${t[0]} ${esc(t[1])}${h.nhl ? " · National Historic Landmark" : ""}</div><h2>${esc(h.name)}</h2>
+    ${!h.th && h.img ? `<figure class="thumb"><img src="${esc(h.img.thumb)}" alt="${esc(h.name)}" loading="lazy"><figcaption class="attr">Photo: ${esc(h.img.artist)} · ${esc(h.img.license)} · <a href="${esc(h.img.page)}" target="_blank" rel="noopener">Wikimedia Commons</a></figcaption></figure>` : ""}
+    <div class="desc">${esc(h.desc)}</div>
+    <table class="kv">${row(ST.cu, h.county ? link("county", h.county, h.county + ST.cus) : null)}${row("Source", ext(h.src, (h.src_name || "Source") + " ↗"))}</table>`;
+  };
+  function appealBlock(c) {
+    const a = c.appeal; if (!a || !a.jh) return "";
+    const k = Math.max(0, BANDS.indexOf(a.band)), w = (AM && AM.weights) || {};
+    const comp = [["RN pay vs. home price", a.afford, w.afford, `${money(a.wage)} RN median${a.wage_flag ? "†" : ""} ÷ ${money(a.home)} home = ${a.ratio != null ? a.ratio.toFixed(2) : "—"}`],
+      ["Drive to acute-care hospital", a.hosp, w.hosp, `${esc(a.jh.name)} · ${Math.round(a.jh.min)} min / ${fmt1(a.jh.mi)} mi`],
+      ["Drive to Level I/II trauma", a.l12, w.l12, `${esc(a.l12h.name)} (Level ${esc(a.l12h.level)}) · ${Math.round(a.l12h.min)} min / ${fmt1(a.l12h.mi)} mi`],
+      ["Land suitability", a.land, w.land, "land score"], ["Schools", a.school, w.school, "school score"],
+      ["Trauma access (any level)", a.trauma, w.trauma, `${esc(a.trh.name)} (Level ${esc(a.trh.level)}) · ${Math.round(a.trh.min)} min`]];
+    return `<div class="appeal" style="--band:${RAMP[k]}"><div class="ascore"><b>${fmt1(a.score)}</b><span>/100</span></div>
+      <div class="ameta"><div class="kicker" style="margin-top:0">Appeal score</div><div class="arank">#${a.rank} of ${ST.n} · <span class="aband">${esc(a.band)}</span></div>
+      <div class="small">Nurse financial value ${fmt1(a.nfv)}/100 · <button type="button" class="linkbtn" data-info="appeal">ⓘ How this score works</button></div></div></div>
+      <details class="abreak"><summary>Score breakdown</summary><table class="tbl"><tr><th>Component</th><th class="n">0–100</th><th class="n">pts</th></tr>
+      ${comp.map(([n, v, wt, d]) => `<tr><td>${n}<br><span class="small">${d}</span></td><td class="n">${fmt1(v)}</td><td class="n">${v != null && wt ? fmt1(v * wt / 100) : "—"}<span class="small">/${wt}</span></td></tr>`).join("")}</table>
+      ${a.wage_flag ? `<div class="small">† ${esc(a.wage_flag)}.</div>` : ""}<div class="small">RN wage area: ${esc(a.area)}. Drive times are free-flow (no traffic) from the county's population center.</div></details>`;
+  }
+  R.county = c => {
+    const mrows = metrics.map(m => { const v = c.m[m.key]; if (v == null) return ""; const all = K.counties.map(x => x.m[m.key]).filter(x => x != null).sort((a, b) => m.lower_better ? a - b : b - a); return `<tr><td>${esc(m.label)}</td><td class="n">${esc(fmtMetric(m, v))}</td><td class="n small">#${all.indexOf(v) + 1}/${all.length}</td></tr>`; }).join("");
+    const props = (K.properties || []).filter(p => p.county === c.name);
+    const ds = c.districts || [];
+    const txt = c.text ? Object.entries(c.text).map(([k, v]) => row(k, esc(v))).join("") : "";
+    return `${thumb("county", c)}<div class="kicker">${ST.cu}</div><h2>${esc(c.name)}${ST.cus}, ${ST.name}</h2>
+      ${appealBlock(c)}
+      <div class="stats gtiles">${GCATS.map(g => groupTile(c, g)).join("")}</div><div class="small gtip">Tap a tile to list them · tap a row to fly to its pin</div>
+      ${sweetKey && c.m[sweetKey] != null ? `<div class="badges"><span class="badge gold">Sweet-spot: ${esc(fmtMetric(metrics.find(m => m.key === sweetKey), c.m[sweetKey]))}</span></div>` : ""}
+      ${mrows ? `<div class="kicker">${ST.cu} metrics</div><table class="tbl"><tr><th>Metric</th><th class="n">Value</th><th class="n">Rank</th></tr>${mrows}</table>` : ""}
+      ${txt ? `<table class="kv">${txt}</table>` : ""}
+      <div class="kicker">Health care</div><table class="kv">${row("Trauma centers in " + ST.cu.toLowerCase(), c.n.trauma.length ? esc(c.n.trauma.join("; ")) : "None")}
+      ${row("Nearest trauma center", c.near_trauma ? `${link("hospital", c.near_trauma.id, c.near_trauma.name)} · ${esc(c.near_trauma.trauma)} · ~${c.near_trauma.miles} mi from county center` : null)}</table>
+      <div class="kicker">Schools</div>${schoolBlock(c.name)}
+      ${ds.length ? `<table class="tbl"><tr><th>District</th><th class="n">vs ${ST.ab}</th><th class="n">vs US</th><th>${ST.rlab ? "A/B/C/D/F" : "ES/MS/HS"}</th></tr>${ds.map(d => `<tr><td>${esc(d.name)}</td><td class="n">${esc(sign(d.pp_vs_ky, 0))}</td><td class="n">${esc(sign(d.gl_vs_us, 1))}</td><td>${d.lg ? esc(d.lg) : `${rbadge(d.es)} ${rbadge(d.ms)} ${rbadge(d.hs)}`}</td></tr>`).join("")}</table>` : ""}
+      ${props.length ? `<div class="kicker">Properties here</div><table class="kv">${props.map(p => row(isCF(p) ? (hasCave(p) ? G.bat(20) : G.fall(16)) : isNH(p) ? "🏥" : isHome(p) ? "🏠" : isCab(p) ? G.cabin(16) : isBig(p) ? G.bigStar(16) : p.standout && p.standout.length ? "★" : "⌂", link("property", p.id, p.title) + (p.price ? " · " + money(p.price) : ""))).join("")}</table>` : ""}`;
+  };
+  function nearbyProps(pt) {
+    const near = (K.properties || []).filter(p => p.lat != null).map(p => [p, hav(pt.lat, pt.lon, p.lat, p.lon)]).filter(x => x[1] < 25).sort((a, b) => a[1] - b[1]).slice(0, 5);
+    return near.length ? `<div class="kicker">Properties within 25 mi</div><table class="kv">${near.map(([p, d]) => row(d.toFixed(1) + " mi", link("property", p.id, p.title))).join("")}</table>` : "";
+  }
+  function hav(a, b, c, d) { const R = 3958.8, r = Math.PI / 180, x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(x)); }
+
+
+  // ------------------------------------------------------------------ county grouping pages (#county=<slug>&cat=<cat>)
+  // Each county-card count tile opens a compact, sorted list of that county's items; each row opens the item's own card and flies to its pin.
+  const GCATS = [
+    { k: "listings", n: "props", label: "listings", one: "listing", title: "Listings", icon: "🏡", layers: ["props", "homes", "nh", "cab", "big", "cvf"] },
+    { k: "hospitals", n: "hosp", label: "hospitals", title: "Hospitals", icon: "🏥", layers: ["trauma", "hosp"] },
+    { k: "travel", n: "travel", label: "travel jobs", one: "travel job", title: "Travel nurse jobs", icon: "💼", layers: ["travel"] },
+    { k: "perm", n: "perm", label: "permanent RN jobs", one: "permanent RN job", title: "Permanent RN jobs", icon: "🩺", layers: ["perm"] },
+    { k: "schools", n: "schools", label: "schools", title: "Schools", icon: "🏫", layers: ["sch"] },
+    { k: "colleges", n: "colleges", label: "colleges", title: "Colleges", icon: "🎓", layers: ["col"] },
+    { k: "activities", n: "acts", label: "activities", one: "activity", title: "Activities & outdoors", icon: "🌲", layers: ["act"] },
+    { k: "history", n: "hist", label: "history", h2: "history sites", title: "History", icon: "🏛", layers: ["h_hist", "h_coal", "h_ghost", "h_mine"] },
+  ];
+  const GC = {}; GCATS.forEach(g => GC[g.k] = g);
+  const groupHash = (name, cat) => `#county=${slug(name)}&cat=${cat}`;
+  const gItems = {
+    listings: n => (K.properties || []).filter(p => p.county === n && (!PROF || PROF.prop(p))),
+    hospitals: n => (K.hospitals || []).filter(h => h.county === n),
+    travel: n => TJ_ALL.filter(j => j.h.county === n && (!PROF || PROF.job(j, j.h))),
+    perm: n => PJX ? PJX.countyJobs(n) : [],
+    schools: n => (K.schools || []).filter(s => s.county === n && (!PROF || PROF.school(s))),
+    colleges: n => (K.colleges || []).filter(x => x.county === n),
+    activities: n => (K.activities || []).filter(x => x.county === n),
+    history: n => (K.history || []).filter(x => x.county === n),
+  };
+  function gCount(c, g) {
+    if (g.k === "perm") return PJX ? gItems.perm(c.name).length : K.meta && K.meta.pj ? null : 0;
+    if (PROF && /^(listings|travel|schools)$/.test(g.k)) return gItems[g.k](c.name).length;
+    if (g.k === "travel") return c.n.travel != null ? c.n.travel : gItems.travel(c.name).length;
+    return c.n[g.n] || 0;
+  }
+  function groupTile(c, g) {
+    const n = gCount(c, g);
+    if (n == null) return `<a class="stat gt tap" href="${groupHash(c.name, g.k)}" data-grp="${g.k}" aria-label="${esc(g.label)}: open the list"><b data-pjn="${esc(c.name)}">…</b><span>${esc(g.label)}</span><i class="gchev" aria-hidden="true">›</i></a>`;
+    if (!n) return `<div class="stat gt zero" aria-label="No ${esc(g.label)}"><b>0</b><span>${esc(g.label)}</span></div>`;
+    return `<a class="stat gt tap" href="${groupHash(c.name, g.k)}" data-grp="${g.k}" aria-label="${n} ${esc(g.label)}: open the list"><b>${n}</b><span>${esc(g.label)}</span><i class="gchev" aria-hidden="true">›</i></a>`;
+  }
+  const gImg = (src, ph) => src ? `<img class="gth" src="${esc(src)}" alt="" loading="lazy" decoding="async" width="60" height="60">` : `<span class="gth ph" aria-hidden="true">${ph}</span>`;
+  const gRow = (type, id, from, img, l1, l2, l3, wrap2) => `<a class="grow" href="#${type}=${esc(encodeURIComponent(id))}" data-go="${type}" data-id="${esc(id)}" data-from="${esc(from)}">${img}
+    <span class="gtx"><span class="g1">${bChip(type, id)}${l1}</span>${l2 ? `<span class="g2${wrap2 ? " wrap" : ""}">${l2}</span>` : ""}${l3 ? `<span class="g3">${l3}</span>` : ""}</span><i class="gchev" aria-hidden="true">›</i></a>`;
+  const dot = parts => parts.filter(x => x != null && x !== "" && x !== false).join(" · ");
+  const shortHosp = s => String(s || "").replace(/\s*\(.*?\)\s*/g, " ").replace(/\s+-\s+.*$/, "").trim();
+  function nearestDrive(p) {
+    const ds = (p.drives || []).map(d => ({ d, m: d.min_7am != null ? d.min_7am : d.minutes_free_flow })).filter(x => x.m != null);
+    if (!ds.length) return null;
+    const pick = ds.find(x => /nearest acute/i.test(x.d.role || "")) || ds.sort((a, b) => a.m - b.m)[0];
+    return `🏥 ${Math.round(pick.m)} min to ${esc(shortHosp(pick.d.hospital))}`;
+  }
+  const TRANK = t => !t ? 9 : /Level I\b(?! ?I)/.test(t) && !/II|IV/.test(t) ? 1 : /Level II\b/.test(t) && !/III/.test(t) ? 2 : /III/.test(t) ? 3 : /IV/.test(t) ? 4 : 5;
+  const hospBeds = h => h.lic_beds || (h.beds && +h.beds) || null;
+  const LVLNAME = { HS: "High", MS: "Middle", ES: "Elementary" };
+  const SKY = (K.meta && K.meta.school_ky) || {};
+  const topLevel = s => ["HS", "MS", "ES"].find(L => s.levels && s.levels[L]) || null;
+  const KIND_ORDER = ["University / college", "Community & technical college", "Other", "Seminary", "Beauty / trade school"];
+  const HIST_ORDER = ["historic", "ghost_town", "coal_camp", "mine"];
+  const HIST_SEC = { historic: "🏛 Historic sites & landmarks", ghost_town: "👻 Ghost towns", coal_camp: "🏚 Coal camps", mine: "⛏ Old mines (USGS MRDS)" };
+  const host = u => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return ""; } };
+  const firstSentence = (t, n = 140) => { t = String(t || "").replace(/\s+/g, " ").trim(); const m = t.match(/^(.{20,}?[.!?])\s/); t = m ? m[1] : t; return t.length > n ? t.slice(0, n - 1) + "…" : t; };
+  // section = [title, rows-html[]]
+  const GB = {};
+  GB.listings = (c, xs, from) => {
+    const byPrice = (a, b) => (a.price == null) - (b.price == null) || (a.price || 0) - (b.price || 0);
+    const r = p => gRow("property", p.id, from, gImg(p.rt || (p.th && p.th.u), isHome(p) ? "🏠" : isCab(p) ? "🪵" : isBig(p) ? "★" : isCFo(p) ? (hasCave(p) ? "🦇" : "💧") : "⌂"),
+      `<b>${p.price != null ? money(p.price) : "Price n/a"}</b>${p.beds != null ? ` · ${esc(p.beds)} bd${p.baths != null ? " / " + esc(p.baths) + " ba" : ""}` : ""}${p.acres != null ? ` · ${esc((+p.acres).toLocaleString(undefined, { maximumFractionDigits: 2 }))} ac` : ""}`,
+      `${p.standout && p.standout.length ? `<span class="gstar">★ ${esc(p.standout.join(", "))}</span> · ` : ""}${esc(p.title)}`,
+      dot([p.town && esc(p.town), nearestDrive(p)]));
+    const rn = p => gRow("property", p.id, from, gImg(p.rt || (p.th && p.th.u), "🏥"),
+      `<b>${p.price != null ? money(p.price) : "Price n/a"}</b> · ${esc(p.beds)} bd / ${esc(p.baths)} ba · ${sqft(p.sqft)} sq ft`,
+      `${esc(p.ptype || "House")} · ${esc(p.title)}`,
+      dot([p.town && esc(p.town), p.nh && `🏥 ${Math.round(p.nh.minutes_free_flow)} min to ${esc(shortHosp(p.nh.name))}${p.nh.er_beds ? ` (${esc(p.nh.er_beds)} ER beds)` : p.nh.estimate ? " (10+ ER beds, est.)" : ""}`]));
+    const land = xs.filter(p => !isHome(p) && !isNH(p) && !isCab(p) && !isBig(p) && !isCFo(p)).sort(byPrice), cfs = xs.filter(isCF).sort(byPrice), homes = xs.filter(isHome).sort(byPrice), nhs = xs.filter(isNH).sort(byPrice), cabs = xs.filter(isCab).sort(byPrice), bigs = xs.filter(isBig).sort(byPrice);
+    return { sub: "Sorted by price, lowest first", secs: [["⌂ 5+ acre land", land.map(r), "No 5+ acre land listings here right now."], ["🏠 1-acre homes", homes.map(r), "No 1-acre home listings here right now."],
+      ["🏥 Near-hospital homes", nhs.map(rn), "No near-hospital homes here right now."]].concat(ST.cabin ? [[(ST.cabin.label || "Cabin") + "s (" + (ST.cabin.acres || 25) + "+ acres)", cabs.map(r), "No cabins here right now.", G.cabin(16)]] : []).concat(bigs.length ? [["★ 50+ acres under $250k", bigs.map(r), "None here right now.", G.bigStar(16)]] : []).concat(cfs.length ? [["Caves & waterfalls on the property", cfs.map(r), "None here right now.", G.bat(20) + G.fall(14)]] : []) };
+  };
+  GB.hospitals = (c, xs, from) => {
+    const tj = h => TJ.hospitals.find(t => t.hospital_id === h.id);
+    const sort = (a, b) => TRANK(a.trauma) - TRANK(b.trauma) || (hospBeds(b) || 0) - (hospBeds(a) || 0) || a.name.localeCompare(b.name);
+    const r = h => { const t = tj(h), beds = hospBeds(h);
+      return gRow("hospital", h.id, from, gImg(h.th && h.th.u, "🏥"), `<b>${esc(h.name)}</b>`,
+        dot([h.trauma && `<span class="gtag tr">🚑 Trauma ${esc(h.trauma.replace(/^Level /, "Lvl "))}</span>`, beds && `${esc(beds)} beds${h.lic_name && /\//.test(h.lic_name) ? " (shared license)" : ""}`,
+          h.lic_type && h.lic_type !== "Acute care" && esc(h.lic_type), h.cms_rating && `CMS ${esc(h.cms_rating)}★/5`, h.emergency === "yes" && "ER"]),
+        dot([h.city && esc(h.city), t && `<span class="gpay">💼 top ${money(t.top)}/wk</span> (${t.n} job${t.n > 1 ? "s" : ""})`]), true); };
+    const gen = xs.filter(h => h.kind === "general").sort(sort), spec = xs.filter(h => h.kind !== "general").sort(sort);
+    return { sub: "Trauma centers first, then by size · beds = state licensed beds", secs: [["Hospitals", gen.map(r), "No general hospitals in this " + ST.cu.toLowerCase() + "."], ...(spec.length ? [["Specialty (psychiatric, rehab, long-term)", spec.map(r)]] : [])] };
+  };
+  GB.perm = (c, xs, from) => PJX.group(c, xs, from);
+  GB.travel = (c, xs, from) => ({ sub: "Highest weekly pay first · gross pay as posted", note: TJ_NOTE(), secs: [["Travel RN assignments", xs.map(j => gRow("travel", j.h.id, from, gImg(j.h.th && j.h.th.u, "💼"),
+    `<b class="gpay">${tjPay(j)}/wk</b> · ${esc(j.u || j.sp || "RN")}`, dot([j.sh && esc(j.sh), j.len && esc(j.len), j.st && "start " + esc(j.st)]), dot([esc(j.h.name), j.ag && esc(j.ag)])))]] });
+  GB.schools = (c, xs, from) => {
+    const lv = s => Object.entries(s.levels || {}).sort((a, b) => ["HS", "MS", "ES"].indexOf(a[0]) - ["HS", "MS", "ES"].indexOf(b[0])).map(([L, v]) => {
+      const d = v.score != null && SKY[L] != null ? v.score - SKY[L] : null;
+      return `<span class="glv">${v.rating ? `<span class="r ${esc(v.rating)}">${L}${s.letter ? " " + esc(s.letter) : ""}</span>` : `<span class="r nr">${L}</span>`}${v.score != null ? ` ${fmt1(v.score)}` : ""}${d != null ? ` <span class="${d >= 0 ? "up" : "dn"}">${d >= 0 ? "+" : "−"}${fmt1(Math.abs(d))} vs ${ST.ab}</span>` : ""}</span>`; }).join(" ");
+    const score = s => { const L = topLevel(s); return L && s.levels[L].score != null ? s.levels[L].score : -1; };
+    const r = s => gRow("school", s.id, from, gImg(s.th && s.th.u, "🏫"), `<b>${esc(s.name)}</b>`, lv(s) || "Not rated in 2025", dot([s.grades && "Grades " + esc(s.grades), esc(s.district), s.city && esc(s.city)]), true);
+    const secs = ["HS", "MS", "ES"].map(L => [`${LVLNAME[L]} schools`, xs.filter(s => topLevel(s) === L).sort((a, b) => score(b) - score(a) || a.name.localeCompare(b.name)).map(r)]);
+    const other = xs.filter(s => !topLevel(s)).sort((a, b) => a.name.localeCompare(b.name)).map(r);
+    if (other.length) secs.push(["Other / not rated", other]);
+    return { sub: ST.schSub ? ST.schSub : ST.rlab ? "TDOE 2024-25 letter grade (A–F) and score (1–5) · best first" : `KDE 2025 overall score by level vs the KY average (ES ${fmt1(SKY.ES)}, MS ${fmt1(SKY.MS)}, HS ${fmt1(SKY.HS)}) · best first`, secs: secs.filter(x => x[1].length), jump: true };
+  };
+  GB.colleges = (c, xs, from) => ({ sub: "Universities first, then community & technical, other", secs: [["Colleges & schools", xs.slice().sort((a, b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind) || a.name.localeCompare(b.name)).map(x =>
+    gRow("college", x.id, from, gImg(x.th && x.th.u, "🎓"), `<b>${esc(x.name)}</b>`, dot([esc(x.kind), /nurs/i.test(x.name) && '<span class="gtag">🩺 Nursing</span>']), dot([x.city && esc(x.city)])))]] });
+  GB.activities = (c, xs, from) => ({ sub: "Grouped by type", secs: [["Activities & outdoors", xs.slice().sort((a, b) => a.kind.localeCompare(b.kind) || a.name.localeCompare(b.name)).map(a =>
+    gRow("activity", a.id, from, gImg(a.th && a.th.u, ACTI[a.kind] || "★"), `<b>${esc(a.name)}</b>`, `${ACTI[a.kind] || "★"} ${esc(a.kind)}`,
+      a.desc ? esc(firstSentence(a.desc)) : a.wiki ? "Wikipedia: " + esc(a.wiki.split(":").pop()) : a.web ? esc(host(a.web)) : ""))]] });
+  GB.history = (c, xs, from) => {
+    const one = h => { if (h.type === "mine") { const m = (h.desc || "").match(/recorded as a (.+?) of (.+?)\. /); return m ? `${m[1][0].toUpperCase() + m[1].slice(1)} of ${m[2]}` : ""; } return firstSentence(h.desc); };
+    const r = h => gRow("history", h.id, from, gImg((h.th && h.th.u) || (h.img && h.img.thumb), (HIST[h.type] || ["•"])[0]), `<b>${esc(h.name)}</b>`,
+      `${esc((HIST[h.type] || ["", h.type])[1])}${h.nhl ? " · National Historic Landmark" : ""}`, esc(one(h)));
+    return { sub: "Grouped by type", secs: HIST_ORDER.map(t => [HIST_SEC[t], xs.filter(h => h.type === t).sort((a, b) => a.name.localeCompare(b.name)).map(r)]).filter(x => x[1].length), jump: true };
+  };
+  function groupHtml(c, g) {
+    const xs = gItems[g.k](c.name), from = c.name + "|" + g.k, n = gCount(c, g);
+    const out = GB[g.k](c, xs, from);
+    const secs = out.secs, multi = secs.length > 1;
+    const jump = out.jump && secs.length > 2 ? `<nav class="gjump" aria-label="Jump to section">${secs.map((s, i) => `<button type="button" data-jump="gs${i}">${esc(s[0].replace(/^\S+\s(?=[A-Z])/u, ""))} <b>${s[1].length}</b></button>`).join("")}</nav>` : "";
+    const body = secs.map((s, i) => `${multi ? `<div class="gsec" id="gs${i}">${s[3] ? `<span class="lic">${s[3]}</span> ` : ""}${esc(s[0])} <span>${s[1].length}</span></div>` : ""}${s[1].length ? s[1].join("") : `<div class="gempty">${esc(s[2] || "None here.")}</div>`}`).join("");
+    return `<div class="gbar"><button type="button" class="gback" id="gBack" aria-label="Back to ${esc(c.name)}${ST.cus} card">‹ ${esc(c.name)}${ST.cus}</button>
+        <button type="button" class="gshare" id="gShare" aria-label="Share this list">${navigator.share ? "Share" : "Copy link"}</button></div>
+      <div class="kicker">${g.icon} ${esc(g.title)}</div><h2>${n} ${esc(n === 1 ? (g.one || (g.h2 || g.label).replace(/s$/, "")) : (g.h2 || g.label))} in ${esc(c.name)}${ST.cus}</h2>
+      <div class="sub">${esc(out.sub)}${xs.length ? " · tap a row to open it on the map" : ""}</div>${out.note || ""}${PROF && /^(listings|travel|schools)$/.test(g.k) ? PROF.note(g.label) : ""}${jump}
+      <div class="glist">${xs.length || secs.some(s => s[2]) ? body : `<div class="gempty">No ${esc(g.label)} recorded in ${esc(c.name)}${ST.cus}.</div>`}</div>
+      <div class="actions"><button class="btn" id="shareBtn">${navigator.share ? "Share…" : "Share"}</button><button class="btn ghost" id="copyBtn">Copy link</button><button class="btn ghost" id="zoomBtn">Zoom to ${ST.cu.toLowerCase()}</button></div>
+      <div class="small" style="word-break:break-all">Link: <a href="${groupHash(c.name, g.k)}">${groupHash(c.name, g.k)}</a></div>`;
+  }
+  const groupShareUrl = (name, cat) => location.protocol === "file:" || cat === "perm" ? new URL("index.html" + groupHash(name, cat), location.href).href : new URL("share/county-" + slug(name + "-" + cat) + ".html", location.href).href;
+  async function shareGroup(name, cat) {
+    const g = GC[cat], title = `${g.title} in ${name}${ST.cus}, ${ST.ab}`, url = fullUrl(groupShareUrl(name, cat));
+    if (navigator.share) { try { await navigator.share({ title: title + " — " + ST.app, text: title, url }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+    copy(url);
+  }
+  let gBackHist = false, gScroll = null;  // gBackHist: the county card is the previous history entry (opened from its tile)
+  function openGroup(name, cat, opts = {}) {
+    const c = IDX.county[name], g = GC[cat];
+    if (!c || !g) { toast("List not found"); return false; }
+    const sv = snap(), sk = shardOf("county", c);
+    if (cat === "perm" && !(PJX && PJX.hasD())) {
+      const tok = { type: "group", id: name, cat, loading: true, prev: current };
+      cardLoading(tok, groupHash(name, cat), opts, sv);
+      loadPermD().then(() => { if (current === tok) { current = tok.prev; openGroup(name, cat, Object.assign({}, opts, { replace: true })); } });
+      return true;
+    }
+    if (!shardReady(sk)) {
+      const tok = { type: "group", id: name, cat, loading: true, prev: current };
+      cardLoading(tok, groupHash(name, cat), opts, sv);
+      loadShard(sk).then(() => { if (current === tok) { current = tok.prev; openGroup(name, cat, Object.assign({}, opts, { replace: true })); } });
+      return true;
+    }
+    const prev = current;
+    current = { type: "group", id: name, cat };
+    gBackHist = !!opts.fromCounty;
+    body.innerHTML = annaCard("group", { c, g }, groupHtml(c, g));
+    card.hidden = false; setPeek(false); card.classList.add("tall");
+    card.scrollTop = takeScroll(gScroll && gScroll.key === name + "|" + cat ? gScroll.top : 0); gScroll = null;
+    if (PNL) showPnl(null);
+    $("#gBack").onclick = () => { if (hasBack()) history.back(); else openItem("county", name, { fly: false }); };
+    $("#gShare").onclick = $("#shareBtn").onclick = () => shareGroup(name, cat);
+    $("#copyBtn").onclick = () => copy(fullUrl(groupShareUrl(name, cat)));
+    $("#zoomBtn").onclick = () => zoomTo("county", c, true);
+    body.querySelectorAll("[data-jump]").forEach(b => b.onclick = () => { const t = $("#" + b.dataset.jump); if (t) card.scrollTo({ top: t.offsetTop - $(".gbar").offsetHeight - 4, behavior: "smooth" }); });
+    nav(fh(groupHash(name, cat)), opts.replace, sv);
+    document.title = `${g.title} in ${name}${ST.cus}, ${ST.ab} — ${ST.app}`;
+    g.layers.forEach(k => { const d = LAYERS.find(x => x.key === k); if (d && !d.disabled && !map.hasLayer(d.layer)) setLayer(d, true); });
+    if (opts.fly !== false && !(prev && (prev.type === "county" || prev.type === "group") && prev.id === name)) zoomTo("county", c, false);
+    highlight("county", c);
+    return true;
+  }
+
+  // ------------------------------------------------------------------ share
+  const TITLE = { city: c => (c.full || c.name) + ", " + ST.ab, travel: h => h.id === "all" ? ST.name + " travel nurse assignments" : h.name + " — travel RN jobs", property: p => p.title, hospital: h => h.name, school: s => s.name, college: c => c.name, activity: a => a.name, history: h => h.name, county: c => c.name + ST.cus + ", " + ST.ab, perm: h => h.name + " — permanent RN jobs" };
+  function itemUrl(type, id) { return new URL("index.html" + (ANNA_ON ? "?anna=1" : "") + "#" + type + "=" + encodeURIComponent(id), location.href).href; }
+  function shareUrl(type, id) { return new URL("share/" + type + "-" + slug(id) + ".html", location.href).href; }
+  function shareUrlBest(type, id) { return location.protocol === "file:" || ANNA_ON || type === "city" || type === "perm" || type === "ski" || type === "peak" || type === "target" || (IDX[type] && IDX[type][id] && IDX[type][id].bst) ? itemUrl(type, id) : shareUrl(type, id); }  // border items: no share page  // cities have no share page
+  async function doShare(type, id) {
+    const it = IDX[type][id]; const title = TITLE[type](it); const url = fullUrl(shareUrlBest(type, id));
+    if (navigator.share) { try { await navigator.share({ title: title + " — " + ST.app, text: title, url }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+    copy(url);
+  }
+  function copy(text) {
+    const done = () => toast("Link copied");
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, () => legacy());
+    else legacy();
+    function legacy() { const ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); done(); } catch (e) { prompt("Copy this link:", text); } ta.remove(); }
+  }
+
+  // ------------------------------------------------------------------ open / close + deep links
+  const card = $("#card"), body = $("#cardBody");
+  // ---- page stack = browser history. Each entry's state: d = depth (0 = map, no card), L = depth of the nearest Top 10 / county list
+  // at or below it, nob = the chain began with a deep link (no map entry under it), v = {c, z, s} map center / zoom / card scroll saved
+  // when the page was left. ‹ Back (header) and the phone's Back step one entry back and restore v; X jumps back to the list the card
+  // came from (or the map). Every card / list open goes through nav().
+  const isListH = h => /^#(county=[^&]+&cat=|deals$|top-|cmap=)/.test(h.replace(/&full=1$/, ""));  // cmap = county map view: X on a card opened from it comes back to it
+  const snap = () => { const c = map.getCenter(); return { c: [c.lat, c.lng], z: map.getZoom(), s: card.hidden ? 0 : card.scrollTop }; };
+  const depth = () => (history.state && history.state.d) || 0;
+  const hasBack = () => depth() >= 2;
+  function nav(h, replace, sv, extra) {
+    const url = h || location.pathname + location.search;
+    if ((h || "") === location.hash && !extra) { if (PNL) setPanel(null); updBack(); return; }
+    if (replace) { history.replaceState(history.state, "", url); updBack(); return; }
+    const st = history.state || { d: 0 }, fromPnl = !!st.pnl;
+    if (PNL) showPnl(null);
+    if (!fromPnl) history.replaceState(Object.assign({}, st, { v: sv || snap() }), "", location.href);  // (an open panel's entry already saved v below it)
+    const d = h ? (st.d || 0) + 1 : 0;
+    history[fromPnl ? "replaceState" : "pushState"](h ? Object.assign({ d, L: isListH(h) ? d : st.L, nob: st.nob ? 1 : 0, fz: FOCUS ? FOCUS.name : null }, extra || {}) : { d: 0 }, "", url);
+    updBack();
+  }
+  let pendScroll = null;  // scroll position to restore when the page being returned to finishes rendering
+  const takeScroll = def => { if (pendScroll != null) { const s = pendScroll; pendScroll = null; return s; } return def; };
+  function updBack() {
+    const has = hasBack(); card.classList.toggle("hasback", has); updFav();
+    const gb = $("#gBack"); if (gb) { if (!gb.dataset.base) gb.dataset.base = gb.textContent; gb.textContent = has ? "‹ Back" : gb.dataset.base; }
+  }
+  $("#cardBack").onclick = () => history.back();
+  function exitCard() {  // X: to the Top 10 / county list this card came from, else to the map (zoomed out)
+    if (current && current.type === "county" && !current.loading && IDX.county[current.id]) { focusClose(current.id); return; }  // county card -> county map view
+    const st = history.state || {}, d = st.d || 0, isList = current && (current.type === "group" || current.type === "top");
+    const tgt = !isList && st.L != null && st.L < d ? st.L : 0;
+    if (d > tgt && (tgt > 0 || !st.nob)) { history.go(tgt - d); return; }
+    closeCard(); homeView(true);
+  }
+  // ---- full-screen view (⤢ in the card header): same card, whole screen, big gallery. Own history entry + deep link (&full=1),
+  // so the phone's Back button collapses it and shared links can open full screen (share pages pass #full through).
+  let FULL_ON = false;
+  const expB = $("#cardExp");
+  const fh = h => FULL_ON ? h + "&full=1" : h;
+  const fullUrl = u => !FULL_ON ? u : u.includes("#") ? u + "&full=1" : u + "#full";
+  const baseHash = () => location.hash.replace(/&full=1$/, "");
+  function setFull(on) {
+    FULL_ON = !!on; card.classList.toggle("full", FULL_ON); document.documentElement.classList.toggle("cardfull", FULL_ON);
+    expB.textContent = FULL_ON ? "⤡" : "⤢"; expB.setAttribute("aria-label", FULL_ON ? "Collapse to the preview" : "Expand to full screen"); expB.setAttribute("aria-pressed", FULL_ON);
+    expB.title = FULL_ON ? "Collapse" : "Expand";
+  }
+  function expandCard() { if (FULL_ON || card.hidden) return; const sv = snap(); setFull(true); card.scrollTop = 0; nav(baseHash() + "&full=1", false, sv, { kyxFull: 1 }); }
+  function collapseCard() { if (!FULL_ON) return; if (history.state && history.state.kyxFull) history.back(); else { setFull(false); history.replaceState(Object.assign({}, history.state, { kyxFull: 0 }), "", baseHash()); updBack(); } }
+  expB.onclick = () => FULL_ON ? collapseCard() : expandCard();
+  $("#cardShare").onclick = () => { const b = $("#shareBtn"); if (b) b.click(); };
+  $("#cardMap").onclick = () => { const z = $("#zoomBtn"); collapseCard(); if (z) setTimeout(() => z.click(), 80); };
+  var current = null; let hl = null;  // var: applyHomeFilter() reads it before this line runs
+  // ------------------------------------------------------------------ card details (data/d/<county>.js; build.py write_split)
+  // data/core.js has only what pins, search, filters and lists need; a card's details, photos and Nearby section load with its county's file.
+  const SHARDS = new Set((K.meta && K.meta.shards) || []), SH = {};
+  const shardOf = (type, it) => { if (it && it.anna) return SHARDS.has("_anna") ? "_anna" : null; if (type === "eng" || type === "spj" || type === "target") return null; if (type === "ski" || type === "peak") return K.mtnd ? "_mtn" : null; if ((type === "travel" && it.id === "all") || type === "city" || type === "perm") return null; const k = type === "county" ? slug(it.name) : it.county ? slug(it.county) : it.bst ? "_b-" + slug(it.bco || it.bst) : "_other"; return SHARDS.has(k) ? k : null; };
+  window.KYXD = (key, d) => {
+    Object.keys(d).forEach(t => { const ix = IDX[t]; if (!ix) return; const o = d[t]; Object.keys(o).forEach(id => { if (ix[id]) Object.assign(ix[id], o[id]); }); });
+    (SH[key] = SH[key] || {}).done = true;
+  };
+  function loadShard(key) {
+    const s0 = SH[key]; if (s0 && (s0.done || s0.p)) return s0.p || Promise.resolve();
+    const s = SH[key] = {};
+    return s.p = new Promise(res => { const el = document.createElement("script"); el.async = true;
+      el.src = "data/d/" + encodeURIComponent(key) + ".js" + (K.meta && K.meta.stamp ? "?v=" + K.meta.stamp : "");
+      el.onload = () => { s.done = true; res(); }; el.onerror = () => { s.done = true; s.failed = true; res(); }; document.head.appendChild(el); });
+  }
+  const shardReady = k => !k || !!(SH[k] && SH[k].done);
+  function cardLoading(tok, hash, opts, sv) {
+    current = tok; card.classList.toggle("tall", tok.type === "group"); body.innerHTML = '<div class="cardload" role="status">Loading…</div>'; card.hidden = false; setPeek(!!opts.peek && PHONE); card.scrollTop = 0;
+    if (PNL) showPnl(null);
+    nav(fh(hash), opts.replace, sv);
+  }
+  function openItem(type, id, opts = {}) {
+    if (type === "perm" && !(PJX && PJX.hasD())) {  // perm.js + data/pjm.js + data/pjd.js first
+      const tok = { type, id, loading: true }, sv = snap();
+      cardLoading(tok, "#perm=" + encodeURIComponent(id), opts, sv);
+      loadPermD().then(() => { if (current === tok) { if (!IDX.perm || !IDX.perm[id]) { const k = IDX.perm && Object.keys(IDX.perm).find(k => slug(k) === slug(id)); if (k) id = k; } openItem(type, id, Object.assign({}, opts, { replace: true })); } });
+      return true;
+    }
+    const it = IDX[type] && IDX[type][id]; if (!it) { toast("Item not found"); return false; }
+    const sv = snap(), sk = shardOf(type, it);
+    if (!shardReady(sk)) {  // first open in this county: show the card shell, load data/d/<county>.js, then render
+      const tok = { type, id, loading: true };
+      cardLoading(tok, "#" + type + "=" + encodeURIComponent(id), opts, sv);
+      loadShard(sk).then(() => { if (current === tok) openItem(type, id, Object.assign({}, opts, { replace: true })); });
+      return true;
+    }
+    const from = opts.from && (GC[opts.from.cat] || (opts.from.top && TOPK[opts.from.top])) ? opts.from : null;
+    current = { type, id };
+    card.classList.remove("tall");
+    body.innerHTML = badgeLine(type, id) + annaCard(type, it, kyxBorderCard(type, it)) + `<div class="actions">
+        <button class="btn" id="shareBtn">${navigator.share ? "Share…" : "Share"}</button>
+        <button class="btn ghost" id="copyBtn">Copy link</button>
+        ${it.lat != null || type === "county" ? '<button class="btn ghost" id="zoomBtn">Zoom here</button>' : ""}
+        ${dirUrl(type, it) ? `<a class="btn ghost" id="dirBtn" href="${esc(dirUrl(type, it))}" target="_blank" rel="noopener">🧭 Directions</a>` : ""}
+        ${type === "property" ? `<button class="btn ghost" id="cmpBtn">${cmpLabel(id)}</button>` : ""}</div>
+        <div class="small" style="word-break:break-all">Link: <a href="#${esc(type)}=${esc(encodeURIComponent(id))}">#${esc(type)}=${esc(id)}</a></div>`;
+    if ((it.lat != null && type !== "peak") || type === "county") { const cb = document.createElement("div"); cb.id = "climBox"; const ac = body.querySelector(".actions"); if (ac) ac.before(cb); loadAreas().then(() => KYXA.card(type, id, it, cb)).then(() => { if (ANNA_ON && ANNAX) ANNAX.clean(cb); }); }  // climate + KY-vs-TN (lazy areas.js)
+    if (ANNA_ON) { /* no permanent-RN-job links on Anna cards */ } else if (PJX) PJX.hook(type, it, body); else if (type === "hospital" || type === "travel" || body.querySelector("[data-pjn]")) loadPerm().then(() => { if (current && current.type === type && current.id === id) { PJX.hook(type, it, body); PJX.apply(); } });
+    card.hidden = false; setPeek(!!opts.peek && PHONE); card.scrollTop = takeScroll(0);
+    if (PNL) showPnl(null);
+    $("#shareBtn").onclick = () => doShare(type, id);
+    $("#copyBtn").onclick = () => copy(fullUrl(shareUrlBest(type, id)));
+    const zb = $("#zoomBtn"); if (zb) zb.onclick = () => zoomTo(type, it, true);
+    const cb = $("#cmpBtn"); if (cb) cb.onclick = () => cmpToggle(id, cb);
+    const gf = $("#gFrom"); if (gf) gf.onclick = () => history.back();  // the list is the previous history entry
+    const g = $("#gal"); if (g) g.querySelectorAll("img").forEach(img => img.onclick = () => openLB(it.photos, +img.dataset.i));
+    const tb = body.querySelector("[data-thumb]");
+    if (tb && it.th) tb.onclick = () => openLB([it.th.b || it.th.u], 0, [it.th.k === "satellite" ? "Satellite view · " + SAT.c : (it.th.c || "")], [it.th.u]);
+    nav(fh("#" + type + "=" + encodeURIComponent(id)), opts.replace, sv);
+    document.title = TITLE[type](it) + " — " + ST.app;
+    ensureLayerFor(type, it);
+    if (type === "property" && isHome(it)) applyHomeFilter();
+    if (type === "property" && isNH(it)) applyNHFilter();  // a home hidden by the Homes filter still shows its pin while open
+    if (opts.fly !== false) zoomTo(type, it, false);
+    highlight(type, it);
+    return true;
+  }
+  const annaCard = (type, it, h) => ANNA_ON && ANNAX ? ANNAX.card(type, it, h) : h;  // Anna on: hospital sections out, engineering-job sections in
+  function showPage(tok, html, hash, opts = {}) {  // a non-item page in the card (profiles.js): same Back / X / expand behaviour
+    const sv = snap(); current = tok; card.classList.toggle("tall", !!opts.tall);
+    body.innerHTML = html; card.hidden = false; setPeek(false); card.scrollTop = takeScroll(0);
+    if (PNL) showPnl(null);
+    if (hl) { map.removeLayer(hl); hl = null; }
+    nav(fh(hash), opts.replace, sv); document.title = (opts.title || "Profile") + " — " + ST.app;
+  }
+  function refreshCard() {
+    const c = current; if (!c || card.hidden || c.loading) return;
+    if (c.type === "group") { current = null; openGroup(c.id, c.cat, { replace: true, fly: false }); }
+    else if (c.type === "top") { current = null; openTop(c.id, { replace: true }); }
+    else if (c.type !== "profile" && R[c.type]) { current = null; openItem(c.type, c.id, { replace: true, fly: false }); }
+  }
+  // the county's bounding box fills the part of the map nothing covers: below the search bar / key / profile pills, above the card
+  // (phone) or left of it (desktop), clear of the layer buttons when they overlap that strip. Back / X restore the view from before.
+  function fitCounty(it) {
+    const b = it.bbox, VW = window.innerWidth, VHh = window.innerHeight;
+    let top = 6, bot = 6, left = 6, right = 6;
+    const box = el => el && !el.hidden && el.offsetWidth ? { l: el.offsetLeft, t: el.offsetTop, r: el.offsetLeft + el.offsetWidth, b: el.offsetTop + el.offsetHeight } : null;
+    const tb = $("#topbar"); if (tb) top = Math.max(top, tb.getBoundingClientRect().bottom + 6);
+    const top0 = top;
+    [$("#mapKey"), pBar].forEach(el => { const q = box(el); if (!q) return; if (q.b - q.t > VHh * 0.3) left = Math.max(left, q.r + 8); else top = Math.max(top, q.b + 6); });
+    const c = box(card);
+    if (c) { if (c.r - c.l >= VW * 0.9) bot = Math.max(bot, VHh - c.t + 6); else right = Math.max(right, VW - c.l + 8); }
+    const fq = box($("#focusChip")); if (fq && card.hidden) bot = Math.max(bot, VHh - fq.t + 6);
+    const st = box(lStack);
+    if (st && st.b > top && st.t < VHh - bot && st.l > VW - right - 120) right = Math.max(right, VW - st.l + 6);
+    if (VHh - bot - top < 90) top = top0;  // tiny strip: let the small pills overlap rather than shrink the county to nothing
+    const so = map.options.zoomSnap; map.options.zoomSnap = 0.05;
+    const bb = [[b[1], b[0]], [b[3], b[2]]], tz = Math.min(12, map.getBoundsZoom(bb, false, L.point(left + right, top + bot)));
+    map.flyToBounds(bb, { duration: 0.8, paddingTopLeft: [left, top], paddingBottomRight: [right, bot], maxZoom: 12 });
+    map.options.zoomSnap = so; return tz;
+  }
+  function zoomTo(type, it, force) {
+    if ((type === "travel" || type === "perm") && it.lat == null) return;  // the ranked list / unmapped clinic sites have no single location
+    const pad = !PHONE ? { paddingBottomRight: [440, 0] } : { paddingBottomRight: [0, Math.round(VH * 0.55)] };
+    if (FULL_ON && !force) { if (type === "county") { const b = it.bbox; map.fitBounds([[b[1], b[0]], [b[3], b[2]]], { animate: false }); } else map.setView([it.lat, it.lon], Math.max(map.getZoom(), type === "property" ? 13 : 12), { animate: false }); return; }
+    if (type === "county") { fitCounty(it); return; }
+    const z = type === "property" ? 13 : 14;
+    const ll = L.latLng(it.lat, it.lon);
+    const target = Math.max(map.getZoom(), force ? z : Math.min(z, 12));
+    // shift center so the pin isn't hidden behind the card
+    const p = map.project(ll, target);
+    if (!PHONE) p.x += 210; else p.y += Math.round(VH * 0.27);
+    map.flyTo(map.unproject(p, target), target, { duration: 0.8 });
+  }
+  function highlight(type, it) {
+    if (hl) { map.removeLayer(hl); hl = null; }
+    if (type === "county") { hl = L.polygon(cLL(it), { renderer: ensureLines(), color: "#e8a317", weight: 4, fill: false, interactive: false }).addTo(map); }
+    else if (it.lat != null) { hl = L.circleMarker([it.lat, it.lon], { renderer: ensureLines(), color: "#e8a317", weight: 3, fill: false, interactive: false }).addTo(map); }
+  }
+  function closeCard(push = true) {
+    card.hidden = true; card.classList.remove("tall"); setPeek(false); setFull(false); current = null; if (TOPF) { TOPF = null; sched(true); } if (hl) { map.removeLayer(hl); hl = null; }
+    document.title = ST.app;
+    if (push && location.hash) nav("", false);
+  }
+  $("#cardClose").onclick = () => exitCard();
+  body.addEventListener("click", e => {
+    const t = e.target.closest("[data-grp]");
+    if (t && current && current.type === "county") { e.preventDefault(); openGroup(current.id, t.dataset.grp, { fromCounty: true }); return; }
+    const a = e.target.closest("[data-go]"); if (!a) return;
+    e.preventDefault();
+    let from = null;
+    if (a.dataset.from && current && current.type === "group") { const [county, cat] = a.dataset.from.split("|"); from = { county, cat }; gScroll = { key: a.dataset.from, top: card.scrollTop }; }
+    else if (a.dataset.from && current && current.type === "top") { from = { top: a.dataset.from.split("|")[1] }; gScroll = { key: a.dataset.from, top: card.scrollTop }; }
+    openItem(a.dataset.go, a.dataset.id, from ? { from } : {});
+  });
+  // bottom sheet (phones): a card opened from the map starts as a peek bar (title only). Tap it or swipe up -> full card;
+  // swipe down: full card -> peek bar (item cards) or closed (lists); peek bar -> closed. The map stays usable above the peek bar.
+  function setPeek(on) { card.classList.toggle("peek", !!on); if (on) card.scrollTop = 0; }
+  card.addEventListener("click", e => { if (!card.classList.contains("peek") || e.target.closest(".cardtools")) return; e.preventDefault(); e.stopPropagation(); setPeek(false); }, true);
+  (function () { let y0 = null; card.addEventListener("touchstart", e => { y0 = card.scrollTop <= 0 || card.classList.contains("peek") ? e.touches[0].clientY : null; }, { passive: true });
+    card.addEventListener("touchend", e => { if (y0 == null || FULL_ON) { y0 = null; return; } const dy = e.changedTouches[0].clientY - y0, pk = card.classList.contains("peek"); y0 = null;
+      if (pk) { if (dy < -30) setPeek(false); else if (dy > 50) exitCard(); }
+      else if (dy > 90) { if (PHONE && current && !current.loading && R[current.type] && current.type !== "travel") setPeek(true); else exitCard(); } }, { passive: true }); })();
+  function countyId(id) {
+    if (IDX.county[id]) return id;
+    return Object.keys(IDX.county).find(k => k.toLowerCase() === id.toLowerCase().replace(/\s*county$/, "")) || Object.keys(IDX.county).find(k => slug(k) === slug(id.replace(/\s*county$/i, ""))) || id;
+  }
+  function route(replace, rs) {
+    const ro = rs ? { replace: true, fly: false } : { replace: true };
+    const full = /&full=1$/.test(location.hash), hs = location.hash.replace(/&full=1$/, "");
+    if (!ANNA_ON && ANNA_RX.test(hs) && K.meta && K.meta.anna) { annaSet(true, { quiet: true }).then(ok => { if (ok) route(replace, rs); else toast("Couldn't load the Anna data"); }); return; }  // shared Anna link: Anna on first
+    if (full !== FULL_ON && (full ? hs.length > 1 : true)) setFull(full);
+    const gm = hs.replace(/&amp;/g, "&").match(/^#county=([^&]+)&cat=([a-z]+)$/);
+    if (gm) {
+      const id = countyId(decodeURIComponent(gm[1]));
+      if (current && current.type === "group" && current.id === id && current.cat === gm[2]) return;
+      openGroup(id, gm[2], ro); return;
+    }
+    if (hs === "#areas") { if (current && current.hash === hs) return; loadAreas().then(() => KYXA.route(hs, ro)); return; }
+    if (/^#(favs|compare|new|near)(=|$)/.test(hs)) { if (current && current.hash === hs) return; loadExtras().then(() => KYXE.route(hs, ro)); return; }
+    if (/^#(profile|pedit|pmatch)=/.test(hs)) { if (current && current.hash === hs) return; loadProfiles().then(() => KYXP.route(hs, ro)); return; }
+    const tm = hs.match(/^#(deals|top-buildings|top-businesses|top-er-jobs|top-other-jobs|top-bonus|top-perm-er|top-perm-sdms|top-perm-icu)$/) || (/^#top-/.test(hs) && TOPH[hs.slice(1)] ? [hs, hs.slice(1)] : null);
+    if (tm) { const t = TOPH[tm[1]]; if (current && current.type === "top" && t && current.id === t.k) return; if (t) { openTop(t.k, { replace: true }); return; } }
+    const m = hs.match(/^#(property|hospital|school|college|activity|history|county|travel|perm|airport|business|building|attraction|city|ski|peak|target|eng|spj)=(.+)$/);
+    const fm = hs.match(/^#cmap=(.+)$/);
+    if (fm) { if (!card.hidden) closeCard(false); if (!rs) setFocus(countyId(decodeURIComponent(fm[1])), true); return; }  // popstate sets the focus from history.state.fz
+    if (!m) { if (!card.hidden) closeCard(false); return; }
+    const type = m[1]; let id = decodeURIComponent(m[2]);
+    if (!IDX[type]) { toast("Item not found"); return; }
+    if (type === "perm" && !(PJX && PJX.hasD())) { if (!(current && current.loading && current.id === id)) openItem(type, id, ro); return; }
+    if (!IDX[type][id] && type === "county") { id = Object.keys(IDX.county).find(k => k.toLowerCase() === id.toLowerCase().replace(/\s*county$/, "")) || id; }
+    if (!IDX[type][id]) { id = Object.keys(IDX[type]).find(k => slug(k) === slug(id)) || id; }
+    if (current && current.type === type && current.id === id) return;
+    openItem(type, id, ro);
+  }
+  window.addEventListener("hashchange", () => {  // typed / pasted hash: a fresh entry with no state
+    if (!history.state || history.state.d == null) history.replaceState({ d: 1, nob: 1, L: isListH(location.hash) ? 1 : undefined }, "", location.href);
+    route(true);
+  });
+  window.addEventListener("popstate", () => {
+    const st = history.state || {};
+    pendScroll = st.v ? st.v.s : null;
+    POPPING = true; try {
+    route(true, !!st.v);
+    if (st.v) { const zs = map.options.zoomSnap; map.options.zoomSnap = 0; map.setView(st.v.c, st.v.z, { animate: false }); map.options.zoomSnap = zs; }  // exact zoom (the start view is 6.2)
+    } finally { POPPING = false; }
+    if (st.fz && IDX.county[st.fz]) setFocus(st.fz, false); else if (FOCUS) clearFocus(true);
+    if (card.hidden) pendScroll = null;
+    else if (pendScroll != null && current && !current.loading) { card.scrollTop = pendScroll; pendScroll = null; }
+    updBack();
+  });
+  // in-page links (#travel=all, Top 10 chips, map-key buttons…) open through the stack too
+  document.addEventListener("click", e => {
+    const a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!a || e.defaultPrevented || a.target === "_blank" || e.ctrlKey || e.metaKey || e.shiftKey || e.button) return;
+    const h = a.getAttribute("href"); if (h.length < 2 || h === location.hash) return;
+    e.preventDefault(); nav(h, false); route(true);
+  });
+
+  // ------------------------------------------------------------------ lightbox (swipe, keys)
+  const lbx = $("#lightbox"), lbImg = $("#lbImg");
+  let lbList = [], lbI = 0, lbCap = null, lbFallback = null;
+  function openLB(list, i, caps, fallback) { lbList = list; lbI = i; lbCap = caps || null; lbFallback = fallback || null; lbx.hidden = false; lbx.classList.toggle("single", list.length < 2); showLB(); }
+  function showLB() {
+    const fb = lbFallback && lbFallback[lbI];
+    lbImg.onerror = fb ? () => { lbImg.onerror = null; lbImg.src = fb; } : null;  // larger remote image unavailable -> local thumb
+    lbImg.src = lbList[lbI]; lbImg.style.transform = "";
+    $("#lbCount").textContent = (lbCap && lbCap[lbI]) || (lbList.length > 1 ? `${lbI + 1} / ${lbList.length}` : "");
+  }
+  function step(d) { if (!lbList.length) return; lbI = (lbI + d + lbList.length) % lbList.length; showLB(); }
+  $("#lbPrev").onclick = () => step(-1); $("#lbNext").onclick = () => step(1); $("#lbClose").onclick = () => lbx.hidden = true;
+  lbx.addEventListener("click", e => { if (e.target === lbx || e.target.classList.contains("lbstage")) lbx.hidden = true; });
+  let tx = null, ty = null;
+  lbx.addEventListener("touchstart", e => { if (e.touches.length === 1) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; } }, { passive: true });
+  lbx.addEventListener("touchmove", e => { if (tx != null) lbImg.style.transform = `translateX(${e.touches[0].clientX - tx}px)`; }, { passive: true });
+  lbx.addEventListener("touchend", e => { if (tx == null) return; const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1); else if (dy > 120) lbx.hidden = true; else lbImg.style.transform = ""; tx = null; });
+  document.addEventListener("keydown", e => {
+    if (!lbx.hidden) { if (e.key === "ArrowRight") step(1); else if (e.key === "ArrowLeft") step(-1); else if (e.key === "Escape") lbx.hidden = true; return; }
+    if (e.key === "Escape") { if (!info.hidden) info.hidden = true; else if (!lp.hidden) lp.hidden = true; else if (FULL_ON) collapseCard(); else if (!card.hidden) exitCard(); }
+  });
+
+  // ------------------------------------------------------------------ search
+  const all = [];
+  Object.entries(IDX).forEach(([type, o]) => Object.values(o).forEach(it => all.push({ type, id: type === "county" ? it.name : it.id, name: type === "county" ? it.name + ST.cus : (it.title || it.name), sub: type === "property" ? [isNH(it) ? "🏥 Near-hospital home" + (it.ptype && it.ptype !== "House" ? " (" + it.ptype.toLowerCase() + ")" : "") : isHome(it) ? "🏠 1-acre home" : isCab(it) ? "🪵 " + (ST.cabin.label || "Cabin") + " (" + (ST.cabin.acres || 25) + "+ acres)" : isBig(it) ? "★ 50+ acres under $250k" + (it.dwell === "yes" ? " (with a home)" : "") : isCF(it) ? cfLab(it) : null, isCF(it) && !isCFo(it) ? cfLab(it) : null, it.town, it.county].filter(Boolean).join(", ") : type === "history" ? (HIST[it.type] || [, ""])[1] : (it.kind || it.district || it.city || ""), extra: type === "property" ? [it.address, isNH(it) ? "near hospital home " + (it.nh ? it.nh.name : "") : ""].filter(Boolean).join(" ").toLowerCase() : "" })));
+  const LABEL = { city: "City", travel: "Travel RN jobs", property: "Property / home", hospital: "Hospital", school: "School", college: "College", activity: "Activity", history: "History", county: ST.cu };
+  const si = $("#search"), res = $("#results"); let hits = [], sel = 0;
+  const annaSee = x => ANNA_ON ? !(x.type === "hospital" || x.type === "travel" || x.type === "perm" || (x.type === "property" && IDX.property[x.id] && isNH(IDX.property[x.id]))) : !x.anna;
+  si.addEventListener("input", () => {
+    const q = si.value.trim().toLowerCase(); if (q.length < 2) { res.hidden = true; return; }
+    const pri = { eng: 1, spj: 2, city: 0, county: 0, property: 1, business: 1, building: 1, travel: 2, hospital: 2, airport: 2, history: 3, activity: 4, attraction: 4, ski: 3, peak: 4, target: 3, college: 5, school: 6 };
+    hits = all.filter(x => annaSee(x) && (x.name.toLowerCase().includes(q) || (x.sub || "").toLowerCase().includes(q) || (x.extra || "").includes(q))).sort((a, b) => (a.name.toLowerCase().startsWith(q) ? 0 : 1) - (b.name.toLowerCase().startsWith(q) ? 0 : 1) || pri[a.type] - pri[b.type]).slice(0, 30);
+    sel = 0; res.innerHTML = hits.map((h, i) => `<div data-i="${i}" class="${i === 0 ? "sel" : ""}">${esc(h.name)}<br><small>${LABEL[h.type]}${h.sub ? " · " + esc(h.sub) : ""}</small></div>`).join("") || "<div><small>No matches</small></div>";
+    res.hidden = false;
+  });
+  si.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { sel = Math.max(0, Math.min(hits.length - 1, sel + (e.key === "ArrowDown" ? 1 : -1))); res.querySelectorAll("div").forEach((d, i) => d.classList.toggle("sel", i === sel)); e.preventDefault(); }
+    if (e.key === "Enter" && hits[sel]) pick(hits[sel]);
+    if (e.key === "Escape") { res.hidden = true; si.blur(); }
+  });
+  res.addEventListener("click", e => { const d = e.target.closest("[data-i]"); if (d) pick(hits[+d.dataset.i]); });
+  function pick(h) { res.hidden = true; si.value = ""; si.blur(); openItem(h.type, h.id); }
+  document.addEventListener("click", e => { if (!e.target.closest(".searchwrap")) res.hidden = true; });
+
+  // ================================================================ more layers: airports, businesses & buildings for sale, attractions, zoom-level de-clutter
+  // Function declarations are hoisted; hooks call them from the layer panel, map key and start sections.
+  var MORE_PIN, MORE_LAYER_FOR, MORE_ATT, MORE_ATT_KEYS;  // var (no initialiser): filled by kyxMoreLayers() before renderKey()/ensureLayerFor() use them
+  function kyxMoreLayers(LAYERS) {
+    const A = K.airports || [], BZ = K.businesses || [], BD = K.buildings || [], AT = K.attractions || [];
+    IDX.airport = {}; IDX.business = {}; IDX.building = {}; IDX.attraction = {};
+    A.forEach(x => IDX.airport[x.id] = x); BZ.forEach(x => IDX.business[x.id] = x); BD.forEach(x => IDX.building[x.id] = x); AT.forEach(x => IDX.attraction[x.id] = x);
+    // type -> [icon, layer label, layer key, short name]
+    MORE_ATT = { amusement: ["🎢", "Amusement & theme parks", "a_park", "Amusement park"], water: ["🌊", "Water parks", "a_water", "Water park"],
+      aquarium: ["🐟", "Aquariums", "a_aqua", "Aquarium"], museum: ["🏛", "Museums", "a_museum", "Museum"], camp: ["⛺", "Campgrounds (state park, Corps, national forest, private)", "a_camp", "Campground"] };
+    MORE_ATT_KEYS = Object.values(MORE_ATT).map(v => v[2]);
+    const priceK = v => v == null ? "" : v >= 1e6 ? "$" + (v / 1e6).toFixed(1).replace(/\.0$/, "") + "M" : "$" + Math.round(v / 1000) + "k";
+    const L_apt = PL_("apt"), L_biz = PL_("biz"), L_bldg = PL_("bldg"), L_at = {};
+    Object.keys(MORE_ATT).forEach(t => L_at[t] = PL_(MORE_ATT[t][2]));
+    A.forEach(a => L_apt.addLayer(ent("airport", a, () => L.divIcon({ className: "", html: `<div class="mk apt${a.oos ? " oos" : ""}${a.nonstops ? "" : " ga"}" style="width:28px;height:28px">✈</div><b class="plab apt">${esc(a.code)}</b>`, iconSize: [28, 28], iconAnchor: [14, 14] }),
+      { z: 3000, zh: 7000, tip: () => `✈ ${esc(a.name)} (${esc(a.code)}) · ${a.nonstops ? a.nonstops + " nonstop destinations" : "no scheduled airline service"}` })));
+    const saleIcon = (cls, sym, x) => L.divIcon({ className: "", html: `<div class="mk ${cls}" style="width:22px;height:22px">${sym}</div>${x.price ? `<b class="plab ${cls.split(" ")[0]}">${priceK(x.price)}</b>` : ""}`, iconSize: [22, 22], iconAnchor: [11, 11] });
+    BZ.forEach(x => L_biz.addLayer(ent("business", x, () => saleIcon("biz", "$", x), { z: 1200, zh: 5500,
+      tip: () => `🏪 ${esc(x.title)}${x.price ? " · " + money(x.price) : ""} · ${esc(x.kind)}${x.town ? " · " + esc(x.town) : ""}` })));
+    BD.forEach(x => L_bldg.addLayer(ent("building", x, () => saleIcon("bldg sv", G.starDot("#2e7d32"), x), { z: 1200, zh: 5500,
+      tip: () => `🔔 ${esc(x.title)}${x.price ? " · " + money(x.price) : ""}${x.was ? " · was: " + esc(x.was) : ""}${x.town ? " · " + esc(x.town) : ""}` })));
+    AT.forEach(x => { const t = MORE_ATT[x.type]; if (!t) return;
+      const e = ent("attraction", x, x.type === "camp" ? () => icOnce("at_camp", () => sicon("att at-camp", G.tent(), 22, 22)) : () => icOnce("at_" + x.type, () => icon("att at-" + x.type, t[0], 24)),
+        { z: 100, zh: x.type === "museum" || x.type === "aquarium" ? 5000 : 0, tip: () => `${t[0]} ${esc(x.name)} (${esc(t[3])})` });
+      if (x.featured) { e.stout = true; e.z = 2500; e.zh = 6000; FEAT.push(e); } else L_at[x.type].addLayer(e); });
+    const ins = (after, rows) => { const i = LAYERS.findIndex(d => d.key === after); LAYERS.splice(i < 0 ? LAYERS.length : i + 1, 0, ...rows); };
+    ins("nh", [{ key: "biz", label: "🏪 Businesses for sale (under $1M)", layer: L_biz, on: true, n: BZ.length, disabled: !BZ.length },
+      { key: "bldg", label: "🔔 Interesting buildings for sale (under $600k)", layer: L_bldg, on: true, n: BD.length, disabled: !BD.length }]);
+    ins("hosp", [{ key: "apt", label: ST.apt, layer: L_apt, on: true, n: A.length, disabled: !A.length }]);
+    ins("act", [{ key: "attr", label: "Attractions", group: true }, ...Object.entries(MORE_ATT).map(([t, v]) => ({ key: v[2], label: v[0] + " " + v[1], layer: L_at[t],
+      on: t !== "camp", n: AT.filter(x => x.type === t).length, sub: true, disabled: !AT.some(x => x.type === t) }))]);
+    // featured standouts: curated outdoor + history sites + attractions (featured flag from data/featured.json) live in their own always-on layer
+    const L_feat = PL_("feat"); FEAT.forEach(e => L_feat.addLayer(e)); const nFeat = FEAT.length;
+    ins("apt", [{ key: "feat", label: ST.feat, layer: L_feat, on: true, n: nFeat, disabled: !nFeat }]);
+    MORE_PIN = ["biz", "bldg", "apt", "feat"];
+    MORE_LAYER_FOR = { _feat: it => it && it.featured ? "feat" : null, airport: () => "apt", business: () => "biz", building: () => "bldg", attraction: it => MORE_ATT[it.type] && MORE_ATT[it.type][2] };
+  }
+  function kyxMorePinKey(PIN_KEY) {
+    const mk = (cls, html, size) => `<span class="mk ${cls}" style="width:${size}px;height:${size}px">${html}</span>`;
+    const krow = (sym, label, note) => `<div class="krow"><span class="ksym">${sym}</span><span>${label}${note ? `<span class="small"> ${note}</span>` : ""}</span></div>`;
+    PIN_KEY.biz = () => `<div class="ksec"><b>🏪 Businesses for sale</b> <span class="small">(under $1M asking; Crexi &amp; Zillow, seen ${esc((K.businesses || [])[0] ? K.businesses[0].seen : "")})</span>${krow(mk("biz", "$", 20), "Business for sale", "(green $) · tag beside the pin = asking price")}</div>`;
+    PIN_KEY.bldg = () => `<div class="ksec"><b>🔔 Interesting buildings for sale</b> <span class="small">(under $600k: old churches, banks, schools, stores…)</span>${krow(ksv(G.starDot("#2e7d32")), "Unusual building for sale", "(green circle, yellow star) · tag = asking price")}</div>`;
+    PIN_KEY.apt = () => `<div class="ksec"><b>✈ Airports</b>${krow(mk("apt", "✈", 20), ST.name + " airport with airline service", "· code beside the pin")}${krow(mk("apt oos", "✈", 20), ST.aptOos)}${krow(mk("apt ga", "✈", 20), "No scheduled flights right now")}</div>`;
+    Object.values(MORE_ATT || {}).forEach(([e, label, key]) => { const t = Object.keys(MORE_ATT).find(k => MORE_ATT[k][2] === key); PIN_KEY[key] = () => krow(t === "camp" ? ksv(G.tent()) : mk("att at-" + t, e, 20), esc(label)); });
+    PIN_KEY.feat = () => `<div class="ksec"><b>★ ${ST.name} standouts</b> <span class="small">(a short hand-picked list: big parks, gorges, caves, battlefields, landmark homes, plus the famous museums, Newport Aquarium and Ark Encounter)</span>${krow(`<span class="mk sv stout">${G.mountain()}</span>`, "Standout site", `· gold glow; icon from zoom ${FULL.feat}`)}</div>`;
+    PIN_KEY._lod = () => { const T = { feat: "★ standouts", trauma: "other trauma centers", hosp: "hospitals", props: "5+ acre homes", nh: "near-hospital homes", cab: "cabins", big: "50+ acre lots", cvf: "caves & waterfalls", homes: "1+ acre homes", travel: "travel jobs", perm: "permanent jobs",
+        a_museum: "museums", a_aqua: "aquariums", col: "colleges", a_park: "amusement parks", a_water: "water parks", act: "outdoors", a_camp: "campgrounds", h_hist: "historic sites", sch: "schools", h_coal: "coal camps", h_ghost: "ghost towns", h_mine: "mines", ski: "ski areas + top peaks", peak: "other peaks", tgt: "Target stores" };
+      const by = {}; Object.entries(FULL).forEach(([k, z]) => { if (T[k]) (by[z] = by[z] || []).push(T[k]); });
+      const steps = Object.keys(by).sort((a, b) => a - b).map(z => `<b>${z}</b> ${by[z].join(", ")}`).join(" · ");
+      return `<div class="ksec small"><b>Zoomed out?</b> Statewide the map shows only Level I/II trauma centers, airports, businesses and unusual buildings for sale, ⭐ bargain homes and the 5 largest cities; every other pin is a faint dot. Zooming in turns the dots into icons a few kinds at a time (zoom ${steps}). Pins of one kind that sit close together show as one bigger icon with a count: tap it to zoom in; from zoom ${CL_OFF} every pin stands alone. The county colors fade as you zoom in; the county lines stay.</div>`; };
+  }
+  function kyxMoreLate() {
+    const A = K.airports || [], BZ = K.businesses || [], BD = K.buildings || [], AT = K.attractions || [];
+    const ATT = MORE_ATT;
+    Object.assign(THUMB_TITLE, { airport: a => `${a.name} (${a.code})`, business: x => x.title, building: x => x.title, attraction: x => x.name });
+    Object.assign(TITLE, { airport: a => `${a.name} (${a.code})`, business: x => x.title + " — business for sale", building: x => x.title + " — building for sale", attraction: x => x.name });
+    Object.assign(LABEL, { airport: "Airport", business: "Business for sale", building: "Building for sale", attraction: "Attraction" });
+    const sqft = v => v ? Math.round(v).toLocaleString() : "—";
+    const wikiUrl = t => "https://en.wikipedia.org/wiki/" + encodeURIComponent(String(t).replace(/ /g, "_"));
+    R.airport = a => `${thumb("airport", a)}<div class="kicker">✈ ${a.oos ? "Airport · out of state, near " + ST.name : ST.name + " airport"}</div><h2>${esc(a.name)} (${esc(a.code)})</h2>
+      <div class="sub">${esc(a.city)}, ${esc(a.state)}</div>${a.note ? `<div class="note">ℹ️ ${esc(a.note)}</div>` : ""}
+      <div class="stats">${stat(a.nonstops != null ? a.nonstops : "—", "nonstop destinations")}${stat((a.airlines || []).length, "airlines")}${stat(esc(a.code), "airport code")}</div>
+      ${(a.airlines || []).length ? `<div class="kicker">Airlines</div><div class="badges">${a.airlines.map(x => `<span class="badge">${esc(x)}</span>`).join("")}</div>` : ""}
+      ${(a.dests || []).length ? `<div class="kicker">Some nonstop destinations</div><div class="desc">${esc(a.dests.join(" · "))}${a.nonstops > a.dests.length ? " …" : ""}</div>` : ""}
+      <table class="kv">${row(ST.cu, a.county ? link("county", a.county, a.county + ST.cus) : esc(a.state))}${row("Wikipedia", a.wiki ? ext(a.wiki, "Airlines & destinations ↗") : null)}</table>
+      <div class="small">Nonstop count = destinations in Wikipedia's airlines &amp; destinations table (seasonal routes included), checked Oct 2026.</div>${nearbyProps(a)}`;
+    function saleCard(x, kind) {
+      const photos = x.photos || [];
+      const gal = photos.length ? `<div class="gal" id="gal">${photos.map((u, i) => `<img src="${esc(u)}" data-i="${i}" loading="${i < 2 ? "eager" : "lazy"}" alt="Photo ${i + 1} of ${esc(x.title)}">`).join("")}</div><div class="galcount">${photos.length} photo${photos.length > 1 ? "s" : ""} · swipe or tap to enlarge</div>` : "";
+      const ppsf = x.price && x.sqft ? "$" + Math.round(x.price / x.sqft).toLocaleString() : "—";
+      return `<div class="kicker">${kind === "business" ? "🏪 Business for sale · " + esc(x.kind) : "🔔 Interesting building for sale" + (x.was ? " · was: " + esc(x.was) : "")}</div><h2>${esc(x.title)}</h2>
+        <div class="sub">${esc(x.address || [x.town, x.county && x.county + ST.cus].filter(Boolean).join(", "))}</div>${gal}
+        <div class="badges">${x.biz_only ? '<span class="badge">Business only · no real estate</span>' : kind === "business" ? '<span class="badge">Real estate included</span>' : ""}${x.auction ? '<span class="badge gold">Auction</span>' : ""}</div>
+        ${x.note ? `<div class="note">⚠️ ${esc(x.note)}</div>` : ""}
+        <div class="stats">${stat(money(x.price), "asking price")}${stat(sqft(x.sqft), "sq ft")}${stat(x.acres ? fmt1(x.acres) : "—", "acres")}${stat(ppsf, "per sq ft")}${stat(x.year_built ? esc(x.year_built) : "—", "built")}${stat(esc(x.seen || "—"), "date seen")}</div>${nearbyBlock(x.nearby)}
+        <table class="kv">${row(kind === "business" ? "Business" : "What it was", esc(kind === "business" ? x.kind : (x.was || x.kind)))}${row("Address", x.address ? esc(x.address) : null)}
+        ${row(ST.cu, x.county ? link("county", x.county, x.county + ST.cus) : null)}
+        ${row("Nearest hospital", x.near_hosp ? `${link("hospital", x.near_hosp.id, x.near_hosp.name)} · ${x.near_hosp.miles} mi straight-line` : null)}
+        ${row("Listing", ext(x.url, "Open on " + (x.source || "source") + " ↗"))}${row("Broker", x.broker ? esc(x.broker) : null)}${row("Status", x.status ? esc(String(x.status).replace(/_/g, " ").toLowerCase()) : null)}
+        ${row("Listed", x.listed ? esc(x.listed) : null)}${row("Updated", x.updated ? esc(x.updated) : null)}${row("Date seen", esc(x.seen))}</table>
+        ${x.headline ? `<div class="small">${esc(x.headline)}</div>` : ""}${x.desc ? `<div class="kicker">Description</div><div class="desc">${esc(x.desc)}</div>` : ""}
+        <div class="small">Asking price as posted; listings change, so confirm on the source.</div>`;
+    }
+    R.business = x => saleCard(x, "business");
+    R.building = x => saleCard(x, "building");
+    R.attraction = a => { const t = ATT[a.type] || ["★", a.kind, "", a.kind];
+      const isRec = /recreation\.gov|reserveamerica/.test(a.web || "");
+      return `${thumb("attraction", a)}<div class="kicker">${t[0]} ${esc(t[3])}${a.sub && a.sub.toLowerCase() !== t[3].toLowerCase() ? " · " + esc(a.sub) : ""}</div><h2>${esc(a.name)}</h2>
+      <div class="sub">${esc(a.county ? a.county + ST.cus + ", " + ST.ab : ST.name)}</div>${a.desc ? `<div class="desc">${esc(a.desc)}</div>` : ""}
+      <table class="kv">${row("Campsites", a.sites ? esc(a.sites) : null)}${row("Run by", a.operator ? esc(a.operator) : null)}${row("Lake / area", a.area ? esc(a.area) : null)}${row("Nightly fee", a.price ? esc(a.price) : null)}
+      ${row(ST.cu, a.county ? link("county", a.county, a.county + ST.cus) : null)}${row(isRec ? "Reserve" : "Website", a.web ? ext(a.web, isRec ? "Reservations & details ↗" : (host(a.web) || "Website") + " ↗") : null)}
+      ${row("Wikipedia", a.wp ? ext(wikiUrl(a.wp), a.wp + " ↗") : null)}${row("Map data", a.osm ? ext(a.osm, "OpenStreetMap ↗") : a.wd ? ext("https://www.wikidata.org/wiki/" + a.wd, "Wikidata ↗") : null)}</table>${nearbyProps(a)}`; };
+    // county grouping pages
+    const at_order = ["amusement", "water", "aquarium", "museum", "camp"];
+    GCATS.push({ k: "business", n: "biz", label: "businesses for sale", one: "business for sale", title: "Businesses for sale", icon: "🏪", layers: ["biz"] },
+      { k: "buildings", n: "bldg", label: "buildings for sale", one: "building for sale", title: "Interesting buildings for sale", icon: "🔔", layers: ["bldg"] },
+      { k: "attractions", n: "attr", label: "attractions", one: "attraction", title: "Attractions", icon: "🎢", layers: MORE_ATT_KEYS.slice() });
+    GCATS.slice(-3).forEach(g => GC[g.k] = g);
+    gItems.business = n => BZ.filter(x => x.county === n);
+    gItems.buildings = n => BD.filter(x => x.county === n);
+    gItems.attractions = n => AT.filter(x => x.county === n);
+    const byPrice = (a, b) => (a.price == null) - (b.price == null) || (a.price || 0) - (b.price || 0);
+    GB.business = (c, xs, from) => ({ sub: "Sorted by asking price, lowest first", secs: [["Businesses for sale", xs.slice().sort(byPrice).map(x => gRow("business", x.id, from, gImg(x.rt, "🏪"),
+      `<b>${x.price != null ? money(x.price) : "Price n/a"}</b> · ${esc(x.kind)}`, esc(x.title), dot([x.town && esc(x.town), x.sqft && sqft(x.sqft) + " sq ft", x.biz_only && "business only"])))]] });
+    GB.buildings = (c, xs, from) => ({ sub: "Sorted by asking price, lowest first", secs: [["Buildings for sale", xs.slice().sort(byPrice).map(x => gRow("building", x.id, from, gImg(x.rt, "🔔"),
+      `<b>${x.price != null ? money(x.price) : "Price n/a"}</b>${x.was ? " · was: " + esc(x.was) : ""}`, esc(x.title), dot([x.town && esc(x.town), x.sqft && sqft(x.sqft) + " sq ft"])))]] });
+    GB.attractions = (c, xs, from) => ({ sub: "Grouped by type", jump: true, secs: at_order.map(t => [ATT[t][0] + " " + ATT[t][1].replace(/ \(.*\)$/, ""), xs.filter(x => x.type === t).sort((a, b) => a.name.localeCompare(b.name)).map(x =>
+      gRow("attraction", x.id, from, gImg(x.th && x.th.u, ATT[t][0]), `<b>${esc(x.name)}</b>`, `${ATT[t][0]} ${esc(ATT[t][3])}${x.sub ? " · " + esc(x.sub) : ""}${x.sites ? " · " + x.sites + " sites" : ""}`,
+        x.desc ? esc(firstSentence(x.desc)) : x.web ? esc(host(x.web)) : ""))]).filter(s => s[1].length) });
+    kyxLOD();
+  }
+  // ---------------------------------------------------------------- zoom-level de-clutter (LOD)
+  // Below each layer's tier its pins are faint dots (Bill, Oct 1 late: "the more you zoom in, the more you see"); icons come back a few
+  // kinds per zoom step (FULL: 7.5 standouts ... 11 minor history). Level I/II trauma centers, airports, businesses / buildings for sale,
+  // bargain homes and cities always show. Close pins of one icon type are grouped (clusterize); county colors fade with zoom (setFade).
+  // The tiers (FULL / KEEP), the viewport culling and the zoomed-out z-order live in the lazy point-layer code near the top (refreshPoints).
+  function kyxLOD() { if (keyReady) renderKey(); }
+  // ================================================================ ski areas & notable peaks (Oct 3, 2026)
+  // Data: K.ski / K.peaks (slim pins in core.js) + data/d/_mtn.js (card details, lazy) from mtn_build.py + explorer/mtn.json.
+  // Generic for every state: no data -> no layer rows, no solo buttons, no key rows. Ski areas show as icons from zoom 8, tier-1
+  // peaks from zoom 8 (FULLE), the rest from 9.5; dots below. Grouping is automatic (one icon key per kind). Share: #ski=<id>, #peak=<id>.
+  // ================================================================ border items (Oct 3, 2026)
+  // Pins within ~15 mi OUTSIDE the state line that meet this map's criteria (build.py + border_build.py, explorer/border.json).
+  // They are ordinary items (same icons, layers, filters, Top 10s, share links) with county=null, bst=<state>, bco=<their county/town>,
+  // bmi=<miles outside>; card details sit in data/d/_b-<st>.js. Their cards get a state tag; school grades use their own state's labels.
+  const BST_NAME = { AL: "Alabama", AR: "Arkansas", CT: "Connecticut", GA: "Georgia", IL: "Illinois", IN: "Indiana", KY: "Kentucky", MA: "Massachusetts", ME: "Maine",
+    MO: "Missouri", MS: "Mississippi", NC: "North Carolina", NH: "New Hampshire", NY: "New York", OH: "Ohio", RI: "Rhode Island", SC: "South Carolina", TN: "Tennessee",
+    VA: "Virginia", VT: "Vermont", WV: "West Virginia", QC: "Québec", NB: "New Brunswick", ON: "Ontario" };
+  function kyxBorderCard(type, it) {
+    if (!it || !it.bst) return R[type](it);
+    const sv = {}, bs = it.bsch;
+    if (type === "school") ["sch", "schLab", "schSrc", "rlab", "schOf"].forEach(k => { sv[k] = ST[k]; if (bs) ST[k] = bs[k] == null ? (k === "rlab" ? null : ST[k]) : bs[k]; });
+    if (type === "school" && !bs) { ST.schLab = "State grade"; ST.schSrc = "no grades loaded for " + (BST_NAME[it.bst] || it.bst) + " schools";
+      ST.schNone = "No grade shown: this map has no school grades for " + (BST_NAME[it.bst] || it.bst) + " (school directory listing from NCES only)"; }
+    let h; try { h = R[type](it); } finally { Object.assign(ST, sv); if (type === "school") ST.schNone = sv.schNone; }
+    const bco = it.bco && it.bco !== it.bst ? it.bco : null, loc = esc(bco || BST_NAME[it.bst] || it.bst);
+    h = h.replace(/<a class="inl" data-go="county" data-id="(?:null|undefined|)">[^<]*<\/a>/g, loc);
+    h = h.replace(/<a class="inl" data-go="([a-z]+)" data-id="([^"]*)">([^<]*)<\/a>/g, (m, t, id, tx) => {  // links to things that are not on this map -> plain text
+      if (t === "county") return IDX.county[id] ? m : tx;
+      return !IDX[t] || IDX[t][id] ? m : tx; });
+    const cuRow = new RegExp(`<tr><td>${esc(ST.cu)}</td><td>(?:${loc.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}|${esc(it.bst)}|${esc(it.state || it.bst)}|out of state)</td></tr>`);
+    h = h.replace(cuRow, `<tr><td>${/County|Parish/.test(loc) ? "County" : "Location"}</td><td>${loc}</td></tr>`);
+    if (type === "hospital" || type === "travel") {
+      h = h.replace(`Not on the ${ST.traumaList}`, `Not known: this map has no ${esc(BST_NAME[it.bst] || it.bst)} trauma list`);
+      if (/CMS/.test(it.src || "")) h = h.replace(/\(per OpenStreetMap\)/g, "(per CMS Care Compare)");
+    }
+    if (type === "school") {  // the home-state district context block does not apply over the line
+      h = h.replace(/<div class="kicker">[^<]*context<\/div>/, bs ? '<div class="kicker">Grades</div>' : "");
+      if (!bs) h = h.replace(/<div class="small">(?:Letter grades|KDE colors)[\s\S]*?\)\.<\/div>/, "");
+    }
+    const tag = `<div class="btag">🧭 Just over the state line in <b>${esc(BST_NAME[it.bst] || it.bst)}</b> <span class="bst">${esc(it.bst)}</span>${bco ? " · " + esc(bco) : ""}${it.bmi != null ? ` · ${esc(it.bmi)} mi outside ${esc(ST.name)}` : ""}</div>`;
+    const i = h.indexOf('<div class="kicker">');
+    if (i >= 0) { const j = h.indexOf("</div>", i) + 6; return h.slice(0, j) + tag + h.slice(j); }
+    return tag + h;
+  }
+  function kyxBorderLate() {
+    const B = K.meta && K.meta.border; if (!B) return;
+    PIN_KEY._border = () => `<div class="ksec small"><b>🧭 Just over the state line:</b> pins up to ~${esc(B.miles)} mi outside ${esc(ST.name)} that meet this map's own criteria (homes, jobs, hospitals, schools, colleges, parks and more) use the same icons; their cards say which state they are in. They don't change any ${esc(ST.cu.toLowerCase())} colors, scores or counts.</div>`;
+  }
+  // ================================================================ Target stores (Oct 7, 2026)
+  // Data: K.targets (whole rows in core.js) + K.meta.target from target_build.py + explorer/target.json (Target's own store directory
+  // and store pages). Every store in the state plus stores within ~15 mi outside the state line (bst/bco/bmi: border rule, no county
+  // field, so never in county stats). Layer key tgt (red bullseye, icons from zoom FULL.tgt, faint dots below, grouped like the others),
+  // right-stack button "Target", Map key row, search, card (name, address, hours, phone, services), share #target=<store number>.
+  // Shown in every profile (Bill's and Anna's): profiles only filter homes / jobs / schools / county items. No data -> no layer, no button.
+  function kyxTarget(LAYERS) {
+    const TG = K.targets || [];
+    IDX.target = {}; TG.forEach(x => IDX.target[x.id] = x);
+    if (!TG.length) return;
+    const L_tgt = PL_("tgt");
+    TG.forEach(x => L_tgt.addLayer(ent("target", x, () => icOnce("tgt", () => sicon("tgt", G.tgt(18), 18, 18)), { z: 500, zh: 1200,
+      tip: () => `🎯 ${esc(x.name)} · ${esc(x.city || "")}${x.st ? ", " + esc(x.st) : ""}` })));
+    const nIn = TG.filter(x => !x.bst).length, nB = TG.length - nIn;
+    let i = LAYERS.findIndex(d => d.key === "peak"); if (i < 0) i = LAYERS.findIndex(d => d.key === "ski"); if (i < 0) i = LAYERS.findIndex(d => d.key === "act");
+    LAYERS.splice(i < 0 ? LAYERS.length : i + 1, 0, { key: "tgt", ic: G.tgt(16), label: `Target stores (${nIn} in ${ST.name}${nB ? ` + ${nB} just over the line` : ""})`, layer: L_tgt, on: true, n: TG.length });
+    if (MORE_LAYER_FOR) MORE_LAYER_FOR.target = () => "tgt";
+  }
+  function kyxTargetPinKey(PIN_KEY) {
+    if (!(K.targets || []).length) return;
+    const m = (K.meta && K.meta.target) || {};
+    PIN_KEY.tgt = () => `<div class="ksec"><b>🎯 Target stores</b> <span class="small">(every Target in ${esc(ST.name)}${m.n_in != null ? ` (${m.n_in})` : ""}${m.n_border ? ` plus ${m.n_border} within ~${esc(m.miles || 15)} mi over the state line` : ""}; card: address, hours, phone; from Target's store directory, checked ${esc(m.checked || "")})</span>${krow(ksv(G.tgt(18)), "Target store", `· icon from zoom ${FULL.tgt}`)}</div>`;
+  }
+  function kyxTargetLate() {
+    if (!(K.targets || []).length) return;
+    Object.entries({ AZ: "Arizona", CO: "Colorado", DE: "Delaware", ID: "Idaho", MT: "Montana", ND: "North Dakota", NE: "Nebraska", NM: "New Mexico", NV: "Nevada",
+      OR: "Oregon", PA: "Pennsylvania", SD: "South Dakota", UT: "Utah", WA: "Washington", WY: "Wyoming", MD: "Maryland", NJ: "New Jersey", MI: "Michigan" }).forEach(([k, v]) => { if (!BST_NAME[k]) BST_NAME[k] = v; });
+    const m = (K.meta && K.meta.target) || {};
+    Object.assign(TITLE, { target: x => x.name + (x.city ? " — " + x.city + ", " + x.st : "") });
+    Object.assign(LABEL, { target: "Target store" });
+    const SVC = ["CVS pharmacy", "Starbucks Cafe", "Drive Up", "Order Pickup", "Target Optical", "Wine, Beer & Spirits Available", "Fresh Grocery", "Ulta Beauty at Target", "Apple Experience", "Disney store at Target", "Baby Boutique", "Target Mobile", "Target Beauty Studio"];
+    R.target = x => {
+      const a2 = [x.city, [x.st, x.zip].filter(Boolean).join(" ")].filter(Boolean).join(", ");
+      const hrs = (x.hrs || []).map(h => row(h[0], esc(h[1]))).join("");
+      const caps = (x.caps || []).filter(c => SVC.includes(c)).sort((a, b) => SVC.indexOf(a) - SVC.indexOf(b));
+      const tel = x.ph ? `<a href="tel:${esc(String(x.ph).replace(/[^0-9+]/g, ""))}">${esc(x.ph)}</a>` : null;
+      return `<div class="kicker">🎯 Target store${x.bst ? "" : " · " + esc(ST.name)}</div><h2>${esc(x.name)}</h2>
+      <div class="sub">${esc(x.addr || "")}${x.addr ? ", " : ""}${esc(a2)}</div>
+      <table class="kv">${row("Address", esc([x.addr, a2].filter(Boolean).join(", ")))}${row("Phone", tel)}${!x.bst && x.cty ? row("County", esc(/County|Parish|Borough/.test(x.cty) ? x.cty : x.cty + " County")) : ""}${row("Store number", esc(x.id))}</table>
+      <div class="kicker">Store hours</div>${hrs ? `<table class="kv">${hrs}</table>` : '<div class="small">— not listed; check target.com.</div>'}
+      <div class="small">Regular hours as listed on target.com${m.checked ? " (checked " + esc(m.checked) + ")" : ""}; holiday hours differ.</div>
+      ${caps.length ? `<div class="kicker">In this store</div><div class="badges">${caps.map(c => `<span class="badge">${esc(c.replace(/ Available$/, ""))}</span>`).join("")}</div>` : ""}
+      <table class="kv">${row("Website", x.url ? ext(x.url, "target.com store page ↗") : null)}</table>`;
+    };
+  }
+  function kyxMtn(LAYERS) {
+    const SK = K.ski || [], PK = K.peaks || [];
+    IDX.ski = {}; IDX.peak = {}; SK.forEach(x => IDX.ski[x.id] = x); PK.forEach(x => IDX.peak[x.id] = x);
+    if (!SK.length && !PK.length) return;
+    const L_ski = PL_("ski"), L_peak = PL_("peak"), nf = v => v == null ? "" : Math.round(v).toLocaleString();
+    SK.forEach(x => L_ski.addLayer(ent("ski", x, () => icOnce("ski", () => sicon("ski", G.skier(22), 22, 22)), { z: 900, zh: 1500,
+      tip: () => `⛷ ${esc(x.name)}${x.st && x.st !== ST.ab ? " (" + esc(x.st) + ")" : ""}${x.trails ? " · " + x.trails + " trails" : ""}${x.vert ? " · " + nf(x.vert) + " ft vertical" : ""}` })));
+    PK.forEach(x => L_peak.addLayer(ent("peak", x, () => icOnce("peak", () => sicon("peak", G.peak(22), 22, 22)), { z: x.tier === 1 ? 800 : 300, zh: x.tier === 1 ? 1400 : 0,
+      tip: () => `⛰ ${esc(x.name)}${x.elev ? " · " + nf(x.elev) + " ft" : ""}${x.hp ? " · " + esc(ST.name) + "'s highest point" : ""}` })));
+    const i = LAYERS.findIndex(d => d.key === "act"), rows = [];
+    if (SK.length) rows.push({ key: "ski", ic: G.skier(16), label: "Ski areas (trails, lifts, ticket prices)", layer: L_ski, on: true, n: SK.length });
+    if (PK.length) rows.push({ key: "peak", ic: G.peak(16), label: "Mountain peaks (elevation, hikes, climate)", layer: L_peak, on: true, n: PK.length });
+    LAYERS.splice(i < 0 ? LAYERS.length : i + 1, 0, ...rows);
+    if (MORE_LAYER_FOR) { MORE_LAYER_FOR.ski = () => "ski"; MORE_LAYER_FOR.peak = () => "peak"; }
+    // offline: fetch the card details once the map is idle (cached by sw.js like any data file)
+    if (K.mtnd) window.addEventListener("load", () => setTimeout(() => { try { (window.requestIdleCallback || (f => f()))(() => loadShard("_mtn")); } catch (e) { } }, 6000), { once: true });
+  }
+  function kyxMtnPinKey(PIN_KEY) {
+    if ((K.ski || []).length) PIN_KEY.ski = () => `<div class="ksec"><b>⛷ Ski areas</b> <span class="small">(every alpine ski area in ${esc(ST.name)} plus ones just over the border worth the drive; card: trails, lifts, vertical, snowfall, season, ticket &amp; pass prices with season and source, discounts, special days)</span>${krow(ksv(G.skier(20)), "Ski area", `· icon from zoom ${FULL.ski}`)}${ST.ab === "KY" ? `<div class="small">Kentucky has no operating ski area (Ski Butler closed in the late 1990s); the nearest are in Indiana, Ohio, West Virginia and Tennessee.</div>` : ""}</div>`;
+    if ((K.peaks || []).length) PIN_KEY.peak = () => `<div class="ksec"><b>⛰ Mountain peaks</b> <span class="small">(state high point, well-known peaks and popular hiking summits; card: elevation, prominence, activities, estimated summit weather)</span>${krow(ksv(G.peak(20)), "Notable peak", `· best-known from zoom ${FULLE.peak({ it: { tier: 1 } })}, the rest from ${FULL.peak}`)}</div>`;
+  }
+  function kyxMtnLate() {
+    if (!(K.ski || []).length && !(K.peaks || []).length) return;
+    Object.assign(THUMB_TITLE, { ski: x => x.name, peak: x => x.name });
+    Object.assign(TITLE, { ski: x => x.name + " — ski area", peak: x => x.name + " — mountain peak" });
+    Object.assign(LABEL, { ski: "Ski area", peak: "Mountain peak" });
+    const nf = v => v == null ? "—" : Math.round(v).toLocaleString(), usd = v => v == null ? "—" : "$" + (Math.round(v * 100) / 100).toLocaleString(undefined, { minimumFractionDigits: v % 1 ? 2 : 0, maximumFractionDigits: 2 });
+    const wikiUrl = t => "https://en.wikipedia.org/wiki/" + encodeURIComponent(String(t).replace(/ /g, "_"));
+    const away = x => x.st && x.st !== ST.ab;
+    const ul = xs => `<ul class="mtnl">${xs.map(t => `<li>${esc(t)}</li>`).join("")}</ul>`;
+    const srcs = xs => (xs || []).length ? `<details class="mtnsrc"><summary>Sources (${xs.length})</summary>${xs.map(u => `<div>${ext(u, host(u) + " ↗")}</div>`).join("")}</details>` : "";
+    R.ski = x => {
+      const sp = x.split, sn = x.split_n, km = x.km_split;
+      const split = sp ? `Beginner ${sp.beg != null ? sp.beg + "%" : "—"} · Intermediate ${sp.int != null ? sp.int + "%" : "—"} · Advanced ${sp.adv != null ? sp.adv + "%" : "—"} <span class="small">(share of trails, Wikipedia)</span>`
+        : sn ? `Beginner ${sn.beg != null ? sn.beg : "—"} · Intermediate ${sn.int != null ? sn.int : "—"} · Advanced ${sn.adv != null ? sn.adv : "—"} <span class="small">(trails, Wikipedia)</span>` : "—";
+      const kms = km && km.some(v => v != null) ? `Easy ${fmt1(km[0])} km · Intermediate ${fmt1(km[1])} km · Difficult ${fmt1(km[2])} km <span class="small">(${fmt1(x.km)} km of slopes, skiresort.com)</span>` : null;
+      const tix = x.tix || [], tk = l => tix.find(t => t[0] === l);
+      const trow = (lab, t) => `<tr><td>${esc(lab)}</td><td><b>${t ? usd(t[1]) : "—"}</b>${t ? `<div class="small">${esc(t[2])}</div>` : ""}</td></tr>`;
+      const snow = x.snow != null ? `${nf(x.snow)} in <span class="small">(average per season, Wikipedia)</span>` : x.snow_stn ? `— at the mountain · ${nf(x.snow_stn.inches)} in at ${esc(x.snow_stn.stn)} (${nf(x.snow_stn.stn_ft)} ft, ${x.snow_stn.mi} mi away; NOAA 1991–2020). The slopes usually get more.` : "—";
+      const plan = x.plan ? x.plan.replace(/^(\d{4}-\d\d-\d\d)\s*-\s*(\d{4}-\d\d-\d\d)$/, "$1 → $2") : null;
+      return `${thumb("ski", x)}<div class="kicker">⛷ Ski area${away(x) ? " · just over the border in " + esc(x.st) : " · " + esc(ST.name)}</div><h2>${esc(x.name)}</h2>
+      <div class="sub">${x.town ? "Near " + esc(x.town) + (x.town_mi ? ` (${x.town_mi} mi)` : "") : ""}</div>${x.note ? `<div class="note">ℹ️ ${esc(x.note)}</div>` : ""}
+      <div class="stats">${stat(x.trails != null ? x.trails : "—", "runs / trails")}${stat(x.lifts != null ? x.lifts : "—", "lifts")}${stat(x.vert != null ? nf(x.vert) + " ft" : "—", "vertical drop")}${stat(x.top != null ? nf(x.top) + " ft" : "—", "summit")}${stat(x.snow != null ? nf(x.snow) + " in" : "—", "avg snowfall")}</div>
+      ${(x.multi || []).length ? `<div class="badges">${x.multi.map(m => `<span class="badge gold">${esc(m[0])} Pass</span>`).join("")}</div>` : ""}
+      <table class="kv">${row("Trail split", split)}${kms ? row("By slope length", kms) : ""}${row("Lifts", x.lifts != null ? x.lifts + ' <span class="small">(skiresort.com)</span>' : "—")}
+      ${row("Vertical / summit / base", `${nf(x.vert)} ft / ${nf(x.top)} ft / ${nf(x.base)} ft`)}${row("Average snowfall", snow)}
+      ${row("Typical season", x.season ? esc(x.season) + ' <span class="small">(skiresort.com)</span>' : "—")}${plan ? row("2026–27 plan", esc(plan) + ' <span class="small">(planned dates, skiresort.com)</span>') : ""}</table>
+      <div class="kicker">Lift tickets (adult, 1 day)</div><table class="kv">${trow("Weekday", tk("Weekday"))}${trow("Weekend", tk("Weekend"))}${tk("Day (main season)") ? trow("Day, main season", tk("Day (main season)")) : ""}</table>
+      <div class="kicker">Season pass</div><table class="kv">${row("This mountain", x.pass ? `<b>${usd(x.pass[0])}</b><div class="small">${esc(x.pass[1])}</div>` : "—")}
+      ${row("Multi-resort", (x.multi || []).length ? x.multi.map(m => `<div><b>${esc(m[0])}</b> · <span class="small">${esc(m[1])}</span></div>`).join("") : "— (not on Epic, Ikon or Indy)")}</table>
+      <div class="kicker">Discounts</div>${(x.disc || []).length ? ul(x.disc) : '<div class="small">— none found in our sources; check the website.</div>'}
+      <div class="small">Nurses / healthcare: ${(x.multi || []).some(m => m[0] === "Ikon") ? "the Ikon Pass sells a discounted nurse pass." : (x.disc || []).some(d => /nurs|healthcare|health care|first responder/i.test(d)) ? "see above." : "— no nurse discount found; ask the ticket office."} Early-bird season passes and multi-day tickets are usually cheaper per day when bought online ahead.</div>
+      <div class="kicker">Special days &amp; events</div>${(x.special || []).length ? ul(x.special) : '<div class="small">—</div>'}
+      <table class="kv">${row("Website", x.web ? ext(x.web, (host(x.web) || "Website") + " ↗") : null)}${row("Wikipedia", x.wp ? ext(wikiUrl(x.wp), x.wp + " ↗") : null)}</table>
+      ${srcs(x.src)}<div class="small">Prices are as published by each source (season and source on every price; checked ${esc((K.mtnd || {}).checked || "Oct 2026")}); '—' = not found. Prices change, so confirm on the resort's site before you go.</div>`;
+    };
+    R.peak = x => {
+      const c = x.clim || {}, t = c.temp, sn = c.snow;
+      const deg = v => v == null ? "—" : Math.round(v) + "°F";
+      const tmp = t ? `<table class="kv">${row("Summer (July)", `${deg(t.jul_hi)} high / ${deg(t.jul_lo)} low`)}${row("Winter (January)", `${deg(t.jan_hi)} high / ${deg(t.jan_lo)} low`)}
+        ${t.sum != null ? row("Summer average (Jun–Aug)", deg(t.sum)) : ""}${t.win != null ? row("Winter average (Dec–Feb)", deg(t.win)) : ""}</table>
+        <div class="small">Estimate for the summit: ${esc(t.stn)} weather station (${nf(t.stn_ft)} ft, ${t.mi} mi away, NOAA 1991–2020 normals) adjusted by 3.5 °F per 1,000 ft of height difference. Wind makes summits feel colder.</div>` : '<div class="small">— no weather station close enough for an estimate.</div>';
+      return `${thumb("peak", x)}<div class="kicker">⛰ Mountain peak${x.hp ? " · " + esc(ST.name) + "'s highest point" : away(x) ? " · just over the border in " + esc(x.st) : ""}</div><h2>${esc(x.name)}</h2>
+      <div class="sub">${x.town ? "Nearest town: " + esc(x.town) + (x.town_mi != null ? ` (${x.town_mi} mi)` : "") : ""}</div>
+      <div class="stats">${stat(x.elev != null ? nf(x.elev) + " ft" : "—", "elevation")}${stat(x.prom != null ? nf(x.prom) + " ft" : "—", "prominence")}${stat(sn ? nf(sn.inches) + " in" : "—", "snowfall nearby")}${stat(t ? deg(t.jul_hi) : "—", "July high (est.)")}${stat(t ? deg(t.jan_hi) : "—", "Jan high (est.)")}</div>
+      <div class="kicker">Activities</div>${(x.act || []).length ? `<div class="badges">${x.act.map(a => `<span class="badge">${esc(a)}</span>`).join("")}</div>` : '<div class="small">—</div>'}
+      <div class="kicker">Weather at the top (estimate)</div>${tmp}
+      <table class="kv">${row("Average snowfall", sn ? `${nf(sn.inches)} in at ${esc(sn.stn)} (${nf(sn.stn_ft)} ft, ${sn.mi} mi away; NOAA 1991–2020). The summit usually gets more.` : "—")}
+      ${row("Prominence", x.prom != null ? nf(x.prom) + " ft <span class=\"small\">(how far it rises above the saddle to any higher peak)</span>" : "—")}
+      ${row("Wikipedia", x.wp ? ext(wikiUrl(x.wp), x.wp + " ↗") : null)}${row("Map data", x.osm ? ext(`https://www.openstreetmap.org/?mlat=${x.lat}&mlon=${x.lon}#map=14/${x.lat}/${x.lon}`, "OpenStreetMap ↗") : x.qid ? ext("https://www.wikidata.org/wiki/" + x.qid, "Wikidata ↗") : null)}</table>
+      <div class="small">Elevation and prominence from Wikipedia / Wikidata / OpenStreetMap; activities from the Wikipedia article (fire towers, trails, roads, cliffs). '—' = not found.</div>`;
+    };
+    if (keyReady) renderKey();
+  }
+  // ================================================================ /more layers
+  kyxMoreLate();
+  kyxBorderLate(); kyxMtnLate(); kyxTargetLate();
+  // ------------------------------------------------------------------ top-10 bubbles (#deals, #top-buildings, #top-businesses)
+  // Three bubbles anchored just south of Kentucky (Tennessee) + a fixed "Top 10s" button; lists come from build.py (scripts/top_lists.py).
+  const TOPD = K.tops || {};
+  const TOPS = [
+    { k: "deals", hash: "deals", type: "property", src: "properties", ll: [35.95, -85.5], icon: G.starDot("#8e24aa"), cls: "tb-deals", row: 1, col: 2, bub: "Deals of the Week",
+      label: n => `⭐ Deals of the Week (${n})`, title: "⭐ Deals of the Week", h2: n => `The ${n} best home values right now`,
+      sub: "Every home listing (5-acre, 1-acre and near-hospital, ⭐ bargains and others) ranked by price per sq ft (per acre for 5-acre land) vs nearby Zillow listings, criteria fit and extras" },
+    { k: "buildings", hash: "top-buildings", type: "building", src: "buildings", ll: [35.95, -87.98], icon: G.starDot("#2e7d32"), cls: "tb-bldg", row: 1, col: 1, bub: "Odd Buildings",
+      label: n => `Top ${n} Odd Buildings`, title: "Top 10 Odd Buildings", h2: n => `Top ${n} odd buildings for sale`,
+      sub: "Ranked by how interesting or historic it is, price per sq ft vs the other odd buildings listed, and condition" },
+    { k: "businesses", hash: "top-businesses", type: "business", src: "businesses", ll: [35.95, -83.02], icon: `<span class="mk biz" style="width:22px;height:22px">$</span>`, cls: "tb-biz", row: 1, col: 3, bub: "Businesses for Sale",
+      label: n => `Top ${n} Businesses for Sale`, title: "Top 10 Businesses for Sale", h2: n => `Top ${n} businesses for sale`,
+      sub: "Ranked by value (asking price vs stated revenue or cash flow), whether the real estate is included, and appeal (Red River Gorge cabins, RV parks, lake lodging…)" },
+    { k: "er_jobs", hash: "top-er-jobs", type: "travel", job: true, ll: [35.0, -86.74], icon: G.nurseCap("ER", "#fff", "#c62828", "#fff"), cls: "tb-job tb-er", row: 2, col: 1, bub: "ER Travel Jobs",
+      label: n => `Top ${n} ER Travel Jobs`, title: "Top 10 ER Travel Jobs", h2: n => `Top ${n} ER travel nurse jobs by weekly pay`,
+      sub: "Emergency Department / ER / ED / Trauma ER travel RN jobs (no peds ED), highest posted weekly pay first (high end of any range)" },
+    { k: "other_jobs", hash: "top-other-jobs", type: "travel", job: true, ll: [35.0, -84.26], icon: G.nurseCap("RN", "#fff", "#c62828", "#fff"), cls: "tb-job tb-oj", row: 2, col: 2, bub: "Non-ER Travel Jobs",
+      label: n => `Top ${n} Non-ER Travel Jobs`, title: "Top 10 Non-ER Travel Jobs", h2: n => `Top ${n} non-ER travel nurse jobs by weekly pay`,
+      sub: "Every other specialty (ICU, PCU, tele, PACU…; no OR, cardiac cath lab, mom-baby, women's or peds), highest posted weekly pay first (high end of any range)" },
+    // permanent RN jobs (perm.js ranks them live from data/pjm.js + data/pjd.js under the active filters)
+    { k: "bonus", hash: "top-bonus", type: "perm", perm: "bonus", icon: G.nurseCap("$", "#fff", "#1565c0", "#fff"), cls: "tb-pj tb-bon", row: 2, col: 3, bub: "Sign-on Bonuses",
+      label: () => "Top Sign-on Bonuses", title: "Top Sign-on Bonuses", h2: n => `Top ${n} sign-on bonuses (permanent RN jobs)`,
+      sub: "Every specialty that passes the filters (ER, ICU, step-down, med-surg…), ranked by the stated sign-on bonus" },
+    { k: "perm_er", hash: "top-perm-er", type: "perm", perm: "er", icon: G.nurseCap("ER", "#fff", "#1565c0", "#fff"), cls: "tb-pj tb-per", row: 3, col: 1, bub: "Perm ER",
+      label: () => "Top 10 Perm ER Jobs", title: "Top 10 Perm ER Jobs", h2: n => `Top ${n} permanent ER RN jobs by listed pay`,
+      sub: "Permanent staff ER / emergency RN jobs (no peds ED), highest listed hourly pay first (top of the range)" },
+    { k: "perm_sdms", hash: "top-perm-sdms", type: "perm", perm: "sdms", icon: G.nurseCap("PCU", "#fff", "#1565c0", "#fff"), cls: "tb-pj tb-psd", row: 3, col: 2, bub: "Perm Step-down + Med-surg",
+      label: () => "Top 10 Perm Step-down + Med-surg", title: "Top 10 Perm Step-down + Med-surg", h2: n => `Top ${n} permanent step-down + med-surg RN jobs by listed pay`,
+      sub: "Permanent staff step-down / PCU / IMC / telemetry and med-surg RN jobs, highest listed hourly pay first (top of the range)" },
+    { k: "perm_icu", hash: "top-perm-icu", type: "perm", perm: "icu", icon: G.nurseCap("ICU", "#fff", "#1565c0", "#fff"), cls: "tb-pj tb-picu", row: 3, col: 3, bub: "Perm ICU (general)",
+      label: () => "Top 10 Perm ICU (general)", title: "Top 10 Perm ICU (general)", h2: n => `Top ${n} permanent general ICU RN jobs by listed pay`,
+      sub: "Permanent staff general ICU / critical care RN jobs (CVICU, neuro ICU and other specialty ICUs are their own filter row), highest listed hourly pay first" },
+  ].filter(t => t.perm ? !!(K.meta && K.meta.pj) : (TOPD[t.k] || []).length);
+  const TOPK = {}; TOPS.forEach(t => TOPK[t.k] = t);
+  const TOPH = {}; TOPS.forEach(t => TOPH[t.hash] = t);
+  const topRows1 = t => PROF && PROF.tops ? PROF.tops(t, topRows0(t)) : topRows0(t);
+  const topRows = t => ANNA_ON && t.type === "property" ? topRows1(t).filter(([, x]) => !isNH(x)) : topRows1(t);  // Anna: no near-hospital homes
+  function topVis(t) { return ANNA_ON ? !!t.anna : !t.anna; }  // Anna on: exactly its own 7 Top 10 lists (no nurse-job or other lists); off: no Anna lists
+  const topN = t => t.perm ? 10 : t.ext ? t.cnt() : (TOPD[t.k] || []).length;
+  const topRows0 = t => (TOPD[t.k] || []).map(r => [r, IDX[t.type] && IDX[t.type][r.hid || r.id]]).filter(x => x[1] && (!t.job || x[1].jobs.some(j => j.id === x[0].id)));
+  const acres = a => (+a).toLocaleString(undefined, { maximumFractionDigits: 2 }) + " ac";
+  function topRow(t, r, x) {
+    if (t.job) {
+      const j = x.jobs.find(j => j.id === r.id), from = "top|" + t.k;
+      return `<div class="trow">${gRow("travel", x.id, from, gImg(x.th && x.th.u, "💼"), `<b class="gpay">#${r.rank} ${tjPay(j)}/wk</b> · ${esc(j.u || j.sp || "RN")}`,
+        `<b>${esc(shortHosp(x.name))}</b>${x.city ? " · " + esc(x.city) : ""}`, dot([j.sh && esc(j.sh), j.ag && esc(j.ag)]), true)}${j.url ? `<a class="tapply" href="${esc(j.url)}" target="_blank" rel="noopener" aria-label="Apply for this job (opens ${esc(host(j.url))})">Apply ↗</a>` : ""}</div>`;
+    }
+    const from = "top|" + t.k, img = gImg(x.rt || (x.th && x.th.u) || (x.photos || [])[0], t.k === "deals" ? "🏠" : t.k === "buildings" ? "⛪" : "$");
+    const size = [x.sqft && sqft(x.sqft) + " sq ft", x.acres != null && x.acres !== "" && acres(x.acres)].filter(Boolean).join(" · ");
+    const facts = t.k === "deals" ? dot([`<b>#${r.rank} ${money(x.price)}</b>`, x.beds != null && `${esc(x.beds)} bd / ${esc(x.bath_detail ? x.bath_detail.replace(/ full/, "") : x.baths)} ba`, size])
+      : dot([`<b>#${r.rank} ${x.price != null ? money(x.price) : "Price n/a"}</b>`, size || null]);
+    const l3 = dot([x.town && esc(x.town), t.k === "deals" ? (r.bargain ? `<span class="gstar"><span class="bstar">${G.starDot("#8e24aa")}</span> Bargain</span>` : null) : esc(x.title)]);
+    return gRow(t.type, x.id, from, img, facts, esc(r.why), l3, true);
+  }
+  function topHtml(t) {
+    const navP = `<nav class="gjump tnav" aria-label="Other top lists">${TOPS.filter(topVis).map(o => `<a class="tchip${o.k === t.k ? " on" : ""}" href="#${o.hash}">${esc(o.title.replace(/^⭐ /, "⭐ "))}</a>`).join("")}</nav>`;
+    if (t.ext) return ANNAX.topHtml(t, navP);
+    if (t.perm) return PJX.topHtml(t, navP);
+    const rows = topRows(t), n = rows.length;
+    const nav = TOPS.filter(topVis).length > 1 ? `<nav class="gjump tnav" aria-label="Other top lists">${TOPS.filter(topVis).map(o => `<a class="tchip${o.k === t.k ? " on" : ""}" href="#${o.hash}">${esc(o.title.replace(/^⭐ /, "⭐ "))}</a>`).join("")}</nav>` : "";
+    return `<div class="gbar"><button type="button" class="gback" id="gBack" aria-label="Back to the map">‹ Map</button>
+        <button type="button" class="gshare" id="gShare" aria-label="Share this list">${navigator.share ? "Share" : "Copy link"}</button></div>
+      <div class="kicker">${esc(t.title)} · <span class="tupd">Updated ${esc(TOPD.updated || "")}</span></div><h2>${esc(t.h2(n))}</h2>
+      <div class="sub">${esc(t.sub)} · tap a row to open it on the map</div>${PROF ? PROF.note(t.job ? "jobs" : "listings") : ""}${nav}
+      <div class="glist tlist">${rows.map(([r, x]) => topRow(t, r, x)).join("") || '<div class="gempty">Nothing qualifies right now.</div>'}</div>
+      <div class="actions"><button class="btn" id="shareBtn">${navigator.share ? "Share…" : "Share"}</button><button class="btn ghost" id="copyBtn">Copy link</button><button class="btn ghost" id="zoomBtn">Show all on map</button></div>
+      <div class="small" style="word-break:break-all">Link: <a href="#${t.hash}">#${t.hash}</a></div>`;
+  }
+  const topShareUrl = t => location.protocol === "file:" || t.anna ? new URL("index.html" + (t.anna ? "?anna=1" : "") + "#" + t.hash, location.href).href : new URL("share/" + t.hash + ".html", location.href).href;
+  async function shareTop(t) {
+    const url = fullUrl(topShareUrl(t));
+    if (navigator.share) { try { await navigator.share({ title: t.title + " — " + ST.app, text: t.title, url }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+    copy(url);
+  }
+  function openTop(key, opts = {}) {
+    const t = TOPK[key]; if (!t) { toast("List not found"); return false; }
+    if (t.perm && !(PJX && PJX.hasD())) {
+      const tok = { type: "top", id: key, loading: true }; cardLoading(tok, "#" + t.hash, opts, snap()); card.classList.add("tall"); tmenu.hidden = true;
+      loadPermD().then(() => { if (current === tok) openTop(key, Object.assign({}, opts, { replace: true })); }); return true;
+    }
+    const sv = snap(); current = { type: "top", id: key };
+    const tf = topFoc(t); if ((tf && tf.k) !== (TOPF && TOPF.k)) { TOPF = tf; sched(true); }  // kyxFoc: its pins on top
+    if (hl) { map.removeLayer(hl); hl = null; }
+    body.innerHTML = topHtml(t);
+    card.hidden = false; setPeek(false); card.classList.add("tall");
+    card.scrollTop = takeScroll(gScroll && gScroll.key === "top|" + key ? gScroll.top : 0); gScroll = null;
+    if (PNL) showPnl(null);
+    $("#gBack").onclick = () => hasBack() ? history.back() : exitCard();
+    $("#gShare").onclick = $("#shareBtn").onclick = () => shareTop(t);
+    $("#copyBtn").onclick = () => copy(fullUrl(topShareUrl(t)));
+    if (t.perm) PJX.wireTop(t);
+    $("#zoomBtn").onclick = () => { const pts = t.ext ? ANNAX.topPts(t) : t.perm ? PJX.topPts(t) : topRows(t).map(([, x]) => [x.lat, x.lon]).filter(p => p[0] != null);
+      if (pts.length) map.flyToBounds(pts, Object.assign({ duration: 0.8, padding: [30, 30] }, !PHONE ? { paddingBottomRight: [440, 30] } : { paddingBottomRight: [30, Math.round(VH * 0.55)] })); };
+    nav(fh("#" + t.hash), opts.replace, sv);
+    document.title = t.title.replace(/^⭐ /, "") + " — " + ST.app;
+    tmenu.hidden = true;
+    return true;
+  }
+  // Top 10 lists: a row of pills fixed to the bottom of the screen (a looping sideways carousel; see carousel() below)
+  const PILL_T = { deals: "Deals", buildings: "Odd Bldgs", businesses: "Biz", er_jobs: "ER Travel", other_jobs: "Other Travel", bonus: "Bonuses", perm_er: "Perm ER", perm_sdms: "Perm SD/MS", perm_icu: "Perm ICU" };
+  const PILL_O = ["deals", "buildings", "businesses", "er_jobs", "other_jobs", "bonus", "perm_er", "perm_sdms", "perm_icu"];
+  const pillsEl = document.createElement("nav"); pillsEl.id = "topPills"; pillsEl.className = "tpills"; pillsEl.setAttribute("aria-label", "Top 10 lists");
+  function buildPills() {  // rebuilt when the Anna profile switches (its own lists in, nurse-job lists out)
+    const ord = TOPS.filter(topVis).sort((x, y) => PILL_O.indexOf(x.k) - PILL_O.indexOf(y.k));
+    pillsEl.innerHTML = ord.map(t => `<a class="topbub tpill ${t.cls}" href="#${t.hash}" data-top="${t.k}" role="button" aria-label="${esc(t.label(topN(t)))}: open the list"><span class="tbi">${t.icon}</span><span class="tbt">${esc(PILL_T[t.k] || t.bub)}</span></a>`).join("");
+    if (ord.length && !pillsEl.isConnected) { document.body.appendChild(pillsEl); document.documentElement.classList.add("haspills"); }
+    if (pillC) requestAnimationFrame(() => pillC.measure()); else if (ord.length && pillsEl.isConnected && pillC === null) pillC = carousel(pillsEl, () => [...pillsEl.querySelectorAll(".tpill:not([data-clone])")], "x", (pos, V) => pos[0] + V / 2 - 60);
+  }
+  pillsEl.addEventListener("click", e => { const a = e.target.closest("[data-top]"); if (!a) return; e.preventDefault(); openTop(a.dataset.top); });
+  if (TOPS.length) buildPills();
+  // fixed fallback button (bottom right) -> small menu of the three lists
+  const tbtn = document.createElement("button"), tmenu = document.createElement("div");
+  tbtn.id = "topBtn"; tbtn.type = "button"; tbtn.className = "topbtn"; tbtn.innerHTML = "🏆 Top 10s"; tbtn.setAttribute("aria-expanded", "false"); tbtn.setAttribute("aria-controls", "topMenu");
+  tmenu.id = "topMenu"; tmenu.className = "topmenu"; tmenu.hidden = true;
+  function buildTMenu() { const x = tmenu.querySelector(".tmx"); tmenu.innerHTML = TOPS.filter(topVis).map(t => `<a href="#${t.hash}" data-top="${t.k}"><span class="tbi">${t.icon}</span>${esc(t.label(topN(t)).replace(/^⭐ /, ""))}</a>`).join("") + `<div class="small">Updated ${esc(TOPD.updated || "")}</div>`; if (x) tmenu.appendChild(x); }
+  buildTMenu();
+  if (TOPS.length) { document.body.appendChild(tbtn); document.body.appendChild(tmenu); }
+  tbtn.onclick = () => { tmenu.hidden = !tmenu.hidden; tbtn.setAttribute("aria-expanded", !tmenu.hidden); };
+  tmenu.insertAdjacentHTML("beforeend", `<div class="tmx"><a href="#favs"><span class="tbi">♥</span>Favorites</a><a href="#compare"><span class="tbi">⚖</span>Compare homes</a><a href="#new"><span class="tbi">🆕</span>New &amp; price cuts</a><a href="#near"><span class="tbi">📍</span>Near me</a><a href="#areas"><span class="tbi">🏙</span>${ST.areas}</a>${ST.other.live !== false ? ST.others.filter(o => o.live !== false).map(o => `<a href="${o.url}" class="stsw"><span class="tbi">🗺</span>Switch to the ${o.name} map</a>`).join("") : ""}</div>`);
+  tmenu.addEventListener("click", e => { if (e.target.closest(".tmx a")) { tmenu.hidden = true; tbtn.setAttribute("aria-expanded", "false"); return; } const a = e.target.closest("[data-top]"); if (!a) return; e.preventDefault(); openTop(a.dataset.top); });
+  document.addEventListener("click", e => { if (!tmenu.hidden && !e.target.closest("#topMenu,#topBtn")) { tmenu.hidden = true; tbtn.setAttribute("aria-expanded", "false"); } });
+  // ------------------------------------------------------------------ phone extras: favorites, compare, badges, directions, near me
+  // Small hooks only; the Favorites / Compare / New / Near-me pages live in extras.js (loaded on first use).
+  const jget = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k) || "null"); return v == null ? d : v; } catch (e) { return d; } };
+  const jset = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } };
+  const FAVT = { property: 1, travel: 1, building: 1, business: 1 };
+  const favGet = () => jget(ST.ls + "favs", []), favSet = a => jset(ST.ls + "favs", a);
+  const favBtn = $("#cardFav");
+  function updFav() {
+    if (!favBtn) return; const c = current, on = !!(c && !c.loading && FAVT[c.type] && c.id !== "all" && !card.hidden); favBtn.hidden = !on; if (!on) return;
+    const f = favGet().includes(c.type + ":" + c.id); favBtn.textContent = f ? "♥" : "♡"; favBtn.classList.toggle("on", f);
+    favBtn.setAttribute("aria-pressed", f); favBtn.setAttribute("aria-label", f ? "Remove from favorites" : "Save to favorites"); favBtn.title = f ? "In your favorites" : "Save to favorites";
+  }
+  if (favBtn) favBtn.onclick = () => { const c = current; if (!c || !FAVT[c.type]) return; const k = c.type + ":" + c.id, a = favGet(), i = a.indexOf(k);
+    if (i >= 0) a.splice(i, 1); else a.unshift(k); favSet(a); updFav();
+    toast("", i >= 0 ? "Removed from Favorites" : `♥ Saved to Favorites · <a href="#favs">see all ${a.length}</a>`, 3000); };
+  const cmpGet = () => jget(ST.ls + "cmp", []), cmpSet = a => jset(ST.ls + "cmp", a);
+  const cmpLabel = id => cmpGet().includes(id) ? `✓ Comparing (${cmpGet().length})` : "⚖ Compare";
+  function cmpToggle(id, btn) {
+    let a = cmpGet(); const i = a.indexOf(id);
+    if (i >= 0) a.splice(i, 1); else { a.push(id); if (a.length > 3) a = a.slice(-3); }
+    cmpSet(a); if (btn) btn.textContent = cmpLabel(id);
+    toast("", i >= 0 ? `Removed from Compare (${a.length})` : a.length >= 2 ? `⚖ ${a.length} homes picked · <a href="#compare">compare them</a>` : "⚖ Picked for Compare. Pick 1–2 more homes.", 3500);
+  }
+  function dirUrl(type, it) {
+    if (it.lat != null && it.lon != null) return `https://www.google.com/maps/dir/?api=1&destination=${(+it.lat).toFixed(6)},${(+it.lon).toFixed(6)}`;
+    if (type === "county") return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(it.name + ST.cus + ", " + ST.name)}`;
+    return "";
+  }
+  // "New" / "↓ Price" since the last visit: a visit starts after 30+ minutes away; the snapshot of ids + prices from the last load of the
+  // previous visit is the baseline for the whole visit. First visit ever: baseline only, no badges.
+  const BADGE = {};
+  (function () {
+    const now = Date.now(), cur = {};
+    (K.properties || []).forEach(p => cur["property:" + p.id] = p.price || 0);
+    (K.businesses || []).forEach(x => cur["business:" + x.id] = x.price || 0);
+    (K.buildings || []).forEach(x => cur["building:" + x.id] = x.price || 0);
+    TJ_ALL.forEach(j => cur["job:" + j.id] = 0);
+    const st = jget(ST.ls + "seen", null);
+    const base = !st ? null : now - (st.t || 0) > 30 * 60e3 ? st.items : st.base;
+    if (base) Object.keys(cur).forEach(k => { if (!(k in base)) BADGE[k] = { k: "new" }; else if (cur[k] && base[k] && cur[k] < base[k]) BADGE[k] = { k: "cut", was: base[k] }; });
+    TJ_ALL.forEach(j => { if (BADGE["job:" + j.id]) BADGE["travel:" + j.h.id] = BADGE["travel:" + j.h.id] || { k: "new", jobs: 0 }, BADGE["travel:" + j.h.id].jobs = (BADGE["travel:" + j.h.id].jobs || 0) + 1; });
+    jset(ST.ls + "seen", { t: now, items: cur, base: base || null });
+  })();
+  const bChip = (type, id) => { const b = BADGE[type + ":" + id]; return !b ? "" : b.k === "new" ? `<span class="nbdg new">New</span>` : `<span class="nbdg cut">↓ Price</span>`; };
+  function badgeLine(type, id) {
+    const b = BADGE[type + ":" + id]; if (!b) return "";
+    return `<div class="nbline">${b.k === "cut" ? `<span class="nbdg cut">↓ Price cut</span> since your last visit (was ${money(b.was)})` : b.jobs ? `<span class="nbdg new">New</span> ${b.jobs} new job${b.jobs > 1 ? "s" : ""} since your last visit` : `<span class="nbdg new">New</span> since your last visit`} · <a href="#new">all new</a></div>`;
+  }
+  const nNew = () => Object.entries(BADGE).filter(([k, b]) => !k.startsWith("travel:") && b.k === "new").length, nCut = () => Object.values(BADGE).filter(b => b.k === "cut").length;
+  // lazy page module
+  const JSP = {};
+  const loadJS = src => JSP[src] || (JSP[src] = new Promise(res => { const el = document.createElement("script"); el.src = src + (K.meta && K.meta.stamp ? "?v=" + K.meta.stamp : ""); el.async = true; el.onload = res; el.onerror = res; document.head.appendChild(el); }));
+  // permanent RN jobs: perm.js + data/pjm.js after the first paint (hats, counts); data/pjd.js (job text) on the first hat / list / Top 10
+  var PJX = null; let pjP = null, pjDP = null;
+  function loadPerm() {
+    if (!(K.meta && K.meta.pj)) return pjP || (pjP = new Promise(() => {}));  // no permanent-jobs data for this state yet: never resolves, no request, no error
+    return pjP || (pjP = Promise.all([loadJS("perm.js"), loadJS("data/pjm.js")]).then(() => {
+      if (!window.KYXPJ || !window.KYXPJM_D) return Promise.reject(new Error("perm data missing"));
+      PJX = KYXPJ.init({ K, IDX, L, G, map, L_perm, LAYERS, ent, sched, link, gRow, dot, host, TJ_ALL, PROF: () => PROF, renderKey, keyReady: () => keyReady,
+        refreshCard: () => { if (current && current.type !== "profile") refreshCard(); },
+        reTop: k => openTop(k, { replace: true }) });
+      const w = $("#pjFilter"); if (w) PJX.panel(w);
+      return PJX;
+    }));
+  }
+  const loadPermD = () => pjDP || (pjDP = loadPerm().then(() => window.KYXPJD_D ? 1 : loadJS("data/pjd.js")).then(() => { PJX.details(); return PJX; }));
+  let extP = null;
+  function loadExtras() {
+    return extP || (extP = Promise.all([loadJS("extras.js"), window.KYXPF_D ? 0 : loadJS("data/pf.js")]).then(() => window.KYXE.init({ K, IDX, MARK, map, TJ_ALL, BADGE, PHONE,
+      showPage, gRow, gImg, dot, money, esc, toast, copy, stat, link, favGet, favSet, cmpGet, cmpSet, isHome, isNH, isCab, isBig, isCF, isCFo, openItem, updFav, body, card, nav,
+      current: () => current })));
+  }
+  // climate lines + Compare areas: areas.js + data/clim.json + data/areas.json, loaded on the first card open or #areas (never on the first load)
+  let arP = null;
+  const loadAreas = () => arP || (arP = loadJS("areas.js").then(() => window.KYXA ? KYXA.init({ K, IDX, esc, toast, showPage, nav, current: () => current, loadPerm }) : Promise.reject()));
+  const arB = document.createElement("button"); arB.type = "button"; arB.id = "areasBtn"; arB.className = "gpsbtn areasbtn"; arB.innerHTML = '<span aria-hidden="true">🏙</span> Areas'; arB.setAttribute("aria-label", ST.areasAria);
+  arB.onclick = () => { if (location.hash === "#areas") return; nav("#areas", false); route(true); };
+  document.body.appendChild(arB);
+  // Near me: a small button above Top 10s
+  const gpsB = document.createElement("button"); gpsB.type = "button"; gpsB.id = "gpsBtn"; gpsB.className = "gpsbtn"; gpsB.innerHTML = '<span aria-hidden="true">📍</span> Near me'; gpsB.setAttribute("aria-label", "Show where I am and what is near me");
+  gpsB.onclick = () => { if (location.hash === "#near" && window.KYXE) { KYXE.route("#near", { replace: true, again: true }); return; } nav("#near", false); route(true); };
+  document.body.appendChild(gpsB);
+  // installable app + offline (service worker; its cache version = the build stamp, so each publish replaces the old caches)
+  window.addEventListener("load", () => setTimeout(() => {
+    if (!("serviceWorker" in navigator) || !(location.protocol === "https:" || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) return;
+    navigator.serviceWorker.register("sw.js?v=" + ((K.meta && K.meta.stamp) || "0")).catch(() => { });
+  }, 2500), { once: true });
+  window.addEventListener("load", () => setTimeout(() => { const n = nNew(), c = nCut(); if ((n || c) && !location.hash) toast("", `🆕 Since your last visit: ${n ? n + " new" : ""}${n && c ? " · " : ""}${c ? c + " price cut" + (c > 1 ? "s" : "") : ""} · <a href="#new">see them</a>`, 5000); }, 1200), { once: true });
+
+  // ------------------------------------------------------------------ solo layer buttons (right-hand stack)
+  // A button shows ONLY that kind of pin (trauma centers, airports and the 5 big cities always stay); tap it again or "All" for the
+  // normal map. Not remembered across reloads. The active profile's own filters still apply on top (profiles.js calls reSolo()).
+  var SOLO = null, SOLO_ON = null, soloF = null;
+  const ALWAYS = new Set(["trauma", "apt", "city"]);
+  const SOLOS = [
+    { k: "jobs", ic: "💼", t: "Jobs", h: "Nursing jobs", keys: ["travel", "perm"] },
+    { k: "hosp", ic: G.nurse(), t: "Hospitals", h: "all hospitals and trauma centers", keys: ["hosp", "trauma"], has: () => (K.hospitals || []).length > 0 },  // kyxHosp (Bill, Oct 8 2026): every hospital incl. border ones, existing icons; trauma on top
+    { k: "p5", ic: "🌳", t: "5+ ac", h: "Primary homes (5+ acres)", keys: ["props"] },
+    { k: "p1", ic: "🏠", t: "1+ ac", h: "Secondary homes (1+ acre)", keys: ["homes"] },
+    { k: "nh", ic: "🏥", t: "Near", h: "Near-hospital homes", keys: ["nh"] },
+    { k: "cave", ic: `<span class="cfic">${G.bat(24)}</span>`, t: "Cave", h: "properties with a cave on the property", keys: ["cvf"], f: e => hasCave(e.it), has: () => CFS.some(hasCave) },
+    { k: "falls", ic: `<span class="cfic">${G.fall(19)}</span>`, t: "Falls", h: "properties with a waterfall on the property", keys: ["cvf"], f: e => hasFalls(e.it), has: () => CFS.some(hasFalls) },
+    { k: "big", ic: `<span class="bkstar">${G.bigStar(18)}</span>`, t: "50+ ac", h: "50+ acre lots under $250k", keys: ["big"], has: () => BIGS.length > 0 },
+    ...(ST.cabin ? [{ k: "cab", ic: G.cabin(18), t: ST.cabin.label || "Cabin", h: `${ST.cabin.label || "Cabin"}s (more than ${ST.cabin.acres || 25} acres)`, keys: ["cab"] }] : []),
+    { k: "barg", ic: `<span class="bstar">${G.starDot("#8e24aa")}</span>`, t: "Bargain", h: "Bargains", keys: ["props", "homes", "nh", "cab"], f: e => !!e.it.bargain },
+    { k: "biz", ic: "💲", t: "Biz", h: "Businesses for sale", keys: ["biz"] },
+    { k: "bldg", ic: "🔔", t: "Odd", h: "Odd buildings for sale", keys: ["bldg"] },
+    { k: "attr", ic: "🎡", t: "Sights", h: "Attractions", keys: () => [...(MORE_ATT_KEYS || []), "feat"] },
+    { k: "sch", ic: "🎓", t: "School", h: "Schools & colleges", keys: ["sch", "col"] },
+    { k: "ski", ic: G.skier(18), t: "Ski", h: "Ski areas", keys: ["ski"], has: () => (K.ski || []).length > 0 },
+    { k: "peak", ic: G.peak(18), t: "Peaks", h: "Mountain peaks", keys: ["peak"], has: () => (K.peaks || []).length > 0 },
+    { k: "tgt", ic: G.tgt(18), t: "Target", h: "Target stores", keys: ["tgt"], has: () => (K.targets || []).length > 0 },
+  ].filter(x => x.has ? x.has() : !ST.solo || ST.solo.includes(x.k));  // a state still being built lists only the buttons that have pins  // a state still being built lists only the buttons that have pins
+  const CATK = p => isNH(p) ? "nh" : isHome(p) ? "homes" : isCab(p) ? "cab" : isBig(p) ? "big" : isCFo(p) ? null : "props";
+  SOLOS.forEach(sd => {  // e.g. "50+ ac" or "Bargain" also shows its listings whose pin is a bat / waterfall
+    if (sd.k === "cave" || sd.k === "falls" || typeof sd.keys === "function") return;
+    const pk = sd.keys.filter(k => ["props", "homes", "nh", "cab", "big"].includes(k)), f0 = sd.f; if (!pk.length) return;
+    sd.keys = sd.keys.concat("cvf"); sd.f = e => e.cfl ? pk.includes(CATK(e.it)) && (!f0 || f0(e)) : (!f0 || f0(e));
+  });
+  function soloVis(x) { return ANNA_ON ? !(x.k === "jobs" || x.k === "nh" || x.k === "hosp") : !x.anna; }  // Anna on: no nurse-job / near-hospital buttons
+  const pinLayer = d => d.layer && !d.group && d.key !== "cty" && d.key !== "sweet";
+  const layerDef = d => d.disabled || annaBlk(d) ? false : (d.key in saved ? !!saved[d.key] : !!d.on);
+  function reSolo() { if (!SOLO_ON) return; LAYERS.forEach(d => { if (!pinLayer(d)) return; const w = !d.disabled && (SOLO_ON.has(d.key) || ALWAYS.has(d.key)); if (map.hasLayer(d.layer) !== w) setLayer(d, w); }); }
+  function setSolo(k) {
+    const sd = k && SOLOS.find(x => x.k === k);
+    if (!sd || SOLO === k) {  // "All", or the active button again: back to the normal map (the profile's layers if one is on)
+      if (SOLO) { SOLO = null; SOLO_ON = null; soloF = null;
+        if (window.KYXP && KYXP.relayer) KYXP.relayer(); else LAYERS.forEach(d => { if (pinLayer(d) && map.hasLayer(d.layer) !== layerDef(d)) setLayer(d, layerDef(d)); });
+        if (FOCUS) focusLayers();
+        sched(true); toast("All: the normal map"); }
+      renderStack(); return;
+    }
+    SOLO = k; SOLO_ON = new Set(typeof sd.keys === "function" ? sd.keys() : sd.keys); soloF = sd.f || null;
+    reSolo(); renderStack(); sched(true);
+    toast(`Only ${sd.h} (+ ${ANNA_ON || SOLO_ON.has("trauma") ? "" : "trauma centers, "}airports, cities). Tap again or “All” for the normal map.`);
+  }
+  const lStack = document.createElement("div"); lStack.id = "layerStack"; lStack.className = "lstack"; lStack.setAttribute("role", "toolbar"); lStack.setAttribute("aria-label", "Show only one kind of pin");
+  let renderStack = function () {
+    lStack.innerHTML = SOLOS.filter(soloVis).map(x => `<button type="button" class="lsb${SOLO === x.k ? " on" : ""}" data-solo="${x.k}" aria-pressed="${SOLO === x.k}" title="Show only: ${esc(x.h)}" aria-label="Show only ${esc(x.h)}"><span class="lsi">${x.ic}</span><span class="lst">${esc(x.t)}</span></button>`).join("")
+      + `<button type="button" class="lsb lsall${SOLO ? "" : " on"}" data-solo="" aria-pressed="${!SOLO}" title="Show all (the normal map)" aria-label="Show all"><span class="lsi">◎</span><span class="lst">All</span></button>`;
+  };
+  lStack.addEventListener("click", e => { const b = e.target.closest("[data-solo]"); if (b) setSolo(b.dataset.solo); });
+  // county focus: chip at the bottom ("‹ County" reopens its card = Back; ✕ = leave the focus), all layers on unless a solo button or a profile decides
+  const fChip = document.createElement("div"); fChip.id = "focusChip"; fChip.className = "fchip"; fChip.hidden = true;
+  fChip.innerHTML = '<button type="button" id="fcBack" aria-label="Back to the county card">‹ <span></span></button><button type="button" id="fcX" aria-label="Leave the county view" title="Leave the county view">✕</button>';
+  document.body.appendChild(fChip);
+  fChip.querySelector("#fcBack").onclick = () => { const st = history.state || {}, nm = FOCUS && FOCUS.name; if (!nm) return;
+    if (/^#cmap=/.test(location.hash) && st.d > 0 && st.fz === nm) history.back(); else openItem("county", nm, { fly: false }); };
+  fChip.querySelector("#fcX").onclick = () => clearFocus();
+  const profOn = () => !!(window.KYXP && KYXP.active && KYXP.active());
+  function focusLayers() { if (SOLO || profOn()) return; LAYERS.forEach(d => { if (pinLayer(d) && !d.disabled && !map.hasLayer(d.layer)) setLayer(d, true); }); }
+  function restoreLayers() { if (SOLO) reSolo(); else if (window.KYXP && KYXP.relayer) KYXP.relayer(); else LAYERS.forEach(d => { if (pinLayer(d) && map.hasLayer(d.layer) !== layerDef(d)) setLayer(d, layerDef(d)); }); }
+  function setFocus(name, fit) {
+    const c = IDX.county[name]; if (!c || !c.rings) return;
+    const same = FOCUS && FOCUS.name === name;
+    FOCUS = { name, c, z: same && !fit ? FOCUS.z : null };
+    if (!same) focusLayers();
+    if (card.hidden) highlight("county", c);
+    fChip.querySelector("span").textContent = name + ST.cus; fChip.hidden = false;
+    sched(true);
+    if (fit) FOCUS.z = fitCounty(c);  // the target zoom (a zoom/pan during the fly must not reset it)
+    else if (FOCUS.z == null) setTimeout(() => { if (FOCUS && FOCUS.name === name && FOCUS.z == null) FOCUS.z = map.getZoom(); }, 0);
+  }
+  function clearFocus(silent) {
+    if (!FOCUS) return; FOCUS = null; fChip.hidden = true;
+    if (hl && card.hidden) { map.removeLayer(hl); hl = null; }
+    restoreLayers(); sched(true);
+    if (!silent) { const st = history.state || {}; if (st.fz || /^#cmap=/.test(location.hash)) history.replaceState(Object.assign({}, st, { fz: null }), "", /^#cmap=/.test(location.hash) ? location.pathname + location.search : location.href); }
+  }
+  function focusClose(name) {  // X / swipe-down on a county card: stay on the county, card gone, refit to the whole screen
+    const sv = snap(); closeCard(false);
+    nav("#cmap=" + encodeURIComponent(name), false, sv, { fz: name });
+    setFocus(name, true); document.title = name + ST.cus + " map — " + ST.app;
+  }
+  map.on("zoomend", () => { if (FOCUS && !POPPING && FOCUS.z != null && map.getZoom() < FOCUS.z - 1.5) clearFocus(); });  // zoomed out well past the county
+  renderStack(); document.body.appendChild(lStack);
+  lStack.addEventListener("wheel", e => { if (lStack.classList.contains("wheel")) return; e.preventDefault(); e.stopPropagation();  // kyxUI3
+    lStack.scrollTop += e.deltaY * (e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? lStack.clientHeight : 1); }, { passive: false });
+  const fitStack = () => {  // the column stops above Areas / Near me / Top 10s and scrolls (wheel, finger) when it does not fit
+    if (lStack.classList.contains("wheel")) { lStack.style.maxHeight = ""; return; }
+    const a = arB.isConnected && getComputedStyle(arB).display !== "none" ? arB.getBoundingClientRect().top : innerHeight - 70, t = lStack.getBoundingClientRect().top;
+    lStack.style.maxHeight = Math.max(110, Math.floor(a - t - 10)) + "px"; };
+  window.addEventListener("resize", () => setTimeout(fitStack, 200)); requestAnimationFrame(fitStack); setTimeout(fitStack, 1500);
+
+  // ------------------------------------------------------------------ looping carousels (bottom Top 10 pills; landscape-phone right-hand wheel)
+  // Items sit absolutely inside a clipped viewport and are placed with transforms around a continuous offset that wraps (infinite loop).
+  // Drag/swipe with momentum, snap to the nearest item, centred item a little larger, a tap (< 7 px of movement) is a normal click.
+  function carousel(vp, getItems, axis, o0) {
+    const X = axis === "x", GAP = X ? 8 : 5, M3 = 6;
+    let it = [], pos = [], sz = [], P = 0, V = 0, o = 0, loop = false, raf = 0, dn = null, moved = false, eat = false, on = true, tapT = -1e9;
+    const wrap = d => { d %= P; if (d > P / 2) d -= P; else if (d < -P / 2) d += P; return d; };
+    let W3 = 0;  // kyxUI3: sideways pills are sized so exactly 3 whole pills fit; snapping moves 1 pill (or 3)
+    let ready = false;  // kyxUI4: never measure while hidden (e.g. the pill row is display:none while a card is open) — that squashed every pill to 60 px at x≈0
+    function measure() {
+      if (!on) return;
+      if (!vp.clientWidth || !vp.clientHeight || !vp.getClientRects().length) return;  // hidden: the ResizeObserver / card-close hook re-measures when it shows again
+      const idx0 = ready && X && loop && W3 && pos.length ? snapIdx(o) : null;  // keep the same first pill across re-layouts
+      vp.querySelectorAll("[data-clone]").forEach(e => e.remove());
+      let base = getItems(); it = base;
+      if (X) {  // kyxUI4: pills size to their content (the longest title fits, never truncated) and the row widens to hold exactly 3 whole pills
+        base.forEach(e => { e.style.width = ""; e.style.transform = "none"; e.classList.remove("w3", "cc"); });
+        const NW = Math.ceil(Math.max(60, ...base.map(e => e.getBoundingClientRect().width))) + 2, A = document.documentElement.clientWidth || innerWidth;
+        W3 = Math.max(NW, Math.floor((Math.min(A, 660) - 2 * M3 - 2 * GAP) / 3));
+        if (3 * W3 + 2 * GAP + 2 * M3 > A) W3 = Math.floor((A - 2 * M3 - 2 * GAP) / 3);  // narrower than 3 longest titles: fit the screen (CSS shrinks the text on phones)
+        const vw = 3 * W3 + 2 * GAP + 2 * M3; if (vp.style.width !== vw + "px") vp.style.width = vw + "px";
+        base.forEach(e => { e.style.width = W3 + "px"; e.classList.add("w3"); });
+      }
+      V = X ? vp.clientWidth : vp.clientHeight;
+      const len = () => { pos = []; sz = []; let t = 0; it.forEach(e => { e.style.transform = ""; const r = e.getBoundingClientRect(), z = X ? r.width : r.height; sz.push(z); pos.push(t + z / 2); t += z + GAP; }); return t; };
+      P = len(); const mx = Math.max(0, ...sz);
+      if (X && P - GAP > V && P < V + mx) { /* clone only when the pills overflow the screen but are too few to loop; if they all fit, show them once, centered */ const cl = base.map(e => { const c = e.cloneNode(true); c.setAttribute("data-clone", ""); c.setAttribute("aria-hidden", "true"); c.tabIndex = -1; vp.appendChild(c); return c; }); it = base.concat(cl); P = len(); }
+      loop = P > V + mx;
+      if (!ready && o0) o = X && loop ? atIdx(1) : o0(pos, V);  // first visible layout: start position
+      else if (!loop) o = 0; else if (X && W3) o = atIdx(idx0 != null ? idx0 : snapIdx(o));
+      ready = true; draw();
+    }
+    function draw() {
+      const c = V / 2;
+      it.forEach((e, i) => {
+        const d = loop ? wrap(pos[i] - o) : pos[i] - (P - GAP) / 2, k = 1 + (X ? 0.04 : 0.1) * Math.max(0, 1 - Math.abs(d) / (sz[i] + GAP));
+        e.style.transform = (X ? `translate3d(${(c + d - sz[i] / 2).toFixed(1)}px,0,0)` : `translate3d(0,${(c + d - sz[i] / 2).toFixed(1)}px,0)`) + ` scale(${k.toFixed(3)})`;
+        e.classList.toggle("cc", k > (X ? 1.02 : 1.05));
+      });
+    }
+    const near = () => { let best = 0, bd = 1e9; pos.forEach((p, i) => { const d = wrap(p - o); if (Math.abs(d) < Math.abs(bd)) { bd = d; best = i; } }); return bd; };
+    function goTo(T) {  // X: ease to an exact pill position (no momentum)
+      cancelAnimationFrame(raf); let last = performance.now();
+      const step = t => { const dt = Math.min(40, t - last); last = t; const d = T - o;
+        if (Math.abs(d) < 0.5) { o = T; draw(); return; } o += d * Math.min(1, dt / 70); draw(); raf = requestAnimationFrame(step); };
+      raf = requestAnimationFrame(step);
+    }
+    const snapIdx = v => { const S = W3 + GAP; return Math.round((v - pos[0]) / S); };
+    const atIdx = n => pos[0] + n * (W3 + GAP);
+    function anim(v) {
+      cancelAnimationFrame(raf); let last = performance.now();
+      const step = t => { const dt = Math.min(40, t - last); last = t;
+        if (Math.abs(v) > 0.04) { o += v * dt; v *= Math.pow(0.94, dt / 16); draw(); raf = requestAnimationFrame(step); return; }
+        const d = near(); if (Math.abs(d) < 0.5) { o += d; draw(); return; }
+        o += d * Math.min(1, dt / 90); draw(); raf = requestAnimationFrame(step); };
+      raf = requestAnimationFrame(step);
+    }
+    vp.addEventListener("pointerdown", e => { if (!on || !loop || (e.pointerType === "mouse" && e.button)) return; cancelAnimationFrame(raf);
+      dn = { id: e.pointerId, p: X ? e.clientX : e.clientY, o, h: [[performance.now(), X ? e.clientX : e.clientY]] }; moved = false; e.stopPropagation(); });
+    vp.addEventListener("pointermove", e => { if (!dn || e.pointerId !== dn.id) return; const p = X ? e.clientX : e.clientY;
+      if (!moved && Math.abs(p - dn.p) > 6) { moved = true; try { vp.setPointerCapture(e.pointerId); } catch (_) { } }
+      if (moved) { o = dn.o - (p - dn.p); draw(); dn.h.push([performance.now(), p]); if (dn.h.length > 6) dn.h.shift(); e.preventDefault(); } e.stopPropagation(); });
+    const up = e => { if (!dn || e.pointerId !== dn.id) return; const h = dn.h, wasMoved = moved, dn0 = dn.o; dn = null; e.stopPropagation();
+      if (!wasMoved) {  // a tap: activate it here (a browser may drop the native click right after a fling) and swallow the native one
+        const t = e.target && e.target.closest && e.target.closest("a,button"); if (t && vp.contains(t) && e.type === "pointerup") { tapT = performance.now(); t.click(); } return; }
+      eat = true; setTimeout(() => eat = false, 60);
+      const a = h[0], b = h[h.length - 1], dt = b[0] - a[0];
+      if (X && loop) { const S = W3 + GAP, n0 = snapIdx(dn0), dd = o - dn0, v = dt > 0 && performance.now() - b[0] < 80 ? -(b[1] - a[1]) / dt : 0;
+        let n = Math.abs(v) > 1.1 || Math.abs(dd) > 2.2 * S ? 3 * Math.sign(Math.abs(v) > 1.1 ? v : dd) : Math.abs(dd) > 0.6 * S ? Math.sign(dd) * Math.round(Math.abs(dd) / S) : (Math.abs(dd) > 0.18 * S || Math.abs(v) > 0.3) ? Math.sign(Math.abs(dd) > 0.18 * S ? dd : v) : 0;
+        goTo(atIdx(n0 + n)); return; }
+      anim(dt > 0 && performance.now() - b[0] < 80 ? Math.max(-3, Math.min(3, -(b[1] - a[1]) / dt)) : 0); };
+    vp.addEventListener("pointerup", up); vp.addEventListener("pointercancel", up);
+    vp.addEventListener("click", e => { if (eat) { e.preventDefault(); e.stopImmediatePropagation(); eat = false; } }, true);
+    // the native click that follows our own tap activation lands on whatever is there now (e.g. the card that just opened): swallow it
+    document.addEventListener("click", e => { if (e.isTrusted && performance.now() - tapT < 450) { tapT = -1e9; e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+    let wAcc = 0, wLock = 0;
+    vp.addEventListener("wheel", e => { if (!on) return; e.preventDefault(); e.stopPropagation(); if (!loop) return;  // never zoom the map under the buttons
+      const dlt = (X && Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * (e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? V : 1);
+      if (X) { const now = performance.now(); wAcc += dlt; if (now < wLock || Math.abs(wAcc) < 30) return; const n = Math.sign(wAcc); wAcc = 0; wLock = now + 220;
+        goTo(atIdx(snapIdx(o) + n)); return; }
+      cancelAnimationFrame(raf); o += dlt; draw(); clearTimeout(vp._wt); vp._wt = setTimeout(() => anim(0), 120); }, { passive: false });
+    ["touchstart", "touchmove", "mousedown", "dblclick"].forEach(t => vp.addEventListener(t, e => e.stopPropagation(), { passive: true }));
+    measure();
+    let roW = 0, roH = 0;  // kyxUI4: re-measure whenever the viewport's box changes (shown again after a card closes, window resized, fonts loaded)
+    if (window.ResizeObserver) new ResizeObserver(() => { const w = vp.clientWidth, h = vp.clientHeight; if (w === roW && h === roH) return; roW = w; roH = h; if (w && h) measure(); }).observe(vp);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => measure());
+    return { measure, next(n) { if (X && loop) goTo(atIdx(snapIdx(o) + n)); }, stop() { on = false; cancelAnimationFrame(raf); vp.querySelectorAll("[data-clone]").forEach(e => e.remove()); it.forEach(e => { e.style.transform = ""; e.classList.remove("cc"); if (X) { e.style.width = ""; e.classList.remove("w3"); } }); if (X) vp.style.width = ""; }, draw };
+  }
+  var pillC;  // var: buildPills() reads it (undefined until the first frame below)
+  if (TOPS.length) requestAnimationFrame(() => { pillC = carousel(pillsEl, () => [...pillsEl.querySelectorAll(".tpill:not([data-clone])")], "x", (pos, V) => pos[0] + V / 2 - 60); }); else pillC = null;
+  // landscape phone: the right-hand solo stack + Areas / Near me / Top 10s become one vertical looping wheel
+  const LQ = window.matchMedia("(orientation: landscape) and (max-height: 500px)");
+  let wheel = null;
+  const wItems = () => [...lStack.querySelectorAll(".lsb"), arB, gpsB].concat(TOPS.length ? [tbtn] : []);
+  function wheelOn() {
+    if (wheel) { [arB, gpsB].concat(TOPS.length ? [tbtn] : []).forEach(e => lStack.appendChild(e)); wheel.measure(); return; }
+    lStack.classList.add("wheel"); [arB, gpsB].concat(TOPS.length ? [tbtn] : []).forEach(e => lStack.appendChild(e));
+    wheel = carousel(lStack, wItems, "y");
+  }
+  function wheelOff() { if (!wheel) return; wheel.stop(); wheel = null; lStack.classList.remove("wheel"); [arB, gpsB].concat(TOPS.length ? [tbtn] : []).forEach(e => document.body.appendChild(e)); }
+  const wSync = () => { if (LQ.matches) wheelOn(); else wheelOff(); if (pillC) pillC.measure(); };
+  (LQ.addEventListener ? LQ.addEventListener("change", wSync) : LQ.addListener(wSync));
+  let rzT = 0; window.addEventListener("resize", () => { clearTimeout(rzT); rzT = setTimeout(() => { if (wheel) wheel.measure(); if (pillC) pillC.measure(); }, 150); });
+  if (LQ.matches) requestAnimationFrame(wheelOn);
+  const renderStack0 = renderStack; renderStack = function () { renderStack0(); if (wheel) wheelOn(); };
+  // the pill row hides while a card is open (it would sit under the peek bar)
+  new MutationObserver(() => { document.documentElement.classList.toggle("cardon", !card.hidden); if (card.hidden && pillC) requestAnimationFrame(() => pillC.measure()); requestAnimationFrame(fitStack); }).observe(card, { attributes: true, attributeFilter: ["hidden"] });
+  document.documentElement.classList.toggle("cardon", !card.hidden);
+
+  // ------------------------------------------------------------------ full screen (Fullscreen API; iOS Safari has none -> Add to Home Screen hint)
+  const FSC = L.Control.extend({ options: { position: "bottomleft" }, onAdd() {
+    const d = document.documentElement, b = L.DomUtil.create("a", "fsbtn");
+    b.href = "#"; b.setAttribute("role", "button");
+    const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+    const ico = () => { const f = !!fsEl(); b.innerHTML = f ? '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 3v6H3M15 3v6h6M9 21v-6H3M15 21v-6h6" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>' : '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>';
+      b.title = f ? "Leave full screen" : "Full screen"; b.setAttribute("aria-label", b.title); b.classList.toggle("on", f); };
+    ico();
+    const fit = () => { ico(); map.invalidateSize(); setTimeout(() => { map.invalidateSize(); if (wheel) wheel.measure(); if (pillC) pillC.measure(); fitStack(); }, 350); };
+    document.addEventListener("fullscreenchange", fit); document.addEventListener("webkitfullscreenchange", fit);
+    L.DomEvent.disableClickPropagation(b);
+    L.DomEvent.on(b, "click", e => { L.DomEvent.preventDefault(e);
+      if (fsEl()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+      const rq = d.requestFullscreen || d.webkitRequestFullscreen;
+      if (rq) { try { const r = rq.call(d); if (r && r.catch) r.catch(() => toast("Full screen was blocked by the browser")); } catch (_) { toast("Full screen is not available here"); } return; }
+      const sa = navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
+      toast("", sa ? "You are already in the full-screen app." : "For full screen on iPhone/iPad: tap <b>Share</b> → <b>Add to Home Screen</b>, then open ${ST.app} from the home screen.", 6000);
+    });
+    return b; } });
+  { const fc = new FSC().addTo(map), el = fc.getContainer(); el.parentNode.appendChild(el); el.classList.add("fsctl"); }  // to the right of the zoom buttons
+
+  // ------------------------------------------------------------------ profiles P1..P4
+  // Only these 4 small buttons (+ "All") are on the critical path. The panel, the filters and data/pf.js load on demand (profiles.js):
+  // when a button is tapped, a #profile / #pedit / #pmatch link opens, or a profile was left on. With "All" nothing is filtered.
+  var PROF = null;  // the active profile's filter api (set by profiles.js); null = the default map
+  const PSLOTS = ["P1", "P2", "P3", "P4"];
+  const pGet = k => { try { return JSON.parse(localStorage.getItem("kyx_prof_" + k) || "null"); } catch (e) { return null; } };
+  const pBar = document.createElement("div"); pBar.id = "profBar"; pBar.className = "profbar"; pBar.setAttribute("role", "toolbar"); pBar.setAttribute("aria-label", "Profiles");
+  function renderPBar() {
+    const act = ANNA_ON ? "-" : localStorage.getItem("kyx_prof_active") || "";  // Anna on: no P1-P4 / All highlighted
+    pBar.innerHTML = `<button type="button" class="pfb${act ? "" : " on"}" data-prof="" aria-pressed="${!act}" title="Default map, no profile filter">All</button>` + PSLOTS.map(k => {
+      const p = pGet(k) || (k === "P1" ? { name: "Bill" } : null), nm = p && p.name ? p.name : k;
+      return `<button type="button" class="pfb${act === k ? " on" : ""}${p ? "" : " unset"}" data-prof="${k}" aria-pressed="${act === k}" title="Profile ${k}${p ? ": " + esc(nm) : " (not set up)"}">${esc(nm)}</button>`; }).join("")
+      + (K.meta && K.meta.anna ? `<button type="button" class="pfb pfa${ANNA_ON ? " on" : ""}" data-anna="1" aria-pressed="${ANNA_ON}" title="${esc(K.meta.anna.name)}: Shawn (engineer) + Anna (leasing / billing) household (Shawn's engineering jobs over $120k, 2bd/2ba homes, no hospitals)">${esc(K.meta.anna.name)}</button>` : "");
+  }
+  window.KYXPF = d => { window.KYXPF_D = d; };  // data/pf.js calls this
+  let profP = null;
+  function loadProfiles() {
+    if (profP) return profP;
+    const v = K.meta && K.meta.stamp ? "?v=" + K.meta.stamp : "";
+    const add = src => new Promise(res => { const el = document.createElement("script"); el.src = src + v; el.async = true; el.onload = res; el.onerror = res; document.head.appendChild(el); });
+    const layerDefault = d => d.disabled || annaBlk(d) ? false : (d.key in saved ? !!saved[d.key] : !!d.on);
+    const remake = e => { PLS.forEach(pl => { if (pl.shown.has(e)) pl._hide(e); }); if (e.mk) { e.mk.off(); e.mk = null; } };
+    return profP = Promise.all([add("profiles.js"), add("data/pf.js"), K.meta && K.meta.pj ? loadPerm().catch(() => 0) : 0]).then(() => window.KYXP.init({ K, IDX, MARK, map, LAYERS, setLayer, layerDefault, PLS, sched, remake,
+      showPage, refreshCard, renderPBar, toast, copy, esc, money, stat, gRow, gImg, dot, TJ_ALL, isHome, isNH, isCab, isBig, isCF, isCFo, body,
+      current: () => current, setProf: p => { PROF = p; if (PJX) PJX.apply(); }, reSolo, loadPerm, PJ: () => PJX }));
+  }
+  pBar.addEventListener("click", e => {
+    const b = e.target.closest("[data-prof],[data-anna]"); if (!b) return;
+    if (b.dataset.anna) { b.classList.add("busy"); annaSet(!ANNA_ON).then(() => b.classList.remove("busy")); return; }
+    const k = b.dataset.prof;
+    if (ANNA_ON) { annaSet(false, { noProf: true, quiet: true }); if (!k) { if (profP) KYXP.tap(""); else { localStorage.removeItem("kyx_prof_active"); renderPBar(); } toast("All: default map, no profile filter"); return; } }
+    if (!k && !profP) { toast("All: default map, no profile filter"); return; }  // profiles never loaded = already the default map
+    b.classList.add("busy"); loadProfiles().then(() => { b.classList.remove("busy"); KYXP.tap(k); });
+  });
+  renderPBar(); document.body.appendChild(pBar);
+  // ---- Anna on / off. Radio with All / P1-P4: Anna on puts any active profile to sleep (P1-P4 storage kept, so Anna off brings it back).
+  let anP = null;
+  function loadAnna() {
+    if (!(K.meta && K.meta.anna)) return Promise.resolve(false);
+    return anP || (anP = Promise.all([loadJS("anna.js"), window.KYXAN_D ? 0 : loadJS("data/anna.js")]).then(() => {
+      if (!window.KYXAN || !window.KYXAN_D) return false;
+      ANNAX = KYXAN.init({ K, ST, IDX, MARK, map, L, G, LAYERS, PL_, ent, icOnce, sicon, icon, ksv, krow, mk, PIN_KEY, FULL, KEEP, DOTC, TLAB, TITLE, LABEL, THUMB_TITLE, R, SOLOS, TOPS, TOPK, TOPH,
+        PILL_T, PILL_O, SHARDS, all, metrics, msel, scaleCache, mkRow, ll, sched, renderKey, link, ext, row, stat, rbadge, money, esc, slug, fmt1, sign, fmtMetric, gRow, gImg, dot, schoolBlock, thumb,
+        sqft, hav, isNH, isHome, countyAt, toast, RAMP, BANDS, info, infoBody, MORE_LAYER_FOR, nearbyBlock, openItem, refreshCard, current: () => current,
+        setMetric: k => { curMetric = k; if (msel.value !== k) msel.value = k; drawCounties(); }, getMetric: () => curMetric, on: () => ANNA_ON });
+      return true;
+    }).catch(() => false));
+  }
+  function annaSet(on, o = {}) {
+    if (!(K.meta && K.meta.anna)) return Promise.resolve(false);
+    if (on) return loadAnna().then(ok => {
+      if (!ok) { anP = null; return false; }
+      if (ANNA_ON) return true;
+      const prev = localStorage.getItem("kyx_prof_active");
+      if (window.KYXP && KYXP.active && KYXP.active()) { KYXP.use("", true); if (prev) localStorage.setItem("kyx_prof_active", prev); }
+      ANNA_ON = true; annaApply(o); return true; });
+    if (!ANNA_ON) return Promise.resolve(true);
+    ANNA_ON = false; annaApply(o);
+    if (!o.noProf && localStorage.getItem("kyx_prof_active")) loadProfiles().then(() => KYXP.boot());
+    return Promise.resolve(true);
+  }
+  function annaApply(o) {
+    try { localStorage.setItem(ST.ls + "anna", ANNA_ON ? "1" : "0"); } catch (e) { }
+    try { const u = new URL(location.href); if (ANNA_ON) u.searchParams.set("anna", "1"); else u.searchParams.delete("anna"); history.replaceState(history.state, "", u.pathname + u.search + u.hash); } catch (e) { }
+    document.documentElement.classList.toggle("annaon", ANNA_ON);
+    if (SOLO && !soloVis(SOLOS.find(x => x.k === SOLO) || {})) { SOLO = null; SOLO_ON = null; soloF = null; }
+    if (ANNAX) ANNAX.apply(ANNA_ON);
+    restoreLayers(); if (FOCUS) focusLayers();
+    buildPills(); buildTMenu(); renderStack(); renderPBar(); renderKey(); sched(true); requestAnimationFrame(fitStack);
+    const c = current, it = c && IDX[c.type] && IDX[c.type][c.id], tp = c && c.type === "top" && TOPK[c.id];
+    if (c && !c.loading && !card.hidden) { if ((!ANNA_ON && (c.type === "eng" || c.type === "spj" || (it && it.anna) || (tp && tp.anna))) || (ANNA_ON && (ANNA_HK.has(c.type) || c.type === "hospital" || (tp && !topVis(tp))))) closeCard(); else refreshCard(); }
+    if (!o.quiet) toast(ANNA_ON ? `${K.meta.anna.name} on: Shawn's engineering jobs, Anna's jobs, 2bd/2ba homes · no hospitals` : `${K.meta.anna.name} off`);
+  }
+
+  // ------------------------------------------------------------------ start
+  // de-clutter when zoomed out: hide minor hospitals, shrink markers
+  const zc = () => { const z = map.getZoom(), el = map.getContainer(); el.classList.toggle("z-low", z < 8); el.classList.toggle("z-vlow", z < 7); };
+  map.on("zoomend", zc);
+  if (!history.state || history.state.d == null) history.replaceState(location.hash ? { d: 1, nob: 1, L: isListH(location.hash) ? 1 : undefined } : { d: 0 }, "", location.href);
+  const annaQ = new URLSearchParams(location.search).get("anna");
+  const annaBoot = !!(K.meta && K.meta.anna) && (annaQ === "1" || (annaQ !== "0" && localStorage.getItem(ST.ls + "anna") === "1"));
+  if (annaBoot) annaSet(true, { quiet: true });  // Anna was left on, or ?anna=1 (shared link): its data loads after the first paint
+  if (location.hash) route(true);  // (the start view without a hash is set right after the map is created)
+  updBack();
+  if (!annaBoot && localStorage.getItem("kyx_prof_active")) {  // a profile was left on: load it after the page is up (never blocks the first paint)
+    const go = () => loadProfiles().then(() => KYXP.boot());
+    if (document.readyState === "complete") setTimeout(go, 30); else window.addEventListener("load", () => setTimeout(go, 30), { once: true });
+  }
+  zc();
+  if (K.meta && K.meta.pj) {  // permanent RN jobs: hats + counts load after the page is up (perm.js + data/pjm.js, ~15 KB gzipped)
+    const idle = () => (window.requestIdleCallback || (f => setTimeout(f, 1)))(() => loadPerm().catch(() => 0), { timeout: 4000 });
+    if (document.readyState === "complete") setTimeout(idle, 1200); else window.addEventListener("load", () => setTimeout(idle, 1200), { once: true });
+  }
+  window.KYXApp = { anna: () => ANNA_ON, annaSet, loadPerm, PJ: () => PJX, focus: () => FOCUS && { name: FOCUS.name, z: FOCUS.z }, clearFocus, focusStats: () => { const o = { shown: {}, expect: {} };
+    PLS.forEach(pl => pl.ents.forEach(e => { if (!FOCUS || e.px || !inFocus(e)) return; if (SOLO_ON && SOLO_ON.has(pl.key) && soloF && !soloF(e)) return;
+      o.expect[e.type] = (o.expect[e.type] || 0) + 1; if (pl.shown.has(e) && e.mk && e.mk._icon) o.shown[e.type] = (o.shown[e.type] || 0) + 1; })); return o; }, BADGE, favGet, cmpGet, loadExtras, homeTarget, countyAt, openItem, closeCard, exitCard, map, IDX, depth, loadProfiles, prof: () => PROF, setSolo, solo: () => SOLO, iconKinds: () => { const z = map.getZoom(), o = []; PLS.forEach(pl => { if ((SOLO_ON && SOLO_ON.has(pl.key)) || !(pl.key in FULL) || z >= FULL[pl.key]) o.push(pl.key); }); return o.sort(); },
+    clusters: () => CLS.filter(c => c.mk._icon).map(c => { const q = map.latLngToContainerPoint(c.mk.getLatLng()); return { g: c.g, n: c.n, type: c.xs[0][1].type, x: q.x, y: q.y }; }), dots: () => DOTS.length, fade: () => +(fillPane.style.opacity || 1), FULL, CL_OFF,
+    foc: () => ({ on: FOC_ON, top: TOPF && TOPF.k, solo: SOLO }),
+    pins: () => { const o = []; PLS.forEach(pl => pl.shown.forEach(e => { if (e.mk && e.mk._icon) { const q = map.latLngToContainerPoint(e.mk.getLatLng()); o.push({ type: e.type, id: e.id, x: q.x, y: q.y }); } })); return o; } };  // pins(): for tests
+})();
