@@ -4,6 +4,9 @@ Live site: https://unclebill-spec.github.io/kentucky-explorer/. Times are US Eas
 Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which used generic "Publish <date>" messages) and from the
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
+## 2026-10-22
+- 12:27 ET: Near-hospital homes: +6 from a fresh Realtor.com search (Somerset, Hopkinsville, Glasgow, Elizabethtown x2, Madisonville)
+
 ## 2026-10-08
 - 00:16 ET: New right-side 'Hospitals' filter button: shows every hospital on the map, including hospitals within ~15 mi over the state line, with the icons they already have. While it is on, hospitals are drawn larger and on top, every trauma center sits above every other hospital (single pins and groups), and other pins shrink underneath. Hidden in Anna mode. Shared app code, same on every map.
 
