@@ -15,8 +15,9 @@
     cu: "County", cus: " County", cup: "counties", cuP: "Counties",  // map block words (Massachusetts: Town / "" / towns / Towns)
     other: { name: "Tennessee", ab: "TN", url: "https://unclebill-spec.github.io/tennessee-explorer/", live: true },
     others: null,
-    caps: { p5: 500000, p1: 425000, nh: 325000 },  // home-search price caps (Massachusetts: $650k on all three; Maine: $550k on all four)
+    caps: { p5: 500000, p1: 425000, nh: 325000, nlh: 350000, tha: 350000 },  // home-search price caps (Massachusetts: $650k on p5/p1/nh; Maine: $550k on those four). nlh/tha are $350k everywhere except Massachusetts $450k
     cabin: null }, (K.meta && K.meta.state) || {});  // optional 4th home category, per state: { acres: 25, label: "Cabin", cat: "cabin-home" } (Maine); off = null
+  if (ST.caps) { if (ST.caps.nlh == null) ST.caps.nlh = ST.ab === "MA" ? 450000 : 350000; if (ST.caps.tha == null) ST.caps.tha = ST.ab === "MA" ? 450000 : 350000; }  // a state's caps object replaces the defaults; these two layers stay $350k ($450k in MA) even when p5/p1/nh/cab are higher
   // state switcher: this state + every other live state map, alphabetical (build.py STATE["others"]; Kentucky's list is here)
   if (!ST.others) ST.others = ST.ab === "KY" ? [{ name: "Tennessee", ab: "TN", url: "https://unclebill-spec.github.io/tennessee-explorer/" }, { name: "Massachusetts", ab: "MA", url: "https://unclebill-spec.github.io/massachusetts-explorer/" }, { name: "Maine", ab: "ME", url: "https://unclebill-spec.github.io/maine-explorer/" }, { name: "Vermont", ab: "VT", url: "https://unclebill-spec.github.io/vermont-explorer/" }, { name: "Montana", ab: "MT", url: "https://unclebill-spec.github.io/montana-explorer/" }, { name: "Wyoming", ab: "WY", url: "https://unclebill-spec.github.io/wyoming-explorer/" }, { name: "Idaho", ab: "ID", url: "https://unclebill-spec.github.io/idaho-explorer/" }, { name: "Utah", ab: "UT", url: "https://unclebill-spec.github.io/utah-explorer/" }, { name: "New Hampshire", ab: "NH", url: "https://unclebill-spec.github.io/new-hampshire-explorer/" }, { name: "North Carolina", ab: "NC", url: "https://unclebill-spec.github.io/north-carolina-explorer/" }] : [ST.other];  // other.live: false would hide the state switcher
   window.KYX_ST = ST;
@@ -102,9 +103,11 @@
     tower: () => SVGI(12, 16, `<path d="M1.5 15.5V6.5h3V2.2L7 .8l2.5 1.4v13.3z" fill="#37474f" stroke="#fff" stroke-width="1"/><path d="M5.9 4.2h2.2M5.9 6.4h2.2M5.9 8.6h2.2M5.9 10.8h2.2M2.6 8.6h1M2.6 10.8h1" stroke="#ffe082" stroke-width="1"/>`),
     // log cabin (Maine 4th home category): same 24px outline, white stroke and size as the red house; brown logs, dark roof, chimney
     cabin: (sz = 24) => `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" aria-hidden="true"><path d="M16.2 3.2h2.6v5.6h-2.6z" fill="#5d4037" stroke="#fff" stroke-width="1.2"/><path d="M12 1.8 23 11.6h-2.4V22.4H3.4V11.6H1z" fill="#8d5524" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 3.9 20.3 11.3H3.7z" fill="#4e342e"/><path d="M4.6 14h14.8M4.6 16.8h14.8M4.6 19.6h14.8" stroke="#e8c49a" stroke-width="1.1" stroke-linecap="round"/><rect x="10.2" y="15.6" width="3.6" height="6.8" fill="#3e2723" stroke="#e8c49a" stroke-width=".7"/></svg>`,
-    house: cross => SVGI(24, 24, `<path d="M12 1.8 23 11.6h-3V22.4H4V11.6H1z" fill="${RED_HOUSE}" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/>` + (cross
+    house: (cross, fill) => SVGI(24, 24, `<path d="M12 1.8 23 11.6h-3V22.4H4V11.6H1z" fill="${fill || RED_HOUSE}" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/>` + (cross
       ? `<rect x="6.6" y="13.2" width="10.8" height="4" rx=".5" fill="#fff"/><rect x="10" y="9.8" width="4" height="10.8" rx=".5" fill="#fff"/>`
       : `<rect x="10" y="15.4" width="4" height="7" fill="#fff" opacity=".9"/>`)),
+    // two roofs: townhomes / apartments / condos (no-land homes stay a single house, recolored)
+    towns: (fill = "#ef6c00") => SVGI(24, 24, `<path d="M1.4 13.4 7.6 8.2 13.8 13.4h-1.5v8.8H2.8v-8.8z" fill="${fill}" stroke="#fff" stroke-width="1.35" stroke-linejoin="round"/><path d="M10.2 12.2 16.4 7 22.6 12.2h-1.5V22.2h-9.4V12.2z" fill="${fill}" stroke="#fff" stroke-width="1.35" stroke-linejoin="round"/><rect x="5.3" y="16.6" width="2.1" height="5.6" fill="#fff" opacity=".9"/><rect x="15.6" y="16.2" width="2.1" height="6" fill="#fff" opacity=".9"/>`),
     // black star: 50+ acre lots under $250k (Bill, Oct 4 2026: "it can get a small black star")
     // flying bat (wings spread) = a cave on the property; small waterfall = a waterfall on the property (Bill, Oct 4 2026 2:12 PM)
     bat: (sz = 24) => `<svg width="${sz}" height="${Math.round(sz * 0.46)}" viewBox="-2 2 104 46" aria-hidden="true"><path d="M50 15L46.5 7.5 45 16C40 14 32 6 24 5C16 5 7 9 1 15Q8 15 11 22Q17 19 22 26Q29 23 34 32Q40 28 44 33Q47 40 50 42Q53 40 56 33Q60 28 66 32Q71 23 78 26Q83 19 89 22Q92 15 99 15C93 9 84 5 76 5C68 6 60 14 55 16L53.5 7.5Z" fill="#1d1d1f" stroke="#fff" stroke-width="4.5" stroke-linejoin="round"/></svg>`,
@@ -432,13 +435,13 @@
   // trauma centers, airports, businesses and odd buildings for sale, bargain homes and the 5 cities; every other pin of a layer that is
   // on is a faint dot (drawDots, on the county-line canvas). Each zoom step then turns a few more kinds of dots into icons, from the standouts at 7.5 to
   // coal camps, ghost towns and mines at 11 (it used to be nearly everything at once at 10).
-  const FULL = { feat: 7.5, trauma: 8, hosp: 8, props: 8.5, nh: 8.5, cab: 8.5, big: 8, cvf: 8, homes: 9, travel: 9, perm: 9, a_museum: 9.5, a_aqua: 9.5, col: 9.5,
+  const FULL = { feat: 7.5, trauma: 8, hosp: 8, props: 8.5, nh: 8.5, nlh: 8.5, tha: 8.5, cab: 8.5, big: 8, cvf: 8, homes: 9, travel: 9, perm: 9, a_museum: 9.5, a_aqua: 9.5, col: 9.5,
     a_park: 10, a_water: 10, act: 10, a_camp: 10, h_hist: 10.5, sch: 10.5, h_coal: 11, h_ghost: 11, h_mine: 11, ski: 8, peak: 9.5, tgt: 9 };
   const FULLE = { peak: e => e.it.tier === 1 ? 8 : 9.5 };  // per-pin tier inside a layer: the best-known peaks (tier 1) from zoom 8
   const top12 = h => /^Level (I|II)(\s|$)/.test(h.trauma || ""), barg = p => !!p.bargain;
-  const KEEP = { trauma: top12, props: barg, homes: barg, nh: barg, cab: barg, big: () => true, cvf: () => true };  // cvf: cave / waterfall pins show at every zoom (grouped statewide)  // big: 50+ ac black stars show at every zoom (grouped statewide)
+  const KEEP = { trauma: top12, props: barg, homes: barg, nh: barg, nlh: barg, tha: barg, cab: barg, big: () => true, cvf: () => true };  // cvf: cave / waterfall pins show at every zoom (grouped statewide)  // big: 50+ ac black stars show at every zoom (grouped statewide)
   // ---- faint dots: one small canvas, redrawn in a single pass (no Leaflet object per dot); colors by kind
-  const DOTC = { props: "#c62828", homes: "#c62828", nh: "#c62828", cab: "#6d4c41", big: "#111", cvf: "#1d1d1f", trauma: "#8b0000", hosp: "#d32f2f", travel: "#c62828", perm: "#1565c0", sch: "#5e35b1", col: "#6a1b9a",
+  const DOTC = { props: "#c62828", homes: "#c62828", nh: "#c62828", nlh: "#00897b", tha: "#ef6c00", cab: "#6d4c41", big: "#111", cvf: "#1d1d1f", trauma: "#8b0000", hosp: "#d32f2f", travel: "#c62828", perm: "#1565c0", sch: "#5e35b1", col: "#6a1b9a",
     act: "#2e7d32", feat: "#b8860b", h_hist: "#b8860b", h_coal: "#37474f", h_ghost: "#7e57c2", h_mine: "#5d4037", a_park: "#ef6c00", a_water: "#0288d1", a_aqua: "#0288d1", a_museum: "#8d6e63", a_camp: "#2e7d32", ski: "#0277bd", peak: "#546e7a", tgt: "#cc0000" };
   ptsOn = true;  // the dot tables above exist now (a canvas may draw before this line)
   const hk = e => { let h = e._hk; if (h === undefined) { h = 0; const t = String(e.id); for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; e._hk = h; } return h; };
@@ -567,10 +570,10 @@
     if (CLMK.size > 600) CLMK.forEach((c, k) => { if (!live.has(k)) CLMK.delete(k); });  // keep the cache small
   }
   map.on("zoomend moveend", () => sched());
-  const ent = (type, it, ic, o = {}) => { const e = Object.assign({ type, id: it.id, it, lat: it.lat, lon: it.lon, ic, title: it.title || it.name }, o); MARK[type + ":" + it.id] = e; return e; };
+  const ent = (type, it, ic, o = {}) => { const e = Object.assign({ type, id: it.id, it, lat: it.lat, lon: it.lon, ic, title: it.title || it.name }, o); const k = type + ":" + it.id; if (!MARK[k]) MARK[k] = e; else if (o.lk) MARK[k + "#" + o.lk] = e; else MARK[k] = e; return e; };
   const FEAT = [];  // featured standouts (activities, history, attractions) -> their own always-on layer (filled in kyxMoreLayers)
   const PL_ = k => new PL(k);
-  const L_props = PL_("props"), L_homes = PL_("homes"), L_nh = PL_("nh"), L_cab = PL_("cab"), L_big = PL_("big"), L_cvf = PL_("cvf"), L_hosp = PL_("hosp"), L_trauma = PL_("trauma"), L_sch = PL_("sch"), L_col = PL_("col"), L_act = PL_("act");
+  const L_props = PL_("props"), L_homes = PL_("homes"), L_nh = PL_("nh"), L_nlh = PL_("nlh"), L_tha = PL_("tha"), L_cab = PL_("cab"), L_big = PL_("big"), L_cvf = PL_("cvf"), L_hosp = PL_("hosp"), L_trauma = PL_("trauma"), L_sch = PL_("sch"), L_col = PL_("col"), L_act = PL_("act");
   const L_hist = { mine: PL_("h_mine"), coal_camp: PL_("h_coal"), ghost_town: PL_("h_ghost"), historic: PL_("h_hist") };
   const HIST = { mine: ["⛏", "Old mine (USGS MRDS)"], coal_camp: ["🏚", "Historic coal camp"], ghost_town: ["👻", "Ghost town"], historic: ["🏛", "Historic site"] };
   const SCOLOR = { Blue: "#1e5bd8", Green: "#2e9a4b", Yellow: "#e6c229", Orange: "#ef7d1a", Red: "#d33a2c" };
@@ -584,11 +587,39 @@
   // its category (lists, counts, profiles) but its pin is the bat / waterfall (one pin; a cave + waterfall = the bat); cat "cave" / "falls" = only this
   const isCF = p => !!(p.cf && p.cf.length), isCFo = p => p.cat === "cave" || p.cat === "falls", hasCave = p => isCF(p) && p.cf.includes("cave"), hasFalls = p => isCF(p) && p.cf.includes("falls");
   const cfLab = p => hasCave(p) && hasFalls(p) ? "🦇 Cave + waterfall on the property" : hasCave(p) ? "🦇 Cave on the property" : "💧 Waterfall on the property";
+  const isNlhCat = p => p.cat === "no-land-home", isThaCat = p => p.cat === "townhome-apartment";
+  // nearest qualifying hospital, free-flow minutes only. p.nh is that hospital for near-hospital homes. Else a drives[] row whose role names a qualifying / acute / 10+ ER hospital. Trauma-only and unlabeled times are not used (do not guess).
+  function hospMin(p) {
+    const nh = p && p.nh;
+    if (nh && typeof nh.minutes_free_flow === "number") return nh.minutes_free_flow;
+    let best = null;
+    (p && p.drives || []).forEach(d => {
+      if (typeof d.minutes_free_flow !== "number") return;
+      const role = String(d.role || "");
+      const qual = /qualif|10\+|er bed|acute/i.test(role);
+      if (!qual || (/trauma/i.test(role) && !qual)) return;
+      if (best == null || d.minutes_free_flow < best) best = d.minutes_free_flow;
+    });
+    return best;
+  }
+  const PT_MOBILE = /mobile|manufactur/i, PT_THA = /town|condo|apartment/i, PT_HOUSE = t => t === "House" || /^single[- ]family/i.test(t);
+  const ptypeNlh = p => { const t = p.ptype; return !!t && !PT_MOBILE.test(t) && !PT_THA.test(t) && !/land|lot/i.test(t) && PT_HOUSE(t); };
+  const ptypeTha = p => { const t = p.ptype; return !!t && !PT_MOBILE.test(t) && !PT_HOUSE(t) && !/\bland\b|\blot\b/i.test(t) && PT_THA.test(t); };
+  const underCap = (p, k) => p.price != null && ST.caps && ST.caps[k] != null && p.price < ST.caps[k];
+  const drive15 = p => { const m = hospMin(p); return m != null && m <= 15; };
+  const passNlh = p => ptypeNlh(p) && p.beds >= 4 && p.baths >= 2 && underCap(p, "nlh") && drive15(p);
+  const passTha = p => ptypeTha(p) && p.beds >= 3 && p.baths >= 2 && underCap(p, "tha") && drive15(p);
+  const isNlh = p => isNlhCat(p) || (!isThaCat(p) && passNlh(p));  // cat match, or another category that already meets the rules
+  const isTha = p => isThaCat(p) || (!isNlhCat(p) && passTha(p));
   const CFS = (K.properties || []).filter(isCF);
-  const HOMES = (K.properties || []).filter(isHome), NHOMES = (K.properties || []).filter(isNH), CABS = (K.properties || []).filter(isCab), BIGS = (K.properties || []).filter(isBig), LANDS = (K.properties || []).filter(p => !isHome(p) && !isNH(p) && !isCab(p) && !isBig(p) && !isCFo(p));
+  const HOMES = (K.properties || []).filter(isHome), NHOMES = (K.properties || []).filter(isNH), CABS = (K.properties || []).filter(isCab), BIGS = (K.properties || []).filter(isBig), LANDS = (K.properties || []).filter(p => !isHome(p) && !isNH(p) && !isCab(p) && !isBig(p) && !isCFo(p) && !isNlhCat(p) && !isThaCat(p));
+  const NLHS = (K.properties || []).filter(isNlh), THAS = (K.properties || []).filter(isTha);
   const CABL = ST.cabin ? `${ST.cabin.label || "Cabin"}s (more than ${ST.cabin.acres || 25} acres, 1+ bd / 1+ ba, under ${CAPK("cab")})` : "";
   const nhMk = {};
   let nf = { maxp: 0, maxm: 0, typ: "" }; try { nf = Object.assign(nf, JSON.parse(localStorage.getItem(ST.ls + "nhfilter") || "{}")); } catch (e) { }
+  let nlf = { maxp: 0, maxm: 0 }, thf = { maxp: 0, maxm: 0 };
+  try { nlf = Object.assign(nlf, JSON.parse(localStorage.getItem(ST.ls + "nlhfilter") || "{}")); } catch (e) { }
+  try { thf = Object.assign(thf, JSON.parse(localStorage.getItem(ST.ls + "thafilter") || "{}")); } catch (e) { }
   const sqft = v => v ? Math.round(v).toLocaleString() : "—";
   const IC_BARG = () => icOnce("barg", () => sicon("barg", G.starDot("#8e24aa"), 24, 24)), IC_HS = () => icOnce("hs", () => sicon("hs", G.house(false), 22, 22));
   NHOMES.forEach(p => {
@@ -627,6 +658,21 @@
     const star = p.standout && p.standout.length;
     L_props.addLayer(ent("property", p, p.bargain ? IC_BARG : IC_HS, { z: p.bargain ? 3500 : star ? 2000 : 1000, zh: p.bargain ? 6500 : 0,
       tip: () => `${esc(p.title)}${p.price ? " · " + money(p.price) : ""}${p.acres ? " · " + p.acres + " ac" : ""}${star ? " ★ " + esc(p.standout.join(", ")) : ""}` }));
+  });
+  // second pin for no-land homes and townhomes/apartments (own marker; same property id). Primary pins above keep MARK["property:id"].
+  const nlhMk = {}, thaMk = {};
+  const IC_NLH = () => icOnce("nlh", () => sicon("hs nlh", G.house(false, "#00897b"), 22, 22));
+  const IC_THA = () => icOnce("tha", () => sicon("hs tha", G.towns("#ef6c00"), 24, 24));
+  const layTip = (p, kind) => { const m = hospMin(p); return `${kind} ${esc(p.title)}${p.price ? " · " + money(p.price) : ""}${p.beds != null ? " · " + esc(p.beds) + " bd/" + esc(p.baths) + " ba" : ""}${m != null ? " · ~" + Math.round(m) + " min to a hospital" : ""}`; };
+  NLHS.forEach(p => {
+    if (p.lat == null || p.lon == null) return; if (isCF(p)) return;
+    const e = ent("property", p, p.bargain ? IC_BARG : IC_NLH, { lk: "nlh", z: p.bargain ? 3500 : 1550, zh: p.bargain ? 6500 : 0, tip: () => layTip(p, "🏡") });
+    nlhMk[p.id] = e; L_nlh.addLayer(e);
+  });
+  THAS.forEach(p => {
+    if (p.lat == null || p.lon == null) return; if (isCF(p)) return;
+    const e = ent("property", p, p.bargain ? IC_BARG : IC_THA, { lk: "tha", z: p.bargain ? 3500 : 1540, zh: p.bargain ? 6500 : 0, tip: () => layTip(p, "🏘") });
+    thaMk[p.id] = e; L_tha.addLayer(e);
   });
   (K.hospitals || []).forEach(h => {
     const tr = h.trauma, gen = h.kind === "general";
@@ -712,6 +758,8 @@
     { key: "props", label: "★ Notable Properties (5+ acres)", layer: L_props, on: true, n: LANDS.length },
     { key: "homes", label: "🏠 Homes (1+ acre, 3bd/2ba, under " + CAPK("p1") + ")", layer: L_homes, on: true, n: HOMES.length, filter: true },
     { key: "nh", label: "🏥 Near-hospital homes (1,600+ sq ft, 3bd/2ba, under " + CAPK("nh") + ")", layer: L_nh, on: true, n: NHOMES.length, nfilter: true },
+    { key: "nlh", ic: G.house(false, "#00897b"), label: "No-land homes (4bd/2ba, under " + CAPK("nlh") + ", ≤ 15 min to a hospital)", layer: L_nlh, on: true, n: NLHS.length, nlhfilter: true },
+    { key: "tha", ic: G.towns("#ef6c00"), label: "Townhomes & apartments (3bd/2ba, under " + CAPK("tha") + ", ≤ 15 min to a hospital)", layer: L_tha, on: true, n: THAS.length, thafilter: true },
     ...(ST.cabin ? [{ key: "cab", ic: G.cabin(16), label: CABL, layer: L_cab, on: true, n: CABS.length }] : []),
     ...(BIGS.length ? [{ key: "big", ic: G.bigStar(16), label: BIGL, layer: L_big, on: true, n: BIGS.length }] : []),
     ...(CFS.length ? [{ key: "cvf", ic: `<span class="cfic">${G.bat(18)}${G.fall(14)}</span>`, label: "Caves & waterfalls on the property", layer: L_cvf, on: true, n: CFS.length }] : []),
@@ -746,11 +794,13 @@
     d.cb = cb; d.lab = lab; put(lab);
     if (d.filter) { d.cnt = lab.querySelector(".cnt"); put(homeFilterEl()); }
     if (d.nfilter) { d.cnt = lab.querySelector(".cnt"); put(nhFilterEl()); }
+    if (d.nlhfilter) { d.cnt = lab.querySelector(".cnt"); put(nlhFilterEl()); }
+    if (d.thafilter) { d.cnt = lab.querySelector(".cnt"); put(thaFilterEl()); }
     if (d.pfilter && !d.disabled) { const w = document.createElement("div"); w.className = "hfilter sub pjfilter"; w.id = "pjFilter"; w.innerHTML = '<span class="small">Filters load in a moment…</span>'; put(w); }
     if (on) { if (d.prep) d.prep(); d.layer.addTo(map); }
   }
   LAYERS.forEach(d => mkRow(d, x => ll.appendChild(x)));
-  applyHomeFilter(); applyNHFilter();
+  applyHomeFilter(); applyNHFilter(); applyNlhFilter(); applyThaFilter();
   // filter for the Near-hospital homes layer (max price, max drive minutes, house vs townhome/condo); remembered in localStorage
   function nhFilterEl() {
     const w = document.createElement("div"); w.className = "hfilter sub"; w.id = "nhFilter";
@@ -769,6 +819,28 @@
     if (keyReady) renderKey();
   }
   function nfText() { return [nf.maxp && "≤ " + money(nf.maxp), nf.maxm && "≤ " + nf.maxm + " min drive", nf.typ && (nf.typ === "House" ? "houses only" : "townhomes/condos only")].filter(Boolean).join(", "); }
+  // no-land homes and townhomes/apartments: max price + drive. 0 = the layer's 15 min rule (no extra cut). Does not change the near-hospital filter.
+  function driveFilterEl(id, capK, st, key, apply) {
+    const w = document.createElement("div"); w.className = "hfilter sub"; w.id = id;
+    const opt = (vals, cur, f) => vals.map(v => `<option value="${v}" ${String(cur) === String(v) ? "selected" : ""}>${f(v)}</option>`).join("");
+    const pid = id + "Price", mid = id + "Min";
+    w.innerHTML = `<label class="hf">Max price <select id="${pid}">${opt([0].concat(CAPOPTS(capK, [200000, 250000, 300000])), st.maxp, v => v ? "$" + v / 1000 + "k" : "Any (<" + CAPK(capK) + ")")}</select></label>
+      <label class="hf">Drive ≤ <select id="${mid}">${opt([0, 10], st.maxm, v => v ? v + " min" : "15 min")}</select></label>`;
+    w.querySelectorAll("select").forEach(s => s.onchange = () => { const nxt = { maxp: +$("#" + pid).value, maxm: +$("#" + mid).value }; if (key === "nlh") nlf = nxt; else thf = nxt; localStorage.setItem(ST.ls + key + "filter", JSON.stringify(nxt)); apply(); });
+    return w;
+  }
+  function nlhFilterEl() { return driveFilterEl("nlhFilter", "nlh", nlf, "nlh", applyNlhFilter); }
+  function thaFilterEl() { return driveFilterEl("thaFilter", "tha", thf, "tha", applyThaFilter); }
+  function layPass(p, st) { const m = hospMin(p); return (!st.maxp || (p.price != null && p.price <= st.maxp)) && (!st.maxm || (m != null && m <= st.maxm)); }
+  function applyLayFilter(list, mk, layer, key, st) {
+    let n = 0;
+    list.forEach(p => { const e = mk[p.id]; if (!e) return; const ok = layPass(p, st) || (current && current.id === p.id); if (ok) { n++; if (!layer.hasLayer(e)) layer.addLayer(e); } else if (layer.hasLayer(e)) layer.removeLayer(e); });
+    const d = LAYERS.find(x => x.key === key); if (d && d.cnt) d.cnt.textContent = n === list.length ? String(n) : `${n} of ${list.length}`;
+    if (keyReady) renderKey();
+  }
+  function applyNlhFilter() { applyLayFilter(NLHS, nlhMk, L_nlh, "nlh", nlf); }
+  function applyThaFilter() { applyLayFilter(THAS, thaMk, L_tha, "tha", thf); }
+  function nltText(st) { return [st.maxp && "≤ " + money(st.maxp), st.maxm && "≤ " + st.maxm + " min drive"].filter(Boolean).join(", "); }
   // simple filter for the Homes layer (max price, min acres); remembered in localStorage
   function homeFilterEl() {
     const w = document.createElement("div"); w.className = "hfilter sub"; w.id = "homeFilter";
@@ -787,7 +859,7 @@
   }
   function setLayer(d, on) { if (on && annaBlk(d)) on = false; if (on && d.key === "perm") try { loadPerm(); } catch (e) { } if (on) { if (d.prep) d.prep(); d.layer.addTo(map); if (d.key === "cty" || d.key === "sweet") d.layer.eachLayer(l => l.bringToBack && l.bringToBack()); } else map.removeLayer(d.layer); if (d.cb) d.cb.checked = on; renderKey(); }
   function ensureLayerFor(type, item) {
-    const k = (type === "property" && item && item.anna ? "ahome" : null) || (MORE_LAYER_FOR && MORE_LAYER_FOR._feat(item)) || { property: isCF(item) ? "cvf" : isNH(item) ? "nh" : isHome(item) ? "homes" : isCab(item) ? "cab" : isBig(item) ? "big" : "props", school: "sch", college: "col", activity: "act", travel: "travel", perm: "perm", city: "city" }[type]
+    const k = (type === "property" && item && item.anna ? "ahome" : null) || (MORE_LAYER_FOR && MORE_LAYER_FOR._feat(item)) || { property: isCF(item) ? "cvf" : isNH(item) ? "nh" : isHome(item) ? "homes" : isCab(item) ? "cab" : isBig(item) ? "big" : isNlhCat(item) ? "nlh" : isThaCat(item) ? "tha" : "props", school: "sch", college: "col", activity: "act", travel: "travel", perm: "perm", city: "city" }[type]
       || (type === "hospital" ? (item.trauma ? "trauma" : "hosp") : null)
       || (type === "history" ? { mine: "h_mine", coal_camp: "h_coal", ghost_town: "h_ghost", historic: "h_hist" }[item.type] : null)
       || (MORE_LAYER_FOR && MORE_LAYER_FOR[type] ? MORE_LAYER_FOR[type](item) : null);
@@ -857,6 +929,12 @@
     nh: () => `<div class="ksec"><b>🏥 Near-hospital homes</b> <span class="small">(1,600+ sq ft, 3+ bd, 2+ full ba, under ${CAPK("nh")}, active, good condition, ≤ 10 min free-flow to a hospital with a 24/7 ER of 10+ beds)</span>
       ${krow(ksv(G.house(true)), "Near-hospital home", "(red house with a white nursing cross; houses, townhomes, condos)")}
       ${nfText() ? `<div class="small">Filter on: ${esc(nfText())} · <button type="button" class="linkbtn" data-openlayers="1">change</button></div>` : ""}</div>`,
+    nlh: () => `<div class="ksec"><b>No-land homes</b> <span class="small">(single-family houses, 4+ bd, 2+ ba, under ${CAPK("nlh")}, ≤ 15 min free-flow to a hospital with a 24/7 ER of 10+ beds; no mobile, townhome, condo, or vacant land)</span>
+      ${krow(ksv(G.house(false, "#00897b")), "No-land home", "(teal house)")}
+      ${nltText(nlf) ? `<div class="small">Filter on: ${esc(nltText(nlf))} · <button type="button" class="linkbtn" data-openlayers="1">change</button></div>` : ""}</div>`,
+    tha: () => `<div class="ksec"><b>Townhomes & apartments</b> <span class="small">(townhomes, apartments, and condos, 3+ bd, 2+ ba, under ${CAPK("tha")}, ≤ 15 min free-flow to a hospital with a 24/7 ER of 10+ beds; no mobile or detached house)</span>
+      ${krow(ksv(G.towns("#ef6c00")), "Townhome / apartment / condo", "(orange double house)")}
+      ${nltText(thf) ? `<div class="small">Filter on: ${esc(nltText(thf))} · <button type="button" class="linkbtn" data-openlayers="1">change</button></div>` : ""}</div>`,
     trauma: () => `<div class="ksec"><b>Trauma centers</b> <span class="small">(KYHA Jan 2026 + border centers)</span>
       ${krow(mk("trauma", "I", 22), "Level I", "(highest: UK, UofL, Cincinnati, Vanderbilt, Knoxville)")}${krow(mk("trauma", "II", 22), "Level II", "(Pikeville, Evansville, Huntington)")}
       ${krow(mk("trauma", "III", 22), "Level III")}${krow(mk("trauma", "IV", 22), "Level IV", "(stabilize & transfer)")}${krow(mk("trauma", "IP", 22), "Pediatric Level I", "(Norton Children's)")}</div>`,
@@ -895,9 +973,9 @@
     if (on("cty")) h += countyKey(scaleFor(curMetric), "Counties colored by");
     if (on("sweet")) h += countyKey(scaleFor(sweetKey), "Sweet-spot layer");
     if (!on("cty") && !on("sweet")) h += `<div class="ksec small">${ST.cu} coloring is off. Turn on “${ST.cuP}” in Layers to color by the ${ANNA_ON ? "Anna" : "Appeal"} score.</div>`;
-    const pinKeys = ["eng", "spj", "ahome", "props", "homes", "nh", "cab", "big", "cvf", "bargain", "biz", "bldg", "travel", "perm", "trauma", "hosp", "apt", "city", "feat", "ski", "peak", "tgt", "sch", "col", "act"].filter(k => !annaBlk({ key: k, anna: /^(eng|spj|ahome)$/.test(k) }) && (k === "cab" ? !!ST.cabin : k === "big" ? BIGS.length > 0 : k === "cvf" ? CFS.length > 0 : k === "bargain" ? (K.properties || []).some(p => p.bargain) : PIN_KEY[k])), histKeys = ["h_hist", "h_coal", "h_ghost", "h_mine"];
+    const pinKeys = ["eng", "spj", "ahome", "props", "homes", "nh", "nlh", "tha", "cab", "big", "cvf", "bargain", "biz", "bldg", "travel", "perm", "trauma", "hosp", "apt", "city", "feat", "ski", "peak", "tgt", "sch", "col", "act"].filter(k => !annaBlk({ key: k, anna: /^(eng|spj|ahome)$/.test(k) }) && (k === "cab" ? !!ST.cabin : k === "big" ? BIGS.length > 0 : k === "cvf" ? CFS.length > 0 : k === "bargain" ? (K.properties || []).some(p => p.bargain) : PIN_KEY[k])), histKeys = ["h_hist", "h_coal", "h_ghost", "h_mine"];
     const atKeys = (MORE_ATT_KEYS || []).filter(k => PIN_KEY[k]), aOn = atKeys.filter(on), aOff = atKeys.filter(k => !on(k));
-    const onK = k => k === "bargain" ? on("homes") || on("nh") || on("props") || (ST.cabin && on("cab")) : k === "cab" ? !!ST.cabin && on(k) : on(k);
+    const onK = k => k === "bargain" ? on("homes") || on("nh") || on("nlh") || on("tha") || on("props") || (ST.cabin && on("cab")) : k === "cab" ? !!ST.cabin && on(k) : on(k);
     const active = pinKeys.filter(onK), off = pinKeys.filter(k => !onK(k));
     h += active.map(k => PIN_KEY[k]()).join("");
     const hOn = histKeys.filter(on), hOff = histKeys.filter(k => !on(k));
@@ -999,6 +1077,12 @@
     return `<div class="kicker">Nearby</div><table class="kv nb">${row("🏥 Hospital", H(nb.h))}${nb.t && (!nb.h || nb.t.id !== nb.h.id) ? row("🚑 Level I/II", H(nb.t)) : ""}${nb.tg ? row("🎯 Target", TGN(nb.tg)) : ""}${row("📍 Places", P || null)}${row("🎓 Elementary", S("ES"))}${row("🎓 Middle", S("MS"))}${row("🎓 High", S("HS"))}</table>`;
   }
   const dealNote = p => p.bargain ? `<div class="note deal"><span class="bstar">${G.starDot("#8e24aa")}</span> <b>Bargain:</b> ${esc(p.deal || "")}</div>` : "";
+  function alsoLay(p) {
+    const bits = [];
+    if (!isNlhCat(p) && isNlh(p)) bits.push("the no-land homes layer (4bd/2ba, ≤ 15 min to a hospital)");
+    if (!isThaCat(p) && isTha(p)) bits.push("the townhomes & apartments layer (3bd/2ba, ≤ 15 min to a hospital)");
+    return bits.length ? `<div class="note">Also on ${bits.join(" and ")}.</div>` : "";
+  }
   R.property = p => {
     const photos = p.photos || [];
     const gal = photos.length ? `<div class="gal" id="gal">${photos.map((u, i) => `<img src="${esc(u)}" data-i="${i}" loading="${i < 2 ? "eager" : "lazy"}" alt="Photo ${i + 1} of ${esc(p.title)}">`).join("")}</div><div class="galcount">${photos.length} photo${photos.length > 1 ? "s" : ""} · swipe or tap to enlarge</div>` : "";
@@ -1011,6 +1095,7 @@
     if (isCF(p)) return cfCard(p, gal, ns);
     if (isNH(p)) return nhCard(p, gal, drives, ns);
     if (isBig(p)) return bigCard(p, gal, ns);
+    if (isNlhCat(p) || isThaCat(p)) return nltCard(p, gal, drives, ns);
     const home = isHome(p);
     return `<div class="kicker">${isCab(p) ? `<span class="lic">${G.cabin(16)}</span> ${esc(ST.cabin.label || "Cabin")} · over ${ST.cabin.acres || 25} ac · under ${CAPK("cab")}` : home ? "🏠 Home · 1+ acre, 3bd/2ba, under " + CAPK("p1") + (p.standout && p.standout.length ? " · ★ standout" : "") : p.standout && p.standout.length ? "★ Standout property" : "Property"}</div><h2>${esc(p.title)}</h2>
       <div class="sub">${esc([p.town, p.county && p.county + ST.cus].filter(Boolean).join(", "))}</div>
@@ -1020,7 +1105,7 @@
       ${p.pending ? '<div class="note">Listing details are still being collected (listings.json not ready when this map was built). Re-run build.py to fill in price, acreage and the exact location.</div>' : ""}
       <div class="stats">${stat(money(p.price), "price")}${stat(p.acres != null ? fmt1(p.acres) : "—", "acres")}${stat(ppa || "—", "per acre")}
         ${stat(`${p.beds != null ? esc(p.beds) : "—"} / ${p.baths != null ? esc(p.baths) : "—"}`, "bed / bath")}${home ? stat(p.sqft ? Math.round(p.sqft).toLocaleString() : "—", "sq ft") + stat(p.year_built ? esc(p.year_built) : "—", "built") : stat(p.dwellings != null ? esc(p.dwellings) : "—", "dwellings")}${stat(esc(p.seen || "—"), "date seen")}</div>
-      ${dealNote(p)}${nearbyBlock(p.nearby)}
+      ${dealNote(p)}${alsoLay(p)}${nearbyBlock(p.nearby)}
       ${home ? `<table class="kv">${row("Address", p.address ? esc(p.address) : null)}${row("Baths", p.bath_detail ? esc(p.bath_detail) : null)}${row("Dwellings", p.dwellings ? esc(p.dwellings) : null)}</table>` : ""}
       ${p.notes ? `<div class="note">⚠️ ${esc(p.notes)}</div>` : ""}
       ${p.water && p.water.length ? `<div class="kicker">Water & cave features</div><div class="badges">${p.water.map(w => `<span class="badge">💧 ${esc(w)}</span>`).join("")}</div>` : ""}
@@ -1080,6 +1165,25 @@
       ${p.notes ? `<div class="note">${esc(p.notes)}</div>` : ""}
       ${p.desc ? `<div class="kicker">Description</div><div class="desc">${esc(p.desc)}</div>` : ""}`;
   }
+  function nltCard(p, gal, drives, ns) {
+    const tha = isThaCat(p), m = hospMin(p);
+    const kick = tha ? `Townhome / apartment · 3bd/2ba, under ${CAPK("tha")}, ≤ 15 min to a hospital` : `No-land home · house, 4bd/2ba, under ${CAPK("nlh")}, ≤ 15 min to a hospital`;
+    return `<div class="kicker"><span class="lic">${tha ? G.towns("#ef6c00") : G.house(false, "#00897b")}</span> ${kick}</div><h2>${esc(p.title)}</h2>
+      <div class="sub">${esc(p.address || [p.town, p.county && p.county + ST.cus].filter(Boolean).join(", "))}</div>
+      ${gal || thumb("property", p)}
+      ${m != null ? `<div class="note">🏥 ~${Math.round(m)} min free-flow to a hospital with a 24/7 ER of 10+ beds.</div>` : ""}
+      <div class="stats">${stat(money(p.price), "price")}${stat(`${p.beds != null ? esc(p.beds) : "—"} / ${p.baths != null ? esc(p.baths) : "—"}`, "bed / bath")}
+        ${stat(p.sqft ? Math.round(p.sqft).toLocaleString() : "—", "sq ft")}${stat(esc(p.ptype || "—"), "type")}${stat(esc(p.seen || "—"), "date seen")}</div>
+      ${dealNote(p)}${nearbyBlock(p.nearby)}
+      <table class="kv">${row("Address", p.address ? esc(p.address) : null)}${row("Type", p.ptype ? esc(p.ptype) : null)}${row("Baths", p.bath_detail ? esc(p.bath_detail) : null)}</table>
+      ${p.notes ? `<div class="note">⚠️ ${esc(p.notes)}</div>` : ""}
+      ${drives}
+      <div class="kicker">Schools</div>${schoolBlock(p.county)}
+      <table class="kv">${row("Nearest elementary", ns.ES ? `${link("school", ns.ES.id, ns.ES.name)} ${rbadge(ns.ES.rating)} · ${ns.ES.miles} mi` : null)}
+        ${row("Nearest high school", ns.HS ? `${link("school", ns.HS.id, ns.HS.name)} ${rbadge(ns.HS.rating)} · ${ns.HS.miles} mi` : null)}</table>
+      <table class="kv">${row(ST.cu, p.county ? link("county", p.county, p.county + ST.cus) : null)}${row("Listing", ext(p.url, "Open original listing ↗"))}${row("Date seen", esc(p.seen))}${row("Status", p.status ? esc(p.status) : null)}</table>
+      ${p.desc ? `<div class="kicker">Description</div><div class="desc">${esc(p.desc)}</div>` : ""}`;
+  }
   function nhCard(p, gal, drives, ns) {
     const nh = p.nh || {};
     const er = nh.er_beds ? `${esc(nh.er_beds)} ER beds/bays${nh.er_beds_label ? ` <span class="small">(${esc(nh.er_beds_label)})</span>` : ""}` : nh.estimate ? "Likely 10+ ER beds <b>(estimate</b>: 100+ licensed beds, 24/7 ER; no published count)" : esc(nh.er_beds_label || "—");
@@ -1090,7 +1194,7 @@
         <br><span class="small">${esc(fmt1(nh.miles))} mi · free-flow drive, no traffic (OSRM)${nh.gmaps_check ? " · " + esc(nh.gmaps_check) : ""}</span><br>🚑 ${er}${nh.source_url ? ` · <a href="${esc(nh.source_url)}" target="_blank" rel="noopener">ER source ↗</a>` : ""}</div></div>` : ""}
       <div class="stats">${stat(money(p.price), "price")}${stat(sqft(p.sqft), "sq ft")}${stat(`${p.beds != null ? esc(p.beds) : "—"} / ${p.baths != null ? esc(p.baths) : "—"}`, "bed / bath")}
         ${stat(esc(p.ptype || "—"), "type")}${stat(p.year_built ? esc(p.year_built) : "—", "built")}${stat(esc(p.seen || "—"), "date seen")}</div>
-      ${dealNote(p)}${p.condition ? `<div class="note good">✅ <b>Condition:</b> ${esc(p.condition)}</div>` : ""}${nearbyBlock(p.nearby)}
+      ${dealNote(p)}${alsoLay(p)}${p.condition ? `<div class="note good">✅ <b>Condition:</b> ${esc(p.condition)}</div>` : ""}${nearbyBlock(p.nearby)}
       ${p.notes ? `<div class="note">⚠️ ${esc(p.notes)}</div>` : ""}
       <table class="kv">${row("Address", p.address ? esc(p.address) : null)}${row("Type", esc(p.ptype || "House"))}${row("Baths", p.bath_detail ? esc(p.bath_detail) : null)}${row("Lot", p.acres ? fmt1(p.acres) + " acres" : null)}${row("MLS #", p.mls ? esc(p.mls) : null)}</table>
       ${p.features && p.features.length ? `<div class="kicker">Features</div><div class="badges">${p.features.map(w => `<span class="badge">${esc(w)}</span>`).join("")}</div>` : ""}
@@ -1179,7 +1283,7 @@
       ${row("Nearest trauma center", c.near_trauma ? `${link("hospital", c.near_trauma.id, c.near_trauma.name)} · ${esc(c.near_trauma.trauma)} · ~${c.near_trauma.miles} mi from county center` : null)}</table>
       <div class="kicker">Schools</div>${schoolBlock(c.name)}
       ${ds.length ? `<table class="tbl"><tr><th>District</th><th class="n">vs ${ST.ab}</th><th class="n">vs US</th><th>${ST.rlab ? "A/B/C/D/F" : "ES/MS/HS"}</th></tr>${ds.map(d => `<tr><td>${esc(d.name)}</td><td class="n">${esc(sign(d.pp_vs_ky, 0))}</td><td class="n">${esc(sign(d.gl_vs_us, 1))}</td><td>${d.lg ? esc(d.lg) : `${rbadge(d.es)} ${rbadge(d.ms)} ${rbadge(d.hs)}`}</td></tr>`).join("")}</table>` : ""}
-      ${props.length ? `<div class="kicker">Properties here</div><table class="kv">${props.map(p => row(isCF(p) ? (hasCave(p) ? G.bat(20) : G.fall(16)) : isNH(p) ? "🏥" : isHome(p) ? "🏠" : isCab(p) ? G.cabin(16) : isBig(p) ? G.bigStar(16) : p.standout && p.standout.length ? "★" : "⌂", link("property", p.id, p.title) + (p.price ? " · " + money(p.price) : ""))).join("")}</table>` : ""}`;
+      ${props.length ? `<div class="kicker">Properties here</div><table class="kv">${props.map(p => row(isCF(p) ? (hasCave(p) ? G.bat(20) : G.fall(16)) : isNH(p) ? "🏥" : isHome(p) ? "🏠" : isCab(p) ? G.cabin(16) : isBig(p) ? G.bigStar(16) : isNlhCat(p) ? G.house(false, "#00897b") : isThaCat(p) ? G.towns("#ef6c00") : p.standout && p.standout.length ? "★" : "⌂", link("property", p.id, p.title) + (p.price ? " · " + money(p.price) : ""))).join("")}</table>` : ""}`;
   };
   function nearbyProps(pt) {
     const near = (K.properties || []).filter(p => p.lat != null).map(p => [p, hav(pt.lat, pt.lon, p.lat, p.lon)]).filter(x => x[1] < 25).sort((a, b) => a[1] - b[1]).slice(0, 5);
@@ -1191,7 +1295,7 @@
   // ------------------------------------------------------------------ county grouping pages (#county=<slug>&cat=<cat>)
   // Each county-card count tile opens a compact, sorted list of that county's items; each row opens the item's own card and flies to its pin.
   const GCATS = [
-    { k: "listings", n: "props", label: "listings", one: "listing", title: "Listings", icon: "🏡", layers: ["props", "homes", "nh", "cab", "big", "cvf"] },
+    { k: "listings", n: "props", label: "listings", one: "listing", title: "Listings", icon: "🏡", layers: ["props", "homes", "nh", "nlh", "tha", "cab", "big", "cvf"] },
     { k: "hospitals", n: "hosp", label: "hospitals", title: "Hospitals", icon: "🏥", layers: ["trauma", "hosp"] },
     { k: "travel", n: "travel", label: "travel jobs", one: "travel job", title: "Travel nurse jobs", icon: "💼", layers: ["travel"] },
     { k: "perm", n: "perm", label: "permanent RN jobs", one: "permanent RN job", title: "Permanent RN jobs", icon: "🩺", layers: ["perm"] },
@@ -1257,9 +1361,15 @@
       `<b>${p.price != null ? money(p.price) : "Price n/a"}</b> · ${esc(p.beds)} bd / ${esc(p.baths)} ba · ${sqft(p.sqft)} sq ft`,
       `${esc(p.ptype || "House")} · ${esc(p.title)}`,
       dot([p.town && esc(p.town), p.nh && `🏥 ${Math.round(p.nh.minutes_free_flow)} min to ${esc(shortHosp(p.nh.name))}${p.nh.er_beds ? ` (${esc(p.nh.er_beds)} ER beds)` : p.nh.estimate ? " (10+ ER beds, est.)" : ""}`]));
-    const land = xs.filter(p => !isHome(p) && !isNH(p) && !isCab(p) && !isBig(p) && !isCFo(p)).sort(byPrice), cfs = xs.filter(isCF).sort(byPrice), homes = xs.filter(isHome).sort(byPrice), nhs = xs.filter(isNH).sort(byPrice), cabs = xs.filter(isCab).sort(byPrice), bigs = xs.filter(isBig).sort(byPrice);
+    const land = xs.filter(p => !isHome(p) && !isNH(p) && !isCab(p) && !isBig(p) && !isCFo(p) && !isNlhCat(p) && !isThaCat(p)).sort(byPrice), cfs = xs.filter(isCF).sort(byPrice), homes = xs.filter(isHome).sort(byPrice), nhs = xs.filter(isNH).sort(byPrice), cabs = xs.filter(isCab).sort(byPrice), bigs = xs.filter(isBig).sort(byPrice), nlhs = xs.filter(isNlh).sort(byPrice), thas = xs.filter(isTha).sort(byPrice);
+    const rx = (p, ph) => { const m = hospMin(p); return gRow("property", p.id, from, gImg(p.rt || (p.th && p.th.u), ph),
+      `<b>${p.price != null ? money(p.price) : "Price n/a"}</b>${p.beds != null ? ` · ${esc(p.beds)} bd${p.baths != null ? " / " + esc(p.baths) + " ba" : ""}` : ""}`,
+      `${p.ptype ? esc(p.ptype) + " · " : ""}${esc(p.title)}`,
+      dot([p.town && esc(p.town), m != null && `🏥 ${Math.round(m)} min`])); };
     return { sub: "Sorted by price, lowest first", secs: [["⌂ 5+ acre land", land.map(r), "No 5+ acre land listings here right now."], ["🏠 1-acre homes", homes.map(r), "No 1-acre home listings here right now."],
-      ["🏥 Near-hospital homes", nhs.map(rn), "No near-hospital homes here right now."]].concat(ST.cabin ? [[(ST.cabin.label || "Cabin") + "s (" + (ST.cabin.acres || 25) + "+ acres)", cabs.map(r), "No cabins here right now.", G.cabin(16)]] : []).concat(bigs.length ? [["★ 50+ acres under $250k", bigs.map(r), "None here right now.", G.bigStar(16)]] : []).concat(cfs.length ? [["Caves & waterfalls on the property", cfs.map(r), "None here right now.", G.bat(20) + G.fall(14)]] : []) };
+      ["🏥 Near-hospital homes", nhs.map(rn), "No near-hospital homes here right now."],
+      ["No-land homes", nlhs.map(p => rx(p, G.house(false, "#00897b"))), "No no-land homes here right now.", G.house(false, "#00897b")],
+      ["Townhomes & apartments", thas.map(p => rx(p, G.towns("#ef6c00"))), "None here right now.", G.towns("#ef6c00")]].concat(ST.cabin ? [[(ST.cabin.label || "Cabin") + "s (" + (ST.cabin.acres || 25) + "+ acres)", cabs.map(r), "No cabins here right now.", G.cabin(16)]] : []).concat(bigs.length ? [["★ 50+ acres under $250k", bigs.map(r), "None here right now.", G.bigStar(16)]] : []).concat(cfs.length ? [["Caves & waterfalls on the property", cfs.map(r), "None here right now.", G.bat(20) + G.fall(14)]] : []) };
   };
   GB.hospitals = (c, xs, from) => {
     const tj = h => TJ.hospitals.find(t => t.hospital_id === h.id);
@@ -1487,6 +1597,8 @@
     ensureLayerFor(type, it);
     if (type === "property" && isHome(it)) applyHomeFilter();
     if (type === "property" && isNH(it)) applyNHFilter();  // a home hidden by the Homes filter still shows its pin while open
+    if (type === "property" && isNlh(it)) applyNlhFilter();
+    if (type === "property" && isTha(it)) applyThaFilter();
     if (opts.fly !== false) zoomTo(type, it, false);
     highlight(type, it);
     return true;
@@ -1648,7 +1760,7 @@
 
   // ------------------------------------------------------------------ search
   const all = [];
-  Object.entries(IDX).forEach(([type, o]) => Object.values(o).forEach(it => all.push({ type, id: type === "county" ? it.name : it.id, name: type === "county" ? it.name + ST.cus : (it.title || it.name), sub: type === "property" ? [isNH(it) ? "🏥 Near-hospital home" + (it.ptype && it.ptype !== "House" ? " (" + it.ptype.toLowerCase() + ")" : "") : isHome(it) ? "🏠 1-acre home" : isCab(it) ? "🪵 " + (ST.cabin.label || "Cabin") + " (" + (ST.cabin.acres || 25) + "+ acres)" : isBig(it) ? "★ 50+ acres under $250k" + (it.dwell === "yes" ? " (with a home)" : "") : isCF(it) ? cfLab(it) : null, isCF(it) && !isCFo(it) ? cfLab(it) : null, it.town, it.county].filter(Boolean).join(", ") : type === "history" ? (HIST[it.type] || [, ""])[1] : (it.kind || it.district || it.city || ""), extra: type === "property" ? [it.address, isNH(it) ? "near hospital home " + (it.nh ? it.nh.name : "") : ""].filter(Boolean).join(" ").toLowerCase() : "" })));
+  Object.entries(IDX).forEach(([type, o]) => Object.values(o).forEach(it => all.push({ type, id: type === "county" ? it.name : it.id, name: type === "county" ? it.name + ST.cus : (it.title || it.name), sub: type === "property" ? [isNH(it) ? "🏥 Near-hospital home" + (it.ptype && it.ptype !== "House" ? " (" + it.ptype.toLowerCase() + ")" : "") : isHome(it) ? "🏠 1-acre home" : isCab(it) ? "🪵 " + (ST.cabin.label || "Cabin") + " (" + (ST.cabin.acres || 25) + "+ acres)" : isBig(it) ? "★ 50+ acres under $250k" + (it.dwell === "yes" ? " (with a home)" : "") : isNlhCat(it) ? "No-land home" : isThaCat(it) ? "Townhome / apartment" : isCF(it) ? cfLab(it) : null, isCF(it) && !isCFo(it) ? cfLab(it) : null, !isNlhCat(it) && isNlh(it) ? "No-land home (4bd/2ba)" : null, !isThaCat(it) && isTha(it) ? "Townhome / apartment (3bd/2ba)" : null, it.town, it.county].filter(Boolean).join(", ") : type === "history" ? (HIST[it.type] || [, ""])[1] : (it.kind || it.district || it.city || ""), extra: type === "property" ? [it.address, isNH(it) ? "near hospital home " + (it.nh ? it.nh.name : "") : "", isNlh(it) ? "no-land home" : "", isTha(it) ? "townhome apartment condo" : ""].filter(Boolean).join(" ").toLowerCase() : "" })));
   const LABEL = { city: "City", travel: "Travel RN jobs", property: "Property / home", hospital: "Hospital", school: "School", college: "College", activity: "Activity", history: "History", county: ST.cu };
   const si = $("#search"), res = $("#results"); let hits = [], sel = 0;
   const annaSee = x => ANNA_ON ? !(x.type === "hospital" || x.type === "travel" || x.type === "perm" || (x.type === "property" && IDX.property[x.id] && isNH(IDX.property[x.id]))) : !x.anna;
@@ -1713,7 +1825,7 @@
     PIN_KEY.apt = () => `<div class="ksec"><b>✈ Airports</b>${krow(mk("apt", "✈", 20), ST.name + " airport with airline service", "· code beside the pin")}${krow(mk("apt oos", "✈", 20), ST.aptOos)}${krow(mk("apt ga", "✈", 20), "No scheduled flights right now")}</div>`;
     Object.values(MORE_ATT || {}).forEach(([e, label, key]) => { const t = Object.keys(MORE_ATT).find(k => MORE_ATT[k][2] === key); PIN_KEY[key] = () => krow(t === "camp" ? ksv(G.tent()) : mk("att at-" + t, e, 20), esc(label)); });
     PIN_KEY.feat = () => `<div class="ksec"><b>★ ${ST.name} standouts</b> <span class="small">(a short hand-picked list: big parks, gorges, caves, battlefields, landmark homes, plus the famous museums, Newport Aquarium and Ark Encounter)</span>${krow(`<span class="mk sv stout">${G.mountain()}</span>`, "Standout site", `· gold glow; icon from zoom ${FULL.feat}`)}</div>`;
-    PIN_KEY._lod = () => { const T = { feat: "★ standouts", trauma: "other trauma centers", hosp: "hospitals", props: "5+ acre homes", nh: "near-hospital homes", cab: "cabins", big: "50+ acre lots", cvf: "caves & waterfalls", homes: "1+ acre homes", travel: "travel jobs", perm: "permanent jobs",
+    PIN_KEY._lod = () => { const T = { feat: "★ standouts", trauma: "other trauma centers", hosp: "hospitals", props: "5+ acre homes", nh: "near-hospital homes", nlh: "no-land homes", tha: "townhomes & apartments", cab: "cabins", big: "50+ acre lots", cvf: "caves & waterfalls", homes: "1+ acre homes", travel: "travel jobs", perm: "permanent jobs",
         a_museum: "museums", a_aqua: "aquariums", col: "colleges", a_park: "amusement parks", a_water: "water parks", act: "outdoors", a_camp: "campgrounds", h_hist: "historic sites", sch: "schools", h_coal: "coal camps", h_ghost: "ghost towns", h_mine: "mines", ski: "ski areas + top peaks", peak: "other peaks", tgt: "Target stores" };
       const by = {}; Object.entries(FULL).forEach(([k, z]) => { if (T[k]) (by[z] = by[z] || []).push(T[k]); });
       const steps = Object.keys(by).sort((a, b) => a - b).map(z => `<b>${z}</b> ${by[z].join(", ")}`).join(" · ");
@@ -1955,7 +2067,7 @@
   const TOPS = [
     { k: "deals", hash: "deals", type: "property", src: "properties", ll: [35.95, -85.5], icon: G.starDot("#8e24aa"), cls: "tb-deals", row: 1, col: 2, bub: "Deals of the Week",
       label: n => `⭐ Deals of the Week (${n})`, title: "⭐ Deals of the Week", h2: n => `The ${n} best home values right now`,
-      sub: "Every home listing (5-acre, 1-acre and near-hospital, ⭐ bargains and others) ranked by price per sq ft (per acre for 5-acre land) vs nearby Zillow listings, criteria fit and extras" },
+      sub: "Every home listing (5-acre, 1-acre, near-hospital, no-land homes, townhomes and apartments, ⭐ bargains and others) ranked by price per sq ft (per acre for 5-acre land) vs nearby Zillow listings, criteria fit and extras" },
     { k: "buildings", hash: "top-buildings", type: "building", src: "buildings", ll: [35.95, -87.98], icon: G.starDot("#2e7d32"), cls: "tb-bldg", row: 1, col: 1, bub: "Odd Buildings",
       label: n => `Top ${n} Odd Buildings`, title: "Top 10 Odd Buildings", h2: n => `Top ${n} odd buildings for sale`,
       sub: "Ranked by how interesting or historic it is, price per sq ft vs the other odd buildings listed, and condition" },
@@ -2139,7 +2251,7 @@
   let extP = null;
   function loadExtras() {
     return extP || (extP = Promise.all([loadJS("extras.js"), window.KYXPF_D ? 0 : loadJS("data/pf.js")]).then(() => window.KYXE.init({ K, IDX, MARK, map, TJ_ALL, BADGE, PHONE,
-      showPage, gRow, gImg, dot, money, esc, toast, copy, stat, link, favGet, favSet, cmpGet, cmpSet, isHome, isNH, isCab, isBig, isCF, isCFo, openItem, updFav, body, card, nav,
+      showPage, gRow, gImg, dot, money, esc, toast, copy, stat, link, favGet, favSet, cmpGet, cmpSet, isHome, isNH, isCab, isBig, isCF, isCFo, isNlh, isTha, openItem, updFav, body, card, nav,
       current: () => current })));
   }
   // climate lines + Compare areas: areas.js + data/clim.json + data/areas.json, loaded on the first card open or #areas (never on the first load)
@@ -2170,11 +2282,13 @@
     { k: "p5", ic: "🌳", t: "5+ ac", h: "Primary homes (5+ acres)", keys: ["props"] },
     { k: "p1", ic: "🏠", t: "1+ ac", h: "Secondary homes (1+ acre)", keys: ["homes"] },
     { k: "nh", ic: "🏥", t: "Near", h: "Near-hospital homes", keys: ["nh"] },
+    { k: "nlh", ic: G.house(false, "#00897b"), t: "Houses", h: "No-land homes (4bd/2ba, 15 min to hospital)", keys: ["nlh"], has: () => NLHS.length > 0 },
+    { k: "tha", ic: G.towns("#ef6c00"), t: "Towns", h: "Townhomes & apartments (3bd/2ba, 15 min to hospital)", keys: ["tha"], has: () => THAS.length > 0 },
     { k: "cave", ic: `<span class="cfic">${G.bat(24)}</span>`, t: "Cave", h: "properties with a cave on the property", keys: ["cvf"], f: e => hasCave(e.it), has: () => CFS.some(hasCave) },
     { k: "falls", ic: `<span class="cfic">${G.fall(19)}</span>`, t: "Falls", h: "properties with a waterfall on the property", keys: ["cvf"], f: e => hasFalls(e.it), has: () => CFS.some(hasFalls) },
     { k: "big", ic: `<span class="bkstar">${G.bigStar(18)}</span>`, t: "50+ ac", h: "50+ acre lots under $250k", keys: ["big"], has: () => BIGS.length > 0 },
     ...(ST.cabin ? [{ k: "cab", ic: G.cabin(18), t: ST.cabin.label || "Cabin", h: `${ST.cabin.label || "Cabin"}s (more than ${ST.cabin.acres || 25} acres)`, keys: ["cab"] }] : []),
-    { k: "barg", ic: `<span class="bstar">${G.starDot("#8e24aa")}</span>`, t: "Bargain", h: "Bargains", keys: ["props", "homes", "nh", "cab"], f: e => !!e.it.bargain },
+    { k: "barg", ic: `<span class="bstar">${G.starDot("#8e24aa")}</span>`, t: "Bargain", h: "Bargains", keys: ["props", "homes", "nh", "nlh", "tha", "cab"], f: e => !!e.it.bargain },
     { k: "biz", ic: "💲", t: "Biz", h: "Businesses for sale", keys: ["biz"] },
     { k: "bldg", ic: "🔔", t: "Odd", h: "Odd buildings for sale", keys: ["bldg"] },
     { k: "attr", ic: "🎡", t: "Sights", h: "Attractions", keys: () => [...(MORE_ATT_KEYS || []), "feat"] },
@@ -2183,10 +2297,10 @@
     { k: "peak", ic: G.peak(18), t: "Peaks", h: "Mountain peaks", keys: ["peak"], has: () => (K.peaks || []).length > 0 },
     { k: "tgt", ic: G.tgt(18), t: "Target", h: "Target stores", keys: ["tgt"], has: () => (K.targets || []).length > 0 },
   ].filter(x => x.has ? x.has() : !ST.solo || ST.solo.includes(x.k));  // a state still being built lists only the buttons that have pins  // a state still being built lists only the buttons that have pins
-  const CATK = p => isNH(p) ? "nh" : isHome(p) ? "homes" : isCab(p) ? "cab" : isBig(p) ? "big" : isCFo(p) ? null : "props";
+  const CATK = p => isNH(p) ? "nh" : isHome(p) ? "homes" : isCab(p) ? "cab" : isBig(p) ? "big" : isNlhCat(p) ? "nlh" : isThaCat(p) ? "tha" : isCFo(p) ? null : "props";
   SOLOS.forEach(sd => {  // e.g. "50+ ac" or "Bargain" also shows its listings whose pin is a bat / waterfall
     if (sd.k === "cave" || sd.k === "falls" || typeof sd.keys === "function") return;
-    const pk = sd.keys.filter(k => ["props", "homes", "nh", "cab", "big"].includes(k)), f0 = sd.f; if (!pk.length) return;
+    const pk = sd.keys.filter(k => ["props", "homes", "nh", "nlh", "tha", "cab", "big"].includes(k)), f0 = sd.f; if (!pk.length) return;
     sd.keys = sd.keys.concat("cvf"); sd.f = e => e.cfl ? pk.includes(CATK(e.it)) && (!f0 || f0(e)) : (!f0 || f0(e));
   });
   function soloVis(x) { return ANNA_ON ? !(x.k === "jobs" || x.k === "nh" || x.k === "hosp") : !x.anna; }  // Anna on: no nurse-job / near-hospital buttons
@@ -2407,7 +2521,7 @@
     const layerDefault = d => d.disabled || annaBlk(d) ? false : (d.key in saved ? !!saved[d.key] : !!d.on);
     const remake = e => { PLS.forEach(pl => { if (pl.shown.has(e)) pl._hide(e); }); if (e.mk) { e.mk.off(); e.mk = null; } };
     return profP = Promise.all([add("profiles.js"), add("data/pf.js"), K.meta && K.meta.pj ? loadPerm().catch(() => 0) : 0]).then(() => window.KYXP.init({ K, IDX, MARK, map, LAYERS, setLayer, layerDefault, PLS, sched, remake,
-      showPage, refreshCard, renderPBar, toast, copy, esc, money, stat, gRow, gImg, dot, TJ_ALL, isHome, isNH, isCab, isBig, isCF, isCFo, body,
+      showPage, refreshCard, renderPBar, toast, copy, esc, money, stat, gRow, gImg, dot, TJ_ALL, isHome, isNH, isCab, isBig, isCF, isCFo, isNlh, isTha, isNlhCat, isThaCat, body,
       current: () => current, setProf: p => { PROF = p; if (PJX) PJX.apply(); }, reSolo, loadPerm, PJ: () => PJX }));
   }
   pBar.addEventListener("click", e => {

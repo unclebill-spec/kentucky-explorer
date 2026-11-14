@@ -8,8 +8,8 @@
   const KEY = k => "kyx_prof_" + k, ACT = "kyx_prof_active";
   // P1 = Bill's defaults: the map exactly as it is today (job exclusions match the collector; every home layer on, existing caps)
   // pjobs = permanent RN job filters (perm.js): Bill leaves out OR/periop, cath lab, women's services (L&D/OB/mom-baby), NICU and peds; PACU and CVICU stay in
-  const SEED = { P1: { v: 1, name: "Bill", seed: 1, jobs: { exOR: 1, exCath: 1, exMom: 1, exPeds: 1 }, pjobs: { x: ["or", "cath", "mom", "nicu", "peds"], c: 1, g: 1 }, home: { props: 1, homes: 1, nh: 1, barg: 1, condo: 1 }, area: {}, layers: {} } };
-  const EMPTY = () => ({ v: 1, name: "", jobs: { exOR: 1, exCath: 1, exMom: 1, exPeds: 1 }, pjobs: { x: ["or", "cath", "mom", "nicu", "peds"], c: 1, g: 1 }, home: { props: 1, homes: 1, nh: 1, barg: 1, condo: 1 }, area: {}, layers: {} });
+  const SEED = { P1: { v: 1, name: "Bill", seed: 1, jobs: { exOR: 1, exCath: 1, exMom: 1, exPeds: 1 }, pjobs: { x: ["or", "cath", "mom", "nicu", "peds"], c: 1, g: 1 }, home: { props: 1, homes: 1, nh: 1, nlh: 1, tha: 1, barg: 1, condo: 1 }, area: {}, layers: {} } };
+  const EMPTY = () => ({ v: 1, name: "", jobs: { exOR: 1, exCath: 1, exMom: 1, exPeds: 1 }, pjobs: { x: ["or", "cath", "mom", "nicu", "peds"], c: 1, g: 1 }, home: { props: 1, homes: 1, nh: 1, nlh: 1, tha: 1, barg: 1, condo: 1 }, area: {}, layers: {} });
   const load = k => { try { const p = JSON.parse(localStorage.getItem(KEY(k)) || "null"); if (p) return p; } catch (e) { } return SEED[k] ? JSON.parse(JSON.stringify(SEED[k])) : null; };
   const store = (k, p) => localStorage.setItem(KEY(k), JSON.stringify(p));
   const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -72,8 +72,19 @@
     const flag = { garage: "g", bsmt: "b", single: "s", pool: "p", outb: "o", fence: "F", reduced: "r" };
     function prop(p) {
       const f = PF.props[p.id] || { t: [], f: "" };
-      const cat = A.isNH(p) ? "nh" : A.isHome(p) ? "homes" : A.isCab && A.isCab(p) ? "cab" : A.isBig && A.isBig(p) ? "big" : A.isCFo && A.isCFo(p) ? "cvf" : "props";
-      if (cat === "cab" || cat === "big" || cat === "cvf" ? H[cat] === 0 : !H[cat]) return false;  // caves / waterfalls (all maps) show unless the profile unticks them  // 50+ ac lots (all maps) show unless the profile unticks them  // cabins (ST.cabin states only) show unless the profile unticks them
+      const layers = [];
+      if (A.isNH(p)) layers.push("nh");
+      else if (A.isHome(p)) layers.push("homes");
+      else if (A.isCab && A.isCab(p)) layers.push("cab");
+      else if (A.isBig && A.isBig(p)) layers.push("big");
+      else if (A.isCFo && A.isCFo(p)) layers.push("cvf");
+      else if (A.isNlhCat && A.isNlhCat(p)) layers.push("nlh");
+      else if (A.isThaCat && A.isThaCat(p)) layers.push("tha");
+      else layers.push("props");
+      if (A.isNlh && A.isNlh(p) && layers.indexOf("nlh") < 0) layers.push("nlh");
+      if (A.isTha && A.isTha(p) && layers.indexOf("tha") < 0) layers.push("tha");
+      const on = k => (k === "cab" || k === "big" || k === "cvf" || k === "nlh" || k === "tha") ? H[k] !== 0 : !!H[k];
+      if (!layers.some(on)) return false;  // hide only when every layer this home belongs to is off (a near-hospital house can also be a no-land home)
       if (p.bargain && !H.barg) return false;
       if (!cty(p.county)) return false;
       if (H.minP != null && !(p.price >= H.minP)) return false;
@@ -168,7 +179,7 @@
     A.LAYERS.forEach(d => { if (!d.layer || d.group) return; const want = A.layerDefault(d); if (A.map.hasLayer(d.layer) !== want) A.setLayer(d, want); });
     if (!P) return;
     const H = P.home || {};
-    ["props", "homes", "nh", "cab", "big", "cvf"].forEach(k => { const d = A.LAYERS.find(x => x.key === k), w = k === "cab" || k === "big" || k === "cvf" ? H[k] !== 0 : !!H[k]; if (d && A.map.hasLayer(d.layer) !== w) A.setLayer(d, w); });
+    ["props", "homes", "nh", "nlh", "tha", "cab", "big", "cvf"].forEach(k => { const d = A.LAYERS.find(x => x.key === k), w = k === "cab" || k === "big" || k === "cvf" || k === "nlh" || k === "tha" ? H[k] !== 0 : !!H[k]; if (d && A.map.hasLayer(d.layer) !== w) A.setLayer(d, w); });
     const L = P.layers || {};
     if (L.set) Object.keys(LMAP).forEach(k => LMAP[k].forEach(key => { const d = A.LAYERS.find(x => x.key === key); if (d && !d.disabled && A.map.hasLayer(d.layer) !== !!L[k]) A.setLayer(d, !!L[k]); }));
   }
@@ -229,7 +240,7 @@
         <datalist id="pfTowns">${towns().map(t => `<option value="${esc(t.n)}">`).join("")}</datalist>
       </details>
       <details class="pfsec"><summary>🏠 Housing</summary>
-        <div class="pfh">Show</div><div class="pfgrid">${cb("home.props", 1, H.props, "Home + 5 acres")}${cb("home.homes", 1, H.homes, "1-acre homes")}${cb("home.nh", 1, H.nh, "Near-hospital homes")}${(window.KYX_ST || {}).cabin ? cb("home.cab", 1, H.cab !== 0, esc(((window.KYX_ST || {}).cabin.label || "Cabin") + "s (" + ((window.KYX_ST || {}).cabin.acres || 25) + "+ ac)")) : ""}${cb("home.barg", 1, H.barg, "⭐ Bargains")}</div>
+        <div class="pfh">Show</div><div class="pfgrid">${cb("home.props", 1, H.props, "Home + 5 acres")}${cb("home.homes", 1, H.homes, "1-acre homes")}${cb("home.nh", 1, H.nh, "Near-hospital homes")}${cb("home.nlh", 1, H.nlh !== 0, "No-land homes (4bd)")}${cb("home.tha", 1, H.tha !== 0, "Townhomes & apartments")}${(window.KYX_ST || {}).cabin ? cb("home.cab", 1, H.cab !== 0, esc(((window.KYX_ST || {}).cabin.label || "Cabin") + "s (" + ((window.KYX_ST || {}).cabin.acres || 25) + "+ ac)")) : ""}${cb("home.barg", 1, H.barg, "⭐ Bargains")}</div>
         <div class="pfgrid">${nf("home.minP", H.minP, "Min price $", "any", 'step="5000"')}${nf("home.maxP", H.maxP, "Max price $", "any", 'step="5000"')}
           ${nf("home.beds", H.beds, "Min beds")}${nf("home.baths", H.baths, "Min baths", "any", 'step="0.5"')}${nf("home.sqft", H.sqft, "Min sq ft", "any", 'step="100"')}${nf("home.acres", H.acres, "Min acres", "any", 'step="0.5"')}
           ${nf("home.maxHm", H.maxHm, "Max min. to a hospital")}${nf("home.maxTm", H.maxTm, "Max min. to Level I/II trauma")}
