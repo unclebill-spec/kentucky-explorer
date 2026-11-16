@@ -5,6 +5,7 @@ Entries before Oct 1, 2026 ~6 PM were reconstructed from the git history (which 
 dated backups and publish logs on the work box. Newer entries are added by `publish.sh -m "message"`.
 
 ## 2026-11-16
+- 11:07 ET: State switcher: add Nebraska, South Dakota, North Dakota
 - 10:08 ET: Fix: restore listings (previous publish ran with an emptied listings.json); removed sold 184 Osborne Rd and off-market 1085 Spring Br
 - 10:05 ET: Browser pass: removed sold 184 Osborne Rd Pineville ($299,900) and off-market 1085 Spring Br Jeremiah (Zillow, Nov 16)
 
